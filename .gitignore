@@ -1,17 +1,9 @@
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
+node_modules/
 dist/
-build/
-*.egg-info/
-*.egg
-.eggs/
-.venv/
-venv/
-env/
+*.js.map
 .env
-.ruff_cache/
-.mypy_cache/
-.pytest_cache/
-botsec-output/
+forge-proof-output/
+
+# Foundry artifacts from temp projects
+cache/
+out/

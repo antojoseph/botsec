@@ -1,0 +1,23 @@
+{
+  "name": "forge-proof",
+  "version": "0.1.0",
+  "description": "AI-powered formal verification for smart contracts using Opus 4.6 + Halmos",
+  "type": "module",
+  "bin": {
+    "forge-proof": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.1.0",
+    "commander": "^12.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0"
+  }
+}
