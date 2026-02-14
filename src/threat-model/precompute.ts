@@ -10,7 +10,7 @@ import { existsSync, readdirSync, readFileSync, statSync, rmSync } from "fs";
 import { join } from "path";
 import type {
   PrecomputedAnalysis,
-  SlitherAnalysis,
+  StructuralAnalysis,
   OnChainProfile,
   ValueFlow,
 } from "./types.js";
@@ -26,7 +26,6 @@ export async function precomputeAnalysis(
     address?: string;
     chainId?: number;
     etherscanApiKey?: string;
-    noSlither?: boolean;
   }
 ): Promise<PrecomputedAnalysis> {
   validateFoundryProject(projectDir);
@@ -54,16 +53,16 @@ export async function precomputeAnalysis(
     console.warn(`  Warning: forge build failed: ${e.message?.slice(0, 100)}`);
   }
 
-  // 2. AST-based structural analysis — MUST run immediately after build,
+  // 2. Structural analysis from solc AST — MUST run immediately after build,
   //    before any forge inspect calls which corrupt build-info files.
   console.log("  Analyzing solc AST from build artifacts...");
-  const astResult: SlitherAnalysis | undefined = analyzeFromAST(projectDir);
-  if (astResult) {
+  const structural: StructuralAnalysis | undefined = analyzeFromAST(projectDir);
+  if (structural) {
     console.log(
-      `  AST analysis: ${Object.keys(astResult.functionSummary).length} functions, ` +
-        `${Object.keys(astResult.callGraph).length} call graph entries, ` +
-        `${Object.keys(astResult.stateVarMap).length} state variables, ` +
-        `${Object.keys(astResult.inheritance).length} inheritance relations`
+      `  AST analysis: ${Object.keys(structural.functionSummary).length} functions, ` +
+        `${Object.keys(structural.callGraph).length} call graph entries, ` +
+        `${Object.keys(structural.stateVarMap).length} state variables, ` +
+        `${Object.keys(structural.inheritance).length} inheritance relations`
     );
   } else {
     console.log("  Warning: AST analysis produced no results.");
@@ -114,7 +113,7 @@ export async function precomputeAnalysis(
 
   console.log(`  Inspected ${contracts.length} contract(s): ${contracts.join(", ")}`);
 
-  // AST result was computed in step 2 above (before forge inspect).
+  // Structural analysis was computed in step 2 above (before forge inspect).
 
   // 3. Etherscan v2 (if address provided)
   let onChain: OnChainProfile | undefined;
@@ -133,7 +132,7 @@ export async function precomputeAnalysis(
     );
   }
 
-  return { projectDir, abi, storageLayout, methodIds, slither: astResult, onChain };
+  return { projectDir, abi, storageLayout, methodIds, structural, onChain };
 }
 
 // ---------------------------------------------------------------------------
@@ -225,7 +224,7 @@ function collectSolFiles(dir: string, result: Set<string>): void {
 }
 
 // ---------------------------------------------------------------------------
-// Slither integration
+// Etherscan v2 integration
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------

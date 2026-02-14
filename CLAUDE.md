@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Forge Proof (`forge-proof`) is a TypeScript CLI that uses the Claude Agent SDK to orchestrate three specialized agents for smart contract security analysis with formal verification via Halmos symbolic execution.
+Forge Proof (`forge-proof`) is a TypeScript CLI that uses the Claude Agent SDK to orchestrate specialized agents for smart contract security analysis with formal verification via Halmos symbolic execution.
 
 ## Build & Run Commands
 
@@ -51,8 +51,9 @@ Three-phase agent pipeline coordinated by the orchestrator via `@anthropic-ai/cl
 
 Separate `threat-model` command generates a structured threat model before formal verification:
 
-- `src/threat-model/types.ts` — ThreatModel, Threat, CodeTrace, OnChainProfile schemas
-- `src/threat-model/precompute.ts` — Pre-computation: `forge inspect` + Slither + Etherscan v2 transaction data
+- `src/threat-model/types.ts` — ThreatModel, Threat, CodeTrace, StructuralAnalysis, OnChainProfile schemas
+- `src/threat-model/ast-analysis.ts` — Structural analysis from solc AST (`forge build --build-info`): call graphs, state var read/write maps, inheritance, function summaries, operation ordering (CEI detection), msg.sender auth checks, require/assert inventory, data dependency with taint tracking. Zero external dependencies.
+- `src/threat-model/precompute.ts` — Pre-computation: `forge build --build-info` + `forge inspect` + optional Etherscan v2 transaction data
 - `src/threat-model/orchestrator.ts` — Pipeline: precompute → agent explore → Solodit enrich → synthesize
 - `src/threat-model/solodit.ts` — Solodit API integration for historical vulnerability matching
 - `src/agents/threat-modeler.ts` — Opus agent with 7 systematic xref patterns (CEI timeline, reverse xref, source-to-sink tracing, etc.). Every threat requires a TRACE showing exact code locations traversed.
@@ -69,7 +70,6 @@ forge-proof analyze <path> [--address <addr>] [--chain <id>] [--etherscan-key <k
 forge-proof threat-model <foundry-project-path>
                            [--address <addr>] [--chain <id>] [--etherscan-key <key>]
                            [--solodit-key <key>] [-o <dir>] [--max-turns <n>]
-                           [--no-slither]
 
 forge-proof check
 ```

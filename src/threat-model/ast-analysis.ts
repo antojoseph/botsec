@@ -9,7 +9,7 @@
 import { readFileSync, readdirSync, existsSync, statSync } from "fs";
 import { join } from "path";
 import type {
-  SlitherAnalysis,
+  StructuralAnalysis,
   OperationStep,
   AuthCheck,
   Guard,
@@ -44,11 +44,9 @@ interface NodeInfo {
 
 /**
  * Analyze all build artifacts in a Foundry project and extract structural data.
- * Returns the same SlitherAnalysis shape so it can drop in as a replacement.
- *
  * Reads ASTs from the build-info file (requires `forge build --build-info`).
  */
-export function analyzeFromAST(projectDir: string): SlitherAnalysis | undefined {
+export function analyzeFromAST(projectDir: string): StructuralAnalysis | undefined {
   const outDir = join(projectDir, "out");
   if (!existsSync(outDir)) return undefined;
 
@@ -327,7 +325,6 @@ export function analyzeFromAST(projectDir: string): SlitherAnalysis | undefined 
   );
 
   return {
-    detectors: [],
     callGraph,
     stateVarMap,
     inheritance,
