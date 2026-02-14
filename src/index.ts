@@ -10,6 +10,7 @@
 
 import { Command } from "commander";
 import { analyze } from "./orchestrator.js";
+import { generateThreatModel } from "./threat-model/orchestrator.js";
 import { assertDependencies, checkDependencies } from "./scaffold/dependencies.js";
 
 const BANNER = `
@@ -48,6 +49,10 @@ program
   )
   .option("--max-turns <n>", "Max agent turns (default: 500)", "500")
   .option("-o, --output <dir>", "Output directory", "forge-proof-output")
+  .option(
+    "--threat-model <file>",
+    "Path to threat model JSON (from threat-model command)"
+  )
   .action(async (contractPath, opts) => {
     console.log(BANNER);
     console.log("  AI-Powered Formal Verification for Smart Contracts\n");
@@ -123,6 +128,69 @@ program
     }
 
     console.log("  All dependencies satisfied.\n");
+  });
+
+program
+  .command("threat-model")
+  .description(
+    "Generate a structured threat model for a Foundry project using agentic code exploration"
+  )
+  .argument(
+    "<project-path>",
+    "Path to Foundry project directory (must contain foundry.toml)"
+  )
+  .option(
+    "--address <addr>",
+    "On-chain contract address (enables Etherscan v2 enrichment)"
+  )
+  .option("--chain <id>", "Chain ID (1=mainnet, 8453=base, 42161=arbitrum)", "1")
+  .option(
+    "--etherscan-key <key>",
+    "Etherscan API key (or set ETHERSCAN_API_KEY env var)"
+  )
+  .option(
+    "--solodit-key <key>",
+    "Solodit API key (or set SOLODIT_API_KEY env var)"
+  )
+  .option("-o, --output <dir>", "Output directory", "forge-proof-output")
+  .option("--max-turns <n>", "Max agent turns (default: 200)", "200")
+  .option("--no-slither", "Skip Slither analysis even if installed")
+  .action(async (projectPath, opts) => {
+    console.log(BANNER);
+    console.log("  Threat Model Generation\n");
+
+    // Check API key
+    if (!process.env.ANTHROPIC_API_KEY) {
+      console.error(
+        "  Error: ANTHROPIC_API_KEY not set.\n" +
+          "  Set it with: export ANTHROPIC_API_KEY=sk-ant-...\n"
+      );
+      process.exit(1);
+    }
+
+    console.log(`  Project: ${projectPath}`);
+    if (opts.address) {
+      console.log(`  Address: ${opts.address} (chain ${opts.chain})`);
+    }
+    console.log(`  Output:  ${opts.output}`);
+    console.log(`  Slither: ${opts.slither === false ? "disabled" : "auto-detect"}\n`);
+
+    try {
+      await generateThreatModel({
+        contractPath: projectPath,
+        address: opts.address,
+        chainId: opts.chain,
+        etherscanApiKey:
+          opts.etherscanKey || process.env.ETHERSCAN_API_KEY,
+        soloditKey: opts.soloditKey || process.env.SOLODIT_API_KEY,
+        outputDir: opts.output,
+        maxTurns: parseInt(opts.maxTurns),
+        noSlither: opts.slither === false,
+      });
+    } catch (err: any) {
+      console.error(`\n  Fatal error: ${err.message || err}`);
+      process.exit(1);
+    }
   });
 
 program.parse();

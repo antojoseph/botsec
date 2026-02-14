@@ -47,12 +47,30 @@ Three-phase agent pipeline coordinated by the orchestrator via `@anthropic-ai/cl
 - `src/parsers/halmos-output.ts` — Parses Halmos results: test status (PASS/FAIL/ERROR/TIMEOUT), counterexample hex→decimal, path counts, solver times
 - `src/parsers/etherscan.ts` — Etherscan API types, function selector extraction, transaction summarization
 
+### Threat Model Pipeline
+
+Separate `threat-model` command generates a structured threat model before formal verification:
+
+- `src/threat-model/types.ts` — ThreatModel, Threat, CodeTrace, OnChainProfile schemas
+- `src/threat-model/precompute.ts` — Pre-computation: `forge inspect` + Slither + Etherscan v2 transaction data
+- `src/threat-model/orchestrator.ts` — Pipeline: precompute → agent explore → Solodit enrich → synthesize
+- `src/threat-model/solodit.ts` — Solodit API integration for historical vulnerability matching
+- `src/agents/threat-modeler.ts` — Opus agent with 7 systematic xref patterns (CEI timeline, reverse xref, source-to-sink tracing, etc.). Every threat requires a TRACE showing exact code locations traversed.
+
+The threat model operates directly on the user's Foundry project (no temp scaffolding). Output is `threat-model.json`, consumable by `analyze --threat-model`.
+
 ## CLI Options
 
 ```
 forge-proof analyze <path> [--address <addr>] [--chain <id>] [--etherscan-key <key>]
                            [--loop <n>] [--solver-timeout <ms>] [--max-turns <n>]
-                           [-o <dir>]
+                           [-o <dir>] [--threat-model <file>]
+
+forge-proof threat-model <foundry-project-path>
+                           [--address <addr>] [--chain <id>] [--etherscan-key <key>]
+                           [--solodit-key <key>] [-o <dir>] [--max-turns <n>]
+                           [--no-slither]
+
 forge-proof check
 ```
 
