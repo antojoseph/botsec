@@ -94,11 +94,13 @@ export function analyzeFromAST(projectDir: string): StructuralAnalysis | undefin
         }
       });
 
-      // But only extract structural data from source contracts
+      // But only extract structural data from source contracts (skip interfaces/libraries)
       if (isSource) {
         const contractNodes: ASTNode[] = [];
         for (const n of ast.nodes || []) {
           if (n.nodeType === "ContractDefinition") {
+            // Skip interfaces and libraries — no executable logic to threat-model
+            if (n.contractKind === "interface" || n.contractKind === "library") continue;
             contractNodes.push(n);
           }
         }

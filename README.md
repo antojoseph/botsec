@@ -21,7 +21,7 @@ Forge Proof provides two commands:
 3. **Verifier Agent** (Opus, read/write/bash) — Writes Halmos symbolic tests (`check_` functions), compiles with Forge, runs the SMT solver, interprets counterexamples, iterates on specs
 
 **`forge-proof threat-model`** — Generates a structured threat model for a Foundry project:
-1. **Pre-computation** — Walks the solc AST to extract call graphs, state variable maps, inheritance, CEI ordering, auth checks, guards, and data dependency. Optionally fetches Etherscan v2 transaction data.
+1. **Pre-computation** — Walks the solc AST to extract call graphs, state variable maps, inheritance, CEI ordering, auth checks, guards, and data dependency from concrete contracts (interfaces and libraries are auto-filtered). Optionally fetches Etherscan v2 transaction data.
 2. **Agentic exploration** — An Opus agent with 7 systematic xref patterns traces code paths using the pre-computed structural data. Every threat must include a TRACE with real code locations (anti-slop filter).
 3. **Synthesis** — Queries Solodit API for historical findings, ranks threats, drops untraced threats.
 
@@ -137,8 +137,9 @@ forge-proof analyze <path>
 forge-proof threat-model <foundry-project-path>
   │
   ├─── Phase 0: Pre-Computation
-  │    forge build --build-info → solc AST analysis
+  │    forge build --build-info → solc AST analysis (concrete contracts only)
   │    forge inspect → ABI, storage layout, method IDs
+  │    Interfaces & libraries auto-skipped (no bytecode/storage)
   │    Etherscan v2 → tx history, value flows (if --address)
   │
   ├─── Phase 1: Agentic Exploration
@@ -162,10 +163,10 @@ forge-proof threat-model <foundry-project-path>
 
 | Feature | What It Extracts |
 |---------|-----------------|
-| **Call graph** | Internal + external calls per function, cross-contract resolution via global AST ID map, low-level calls (.call/.transfer/.delegatecall) |
+| **Call graph** | Internal + external calls per function, cross-contract resolution via global AST ID map, low-level calls (.call/.transfer/.delegatecall). Interfaces and libraries excluded. |
 | **State variable map** | Per-variable: which functions read it, which write it, type, visibility |
 | **Inheritance** | Direct parent contracts per contract |
-| **Function summaries** | Visibility, modifiers, state vars read/written, internal/external calls |
+| **Function summaries** | Visibility, modifiers, state vars read/written, internal/external calls. Concrete and abstract contracts only. |
 | **Operation ordering** | Execution-order operations per function — enables direct CEI violation detection (state-write after external-call) |
 | **Auth checks** | msg.sender conditions via modifiers and inline require/if-revert patterns |
 | **Guard inventory** | require/assert/revert statements with human-readable condition summaries |
