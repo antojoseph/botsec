@@ -70,11 +70,28 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
       ],
       permissionMode: "bypassPermissions",
       maxTurns: opts.maxTurns || 500,
+      maxBudgetUsd: 100,
+      maxThinkingTokens: 16000,
       cwd: projectDir,
       agents,
     },
   })) {
     handleMessage(message);
+
+    // Log cost/duration on completion
+    if (message?.type === "result") {
+      const cost = (message as any).total_cost_usd;
+      const turns = (message as any).num_turns;
+      const duration = (message as any).duration_ms;
+      if (cost) {
+        console.log(
+          `\n  Completed: ${turns} turns, $${cost.toFixed(2)}, ${(duration / 1000).toFixed(1)}s`
+        );
+      }
+      if (message.subtype === "error_max_budget_usd") {
+        console.error("  Budget limit ($100) reached.");
+      }
+    }
   }
 }
 

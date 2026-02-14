@@ -56,7 +56,10 @@ export async function generateThreatModel(
 
   const orchestratorPrompt = buildOrchestratorPrompt(precomputed);
 
-  let agentOutput = "";
+  let rawModel: any = null;
+  let costUsd = 0;
+  let durationMs = 0;
+  let numTurns = 0;
 
   for await (const message of query({
     prompt: orchestratorPrompt,
@@ -65,21 +68,53 @@ export async function generateThreatModel(
       allowedTools: ["Read", "Grep", "Glob", "Bash", "Task"],
       permissionMode: "bypassPermissions",
       maxTurns: opts.maxTurns || 200,
+      maxBudgetUsd: 50,
+      maxThinkingTokens: 16000,
       cwd: precomputed.projectDir,
       agents,
+      outputFormat: {
+        type: "json_schema",
+        schema: {
+          type: "object",
+          properties: {
+            contractType: { type: "string" },
+            actors: { type: "array", items: { type: "object" } },
+            assets: { type: "array", items: { type: "object" } },
+            trustBoundaries: { type: "array", items: { type: "object" } },
+            threats: { type: "array", items: { type: "object" } },
+          },
+          required: ["contractType", "threats"],
+        },
+      },
     },
   })) {
     handleMessage(message);
 
-    // Capture the final result
-    if (message?.type === "result" && message.subtype === "success") {
-      agentOutput = message.result || "";
+    // Capture the final structured result
+    if (message?.type === "result") {
+      if (message.subtype === "success") {
+        // Prefer structured_output (SDK-validated JSON) over free-form text
+        rawModel = (message as any).structured_output || parseAgentOutput((message as any).result || "");
+        costUsd = (message as any).total_cost_usd || 0;
+        durationMs = (message as any).duration_ms || 0;
+        numTurns = (message as any).num_turns || 0;
+      } else if (message.subtype === "error_max_budget_usd") {
+        console.error("\n  Budget limit ($50) reached. Partial results may be available.");
+        rawModel = parseAgentOutput((message as any).result || "");
+      } else {
+        console.error(`\n  Agent error: ${(message as any).error || message.subtype}`);
+        rawModel = { contractType: "other", actors: [], assets: [], trustBoundaries: [], threats: [] };
+      }
     }
   }
 
-  // Parse the agent's JSON output
-  console.log("\n  Parsing threat model output...");
-  const rawModel = parseAgentOutput(agentOutput);
+  if (!rawModel) {
+    rawModel = { contractType: "other", actors: [], assets: [], trustBoundaries: [], threats: [] };
+  }
+
+  if (costUsd > 0) {
+    console.log(`\n  Agent completed: ${numTurns} turns, $${costUsd.toFixed(2)}, ${(durationMs / 1000).toFixed(1)}s`);
+  }
 
   // Phase 2: Synthesis
   console.log("\n  Phase 2: Synthesis & enrichment...");
