@@ -193,19 +193,48 @@ function listContractsFromOut(projectDir: string): string[] {
   collectSolFiles(join(projectDir, srcDir), srcSolFiles);
 
   const names: string[] = [];
+  let skippedCount = 0;
   for (const entry of readdirSync(outDir)) {
     if (entry.endsWith(".sol") && srcSolFiles.has(entry)) {
       const subDir = join(outDir, entry);
       try {
         for (const file of readdirSync(subDir)) {
           if (file.endsWith(".json")) {
+            // Skip interfaces and libraries — no executable logic to threat-model
+            if (isInterfaceOrLibrary(join(subDir, file))) {
+              skippedCount++;
+              continue;
+            }
             names.push(file.replace(".json", ""));
           }
         }
       } catch { /* skip */ }
     }
   }
+  if (skippedCount > 0) {
+    console.log(`  Skipped ${skippedCount} interface/library artifact(s).`);
+  }
   return names;
+}
+
+/**
+ * Detect interfaces and libraries from compiled artifacts.
+ * - Interfaces: bytecode "0x" (len ≤ 2), no storage entries
+ * - Libraries: tiny bytecode (< 500 chars), no storage entries
+ * - Abstract storage contracts are KEPT (bytecode "0x" but have storage)
+ */
+function isInterfaceOrLibrary(artifactPath: string): boolean {
+  try {
+    const data = JSON.parse(readFileSync(artifactPath, "utf-8"));
+    const bytecode: string = data.bytecode?.object || "";
+    const storageEntries: number = data.storageLayout?.storage?.length || 0;
+    if (storageEntries > 0) return false; // has storage → keep (e.g. abstract storage contracts)
+    if (bytecode.length <= 2) return true;  // interface (bytecode "0x" or empty)
+    if (bytecode.length < 500) return true; // library (tiny bytecode, no storage)
+    return false;
+  } catch {
+    return false;
+  }
 }
 
 function collectSolFiles(dir: string, result: Set<string>): void {
