@@ -13,6 +13,8 @@ import { explorerAgent } from "./agents/explorer.js";
 import { onchainAgent, type OnchainOpts } from "./agents/onchain.js";
 import { verifierAgent } from "./agents/verifier.js";
 import { scaffoldFoundryProject } from "./scaffold/foundry-project.js";
+import { readFileSync } from "node:fs";
+import type { ThreatModel, Threat } from "./threat-model/types.js";
 
 export interface AnalyzeOptions {
   contractPath: string;
@@ -23,6 +25,7 @@ export interface AnalyzeOptions {
   solverTimeout?: number;
   maxTurns?: number;
   outputDir?: string;
+  threatModelPath?: string;
 }
 
 export async function analyze(opts: AnalyzeOptions): Promise<void> {
@@ -47,10 +50,26 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
     });
   }
 
-  // 3. Build the orchestrator prompt
-  const prompt = buildOrchestratorPrompt(opts, projectDir, hasOnchain);
+  // 3. Load threat model if provided
+  let threatModel: ThreatModel | undefined;
+  if (opts.threatModelPath) {
+    try {
+      const raw = readFileSync(opts.threatModelPath, "utf-8");
+      threatModel = JSON.parse(raw) as ThreatModel;
+      console.log(
+        `  Threat model loaded: ${threatModel.threats.length} threats from ${opts.threatModelPath}`
+      );
+    } catch (err: any) {
+      throw new Error(
+        `Failed to load threat model from ${opts.threatModelPath}: ${err.message}`
+      );
+    }
+  }
 
-  // 4. Run the orchestrator query
+  // 4. Build the orchestrator prompt
+  const prompt = buildOrchestratorPrompt(opts, projectDir, hasOnchain, threatModel);
+
+  // 5. Run the orchestrator query
   console.log("─".repeat(60));
   console.log("  Starting analysis with Claude Agent SDK");
   console.log("─".repeat(60) + "\n");
@@ -95,13 +114,54 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
   }
 }
 
+function formatThreatModelSection(threatModel: ThreatModel): string {
+  const threats = threatModel.threats
+    .sort((a, b) => a.priority - b.priority)
+    .map((t) => {
+      const lines = [
+        `- **T-${t.id}: ${t.title}** [${t.severity}] [${t.category}]`,
+        `  ${t.description}`,
+        `  Affected: ${t.affectedCode.join(", ")}`,
+      ];
+      if (t.suggestedProperties.length > 0) {
+        lines.push(`  Suggested properties: ${t.suggestedProperties.join("; ")}`);
+      }
+      if (t.attackScenario) {
+        lines.push(`  Attack scenario: ${t.attackScenario}`);
+      }
+      return lines.join("\n");
+    })
+    .join("\n\n");
+
+  return `## Pre-Generated Threat Model
+
+A threat model has already been generated for this contract (${threatModel.threats.length} threats, type: ${threatModel.contractType}).
+Use it to FOCUS your analysis — do NOT start from scratch.
+
+### Threats (ranked by priority)
+
+${threats}
+
+### Instructions
+- The code-explorer should VALIDATE these threats (confirm or reject with evidence), not re-discover them from scratch
+- The code-explorer should identify any ADDITIONAL threats not covered above
+- The formal-verifier should prioritize writing check_ tests for the suggestedProperties listed above
+- Threats marked Critical/High should be verified FIRST
+`;
+}
+
 function buildOrchestratorPrompt(
   opts: AnalyzeOptions,
   projectDir: string,
-  hasOnchain: boolean
+  hasOnchain: boolean,
+  threatModel?: ThreatModel
 ): string {
   const loopBound = opts.loopBound || 3;
   const solverTimeout = opts.solverTimeout || 10000;
+
+  const threatModelSection = threatModel
+    ? "\n" + formatThreatModelSection(threatModel) + "\n"
+    : "";
 
   return `You are Forge Proof, a smart contract security analyzer that combines deep code analysis, on-chain intelligence, and formal verification using Halmos.
 
@@ -109,7 +169,7 @@ Your target contract is at: ${opts.contractPath}
 Working directory (Foundry project with contract copied to src/): ${projectDir}
 ${opts.address ? `On-chain address: ${opts.address} (chain: ${opts.chainId || "1"})` : "No on-chain address provided — skip on-chain analysis."}
 ${opts.etherscanApiKey ? "Etherscan API key is available." : ""}
-
+${threatModelSection}
 ## Your Workflow
 
 ### Phase 1: Deep Understanding${hasOnchain ? " (run code-explorer and onchain-analyst IN PARALLEL)" : ""}

@@ -80,6 +80,9 @@ program
       console.log(`  Address: ${opts.address} (chain ${opts.chain})`);
     }
     console.log(`  Halmos:  --loop ${opts.loop} --solver-timeout ${opts.solverTimeout}`);
+    if (opts.threatModel) {
+      console.log(`  Threat Model: ${opts.threatModel}`);
+    }
     console.log(`  Output:  ${opts.output}\n`);
 
     try {
@@ -93,6 +96,7 @@ program
         solverTimeout: parseInt(opts.solverTimeout),
         maxTurns: parseInt(opts.maxTurns),
         outputDir: opts.output,
+        threatModelPath: opts.threatModel,
       });
     } catch (err: any) {
       console.error(`\n  Fatal error: ${err.message || err}`);
