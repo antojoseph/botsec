@@ -76,7 +76,37 @@ forge-proof analyze <path>
   -o, --output <dir>        Output directory [default: forge-proof-output]
 
 forge-proof check           Verify dependencies are installed
+
+forge-proof threat-model <foundry-project-path>
+  --address <addr>          On-chain contract address (optional, Etherscan v2 enrichment)
+  --chain <id>              Chain ID [default: 1]
+  --etherscan-key <key>     Etherscan API key (or ETHERSCAN_API_KEY env var)
+  --solodit-key <key>       Solodit API key (or SOLODIT_API_KEY env var)
+  -o, --output <dir>        Output directory [default: forge-proof-output]
+  --max-turns <n>           Max agent reasoning turns [default: 200]
 ```
+
+## Threat Model
+
+The `threat-model` command generates a structured, evidence-backed threat model for a Foundry project:
+
+```bash
+# Generate threat model
+forge-proof threat-model ./my-defi-project -o ./out
+
+# With on-chain transaction enrichment
+forge-proof threat-model ./my-defi-project --address 0x1234... --etherscan-key $KEY
+
+# Feed into formal verification
+forge-proof analyze ./my-defi-project/src/Vault.sol --threat-model ./out/threat-model.json
+```
+
+**How it works:**
+1. **Pre-computation** — Builds the project with `forge build --build-info`, then walks the solc AST to extract call graphs, state variable read/write maps, inheritance trees, function summaries, operation ordering (CEI), auth checks, require/assert inventory, and data dependency with taint tracking. Optionally fetches Etherscan v2 transaction data.
+2. **Agentic exploration** — An Opus agent with 7 systematic xref patterns (CEI timeline, reverse xref, source-to-sink tracing, interface validation, privilege escalation, etc.) traces code paths using the pre-computed structural data as a map. Every threat must include a TRACE with real code locations.
+3. **Synthesis** — Queries Solodit API for historical findings matching detected threat categories. Ranks threats by severity, confidence, and on-chain activity. Drops any threat without a code trace (anti-slop filter).
+
+Output: `threat-model.json` — consumable by `forge-proof analyze --threat-model`.
 
 ## Benchmark Contracts
 

@@ -57,7 +57,7 @@ export interface TrustBoundary {
 // ---------------------------------------------------------------------------
 
 export interface TraceStep {
-  /** Tool / source: "Grep" | "Read" | "Slither" | "forge-inspect" | "Etherscan" */
+  /** Tool / source: "Grep" | "Read" | "AST" | "forge-inspect" | "Etherscan" */
   action: string;
   /** What was searched / read */
   target: string;
@@ -196,34 +196,15 @@ export interface ThreatModel {
   threats: Threat[];
   onChainProfile?: OnChainProfile;
   precomputed: {
-    slitherAvailable: boolean;
-    detectorsRun: number;
-    detectorFindings: number;
+    astAnalysisAvailable: boolean;
+    functionsAnalyzed: number;
+    stateVarsTracked: number;
     etherscanDataAvailable: boolean;
   };
   metadata: {
     sourcesQueried: string[];
     soloditFindings: number;
   };
-}
-
-// ---------------------------------------------------------------------------
-// Slither structured output types
-// ---------------------------------------------------------------------------
-
-export interface SlitherDetector {
-  check: string;
-  impact: string;
-  confidence: string;
-  description: string;
-  elements: Array<{
-    type: string;
-    name: string;
-    source_mapping?: {
-      filename_relative: string;
-      lines: number[];
-    };
-  }>;
 }
 
 export interface OperationStep {
@@ -262,8 +243,12 @@ export interface Guard {
   condition?: string;
 }
 
-export interface SlitherAnalysis {
-  detectors: SlitherDetector[];
+/**
+ * Structural analysis extracted from the solc AST (via forge build --build-info).
+ * Provides call graphs, state var maps, inheritance, function summaries,
+ * operation ordering (CEI), auth checks, guards, and data dependency.
+ */
+export interface StructuralAnalysis {
   callGraph: Record<string, string[]>;
   stateVarMap: Record<
     string,
@@ -324,8 +309,8 @@ export interface PrecomputedAnalysis {
   /** contract name → { selector → signature } */
   methodIds: Record<string, Record<string, string>>;
 
-  /** Available if slither is installed */
-  slither?: SlitherAnalysis;
+  /** Structural analysis from solc AST (always available after forge build) */
+  structural?: StructuralAnalysis;
 
   /** Available if --address provided (Etherscan v2) */
   onChain?: OnChainProfile;

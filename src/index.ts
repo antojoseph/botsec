@@ -154,7 +154,6 @@ program
   )
   .option("-o, --output <dir>", "Output directory", "forge-proof-output")
   .option("--max-turns <n>", "Max agent turns (default: 200)", "200")
-  .option("--no-slither", "Skip Slither analysis even if installed")
   .action(async (projectPath, opts) => {
     console.log(BANNER);
     console.log("  Threat Model Generation\n");
@@ -172,8 +171,7 @@ program
     if (opts.address) {
       console.log(`  Address: ${opts.address} (chain ${opts.chain})`);
     }
-    console.log(`  Output:  ${opts.output}`);
-    console.log(`  Slither: ${opts.slither === false ? "disabled" : "auto-detect"}\n`);
+    console.log(`  Output:  ${opts.output}\n`);
 
     try {
       await generateThreatModel({
@@ -185,7 +183,6 @@ program
         soloditKey: opts.soloditKey || process.env.SOLODIT_API_KEY,
         outputDir: opts.output,
         maxTurns: parseInt(opts.maxTurns),
-        noSlither: opts.slither === false,
       });
     } catch (err: any) {
       console.error(`\n  Fatal error: ${err.message || err}`);

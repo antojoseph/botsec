@@ -1,9 +1,9 @@
 /**
  * Threat Modeler Agent — deep code exploration for systematic threat modeling.
  *
- * Uses pre-computed analysis (Slither call graphs, forge inspect storage layouts,
- * Etherscan v2 transaction data) as a "code map" and systematic cross-referencing
- * patterns to produce evidence-backed threats.
+ * Uses pre-computed structural analysis (solc AST call graphs, forge inspect
+ * storage layouts, Etherscan v2 transaction data) as a "code map" and systematic
+ * cross-referencing patterns to produce evidence-backed threats.
  *
  * Every threat MUST include a TRACE — the exact code locations traversed to find it.
  */
@@ -26,7 +26,7 @@ export function threatModelerAgent(
 }
 
 function buildThreatModelerPrompt(pre: PrecomputedAnalysis): string {
-  const hasSlither = !!pre.slither;
+  const hasStructural = !!pre.structural;
   const hasOnChain = !!pre.onChain;
 
   return `You are a smart contract security researcher performing SYSTEMATIC THREAT MODELING through deep code exploration.
@@ -44,7 +44,7 @@ Produce a structured threat model as JSON. You must:
 3. Systematically enumerate threats using the cross-referencing patterns below
 4. For each threat, include the TRACE showing how you found it
 
-${hasSlither ? buildCodeMapSection(pre) : buildNoSlitherSection()}
+${hasStructural ? buildCodeMapSection(pre) : buildFallbackSection()}
 
 ${hasOnChain ? buildOnChainSection(pre) : "## No On-Chain Data\nNo on-chain address was provided. Analyze based on code alone."}
 
@@ -54,7 +54,7 @@ You have Read, Grep, Glob, and Bash tools. Use them in coordinated sequences to 
 
 ### Pattern 1 — External Call Receiver Tracing
 
-For each external call found in the ${hasSlither ? "function summary above" : "source code"}:
+For each external call found in the ${hasStructural ? "function summary above" : "source code"}:
 1. Read the function body containing the external call
 2. Determine the receiver: Is it a constructor-set immutable? A state var? msg.sender? A parameter?
 3. If user-controlled (msg.sender, parameter, mutable state var):
@@ -80,7 +80,7 @@ For each function flagged:
 ### Pattern 3 — State Variable Conservation Check
 
 For each pair of state vars that should maintain an invariant (e.g., totalDeposits == sum(balances[*])):
-1. From the ${hasSlither ? "state var map above" : "code"}, find all functions that write to either variable
+1. From the ${hasStructural ? "state var map above" : "code"}, find all functions that write to either variable
 2. Read each writing function
 3. Verify: every write to var A has a corresponding write to var B
 4. Find: any code path where they diverge
@@ -90,7 +90,7 @@ For each pair of state vars that should maintain an invariant (e.g., totalDeposi
 
 ### Pattern 4 — Reverse Xref (Who Calls Function X?)
 
-From the ${hasSlither ? "call graph above" : "source code (Grep for function calls)"}:
+From the ${hasStructural ? "call graph above" : "source code (Grep for function calls)"}:
 1. For a given function X, find all internal callers of X
 2. Find all external callers (public/external visibility)
 3. Trace caller chains: if A calls B calls X, then A can reach X
@@ -168,7 +168,7 @@ Output ONLY valid JSON matching this schema. Do NOT include any text before or a
       "confidence": "high",
       "trace": {
         "steps": [
-          {"action": "Slither", "target": "detectors", "finding": "reentrancy-eth flagged withdraw()"},
+          {"action": "AST", "target": "operationOrder", "finding": "state-write after external-call in withdraw()"},
           {"action": "Read", "target": "src/Vault.sol:30-42", "finding": "msg.sender.call at line 34"},
           {"action": "Grep", "target": "balances\\\\[ in Vault.sol", "finding": "write at line 38, AFTER call at 34"},
           {"action": "Read", "target": "src/Vault.sol:38-39", "finding": "balances[msg.sender] -= amount after external call"}
@@ -194,7 +194,7 @@ Now analyze the contracts in ${pre.projectDir}/src/ using the patterns above.`;
 }
 
 function buildCodeMapSection(pre: PrecomputedAnalysis): string {
-  const s = pre.slither!;
+  const s = pre.structural!;
   return `## Code Map (pre-computed from solc AST + forge inspect)
 
 Use this map to guide your exploration. DO NOT re-discover what's already here.
@@ -232,10 +232,10 @@ ${JSON.stringify(s.dataDependency.tainted, null, 2)}
 ${JSON.stringify(pre.storageLayout, null, 2)}`;
 }
 
-function buildNoSlitherSection(): string {
-  return `## No Slither Data Available
+function buildFallbackSection(): string {
+  return `## No Pre-Computed Analysis Available
 
-Slither is not installed. You must build the code map yourself using Read/Grep/Glob:
+AST analysis did not produce results. You must build the code map yourself using Read/Grep/Glob:
 1. Glob for all .sol files in src/
 2. Grep for: contract/interface/library definitions, function signatures, state variables
 3. Build your own call graph by Grepping for function calls

@@ -1,7 +1,7 @@
 /**
  * Threat Model Orchestrator — coordinates the threat modeling pipeline:
  *
- * Phase 0: Pre-compute (forge inspect + slither + Etherscan v2)
+ * Phase 0: Pre-compute (solc AST + forge inspect + Etherscan v2)
  * Phase 1: Agent exploration (threat modeler agent traces code paths)
  * Phase 2: Synthesis (Solodit enrichment + ranking + anti-slop filter)
  *
@@ -32,7 +32,6 @@ export interface ThreatModelOptions {
   soloditKey?: string;
   outputDir?: string;
   maxTurns?: number;
-  noSlither?: boolean;
 }
 
 export async function generateThreatModel(
@@ -46,7 +45,6 @@ export async function generateThreatModel(
     address: opts.address,
     chainId: opts.chainId ? parseInt(opts.chainId) : undefined,
     etherscanApiKey: opts.etherscanApiKey,
-    noSlither: opts.noSlither,
   });
 
   // Phase 1: Agent exploration
@@ -151,15 +149,19 @@ export async function generateThreatModel(
     threats: rawModel.threats,
     onChainProfile: precomputed.onChain,
     precomputed: {
-      slitherAvailable: !!precomputed.slither,
-      detectorsRun: precomputed.slither?.detectors.length || 0,
-      detectorFindings: precomputed.slither?.detectors.length || 0,
+      astAnalysisAvailable: !!precomputed.structural,
+      functionsAnalyzed: precomputed.structural
+        ? Object.keys(precomputed.structural.functionSummary).length
+        : 0,
+      stateVarsTracked: precomputed.structural
+        ? Object.keys(precomputed.structural.stateVarMap).length
+        : 0,
       etherscanDataAvailable: !!precomputed.onChain,
     },
     metadata: {
       sourcesQueried: [
+        "solc-ast",
         "forge-inspect",
-        ...(precomputed.slither ? ["slither"] : []),
         ...(precomputed.onChain ? ["etherscan-v2"] : []),
         "solodit",
       ],
@@ -196,7 +198,7 @@ Your job is to delegate to the **threat-modeler** agent, which will deeply explo
 
 3. Do NOT modify the JSON. Do NOT add commentary. Just output the raw JSON the agent produced.
 
-Important: The threat-modeler agent has all the context it needs (Slither data, Etherscan data, analysis patterns). Just delegate and return the result.`;
+Important: The threat-modeler agent has all the context it needs (AST structural data, Etherscan data, analysis patterns). Just delegate and return the result.`;
 }
 
 // ---------------------------------------------------------------------------
