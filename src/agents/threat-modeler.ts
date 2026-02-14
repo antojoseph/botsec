@@ -67,17 +67,15 @@ For each external call found in the ${hasSlither ? "function summary above" : "s
 
 ### Pattern 2 — CEI Timeline Construction
 
-For each function that has BOTH state writes AND external calls:
-1. Read the full function body
-2. Build a timeline of operations in execution order:
-   \`\`\`
-   Line N: READ  balances[msg.sender]        (check/guard)
-   Line M: CALL  msg.sender.call{value: x}() (external call — reentrancy window opens)
-   Line P: WRITE balances[msg.sender] -= x   (effect — AFTER call = CEI violation)
-   \`\`\`
-3. Flag any WRITE that occurs AFTER an external CALL
-4. For each flagged pattern, trace: can the external call re-enter this function?
+The Operation Order data above shows the execution order of operations per function.
+Look for any "state-write" step that appears AFTER an "external-call" step — this is a CEI violation.
+
+For each function flagged:
+1. Read the actual function body to confirm the ordering
+2. Identify what state is written after the external call
+3. Trace: can the external call re-enter this function?
    - Does any path from the external target lead back to this function?
+4. If yes: this is a reentrancy vulnerability. Build the full attack scenario.
 
 ### Pattern 3 — State Variable Conservation Check
 
@@ -114,12 +112,14 @@ For each external interface the contract interacts with:
 
 ### Pattern 6 — Privilege Escalation Path Tracing
 
-1. Find all functions with access modifiers (onlyOwner, onlyRole, etc.)
-2. Grep for how the owner/admin address is set and if it can change
-3. For each admin function: what damage can it do? (pause, drain, upgrade, change params)
-4. Trace: is there any path from unprivileged caller to admin state change?
-   - Grep: all writes to owner/admin state variables
-   - Check: are any unguarded or guardable via flash loan manipulation?
+The Auth Checks data above shows which functions check msg.sender and what they compare against.
+
+1. From Auth Checks: find all functions with checksMsgSender=true — these are access-controlled
+2. Find functions WITHOUT auth checks that write to critical state — these may be unguarded
+3. Grep for how the owner/admin address is set and if it can change
+4. For each admin function: what damage can it do? (pause, drain, upgrade, change params)
+5. Trace: is there any path from unprivileged caller to admin state change?
+   - Check: are any guards bypassable via flash loan manipulation?
 ${hasOnChain ? "5. Correlate with Etherscan v2 admin actions data — who actually called these?" : ""}
 
 ### Pattern 7 — Source-to-Sink Value Tracing
@@ -195,7 +195,7 @@ Now analyze the contracts in ${pre.projectDir}/src/ using the patterns above.`;
 
 function buildCodeMapSection(pre: PrecomputedAnalysis): string {
   const s = pre.slither!;
-  return `## Code Map (pre-computed via Slither + forge inspect)
+  return `## Code Map (pre-computed from solc AST + forge inspect)
 
 Use this map to guide your exploration. DO NOT re-discover what's already here.
 Instead, use the map to identify INTERESTING PATHS to trace deeply.
@@ -212,12 +212,24 @@ ${JSON.stringify(s.stateVarMap, null, 2)}
 ### Call Graph
 ${JSON.stringify(s.callGraph, null, 2)}
 
-### Storage Layout
-${JSON.stringify(pre.storageLayout, null, 2)}
+### Operation Order (for CEI analysis — look for state-write AFTER external-call)
+${JSON.stringify(s.operationOrder, null, 2)}
 
-### Slither Detector Findings (automated — verify each one with your own trace)
-${JSON.stringify(s.detectors.slice(0, 30), null, 2)}
-${s.detectors.length > 30 ? `\n(${s.detectors.length - 30} more detectors omitted)` : ""}`;
+### Auth Checks (msg.sender conditions per function)
+${JSON.stringify(s.authChecks, null, 2)}
+
+### Guard Inventory (require/assert/revert per function)
+${JSON.stringify(s.guardInventory, null, 2)}
+
+### Data Dependencies (variable A depends on variable B — transitive)
+Contract-level (cross-function):
+${JSON.stringify(s.dataDependency.byContract, null, 2)}
+
+Tainted variables (depend on msg.sender, msg.value, function params):
+${JSON.stringify(s.dataDependency.tainted, null, 2)}
+
+### Storage Layout
+${JSON.stringify(pre.storageLayout, null, 2)}`;
 }
 
 function buildNoSlitherSection(): string {
