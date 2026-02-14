@@ -226,6 +226,42 @@ export interface SlitherDetector {
   }>;
 }
 
+export interface OperationStep {
+  /** Index in execution order (0-based) */
+  index: number;
+  type:
+    | "state-read"
+    | "state-write"
+    | "external-call"
+    | "internal-call"
+    | "branch"
+    | "revert";
+  /** What was accessed/called */
+  target: string;
+  /** Source location from the AST src field */
+  src?: string;
+}
+
+export interface AuthCheck {
+  type: "modifier" | "require" | "if-revert";
+  /** The modifier or condition name */
+  name: string;
+  /** Whether msg.sender is checked */
+  checksMsgSender: boolean;
+  /** What msg.sender is compared against (if detectable) */
+  comparedTo?: string;
+}
+
+export interface Guard {
+  type: "require" | "assert" | "custom-error" | "revert";
+  /** Error name or message */
+  name?: string;
+  /** Whether the condition involves msg.sender */
+  checksMsgSender: boolean;
+  /** Brief description of the condition */
+  condition?: string;
+}
+
 export interface SlitherAnalysis {
   detectors: SlitherDetector[];
   callGraph: Record<string, string[]>;
@@ -250,6 +286,27 @@ export interface SlitherAnalysis {
       internalCalls: string[];
     }
   >;
+  /** Per-function ordered operation list for CEI analysis */
+  operationOrder: Record<string, OperationStep[]>;
+  /** Per-function msg.sender auth conditions */
+  authChecks: Record<string, AuthCheck[]>;
+  /** Per-function require/assert/revert inventory */
+  guardInventory: Record<string, Guard[]>;
+  /**
+   * Data-dependency map: variable → variables it depends on (transitive).
+   * Two scopes: per-function and per-contract.
+   * Taint sources (msg.sender, msg.value, function params) are tracked.
+   */
+  dataDependency: DataDependencyMap;
+}
+
+export interface DataDependencyMap {
+  /** Per-function: variable → [variables it depends on] */
+  byFunction: Record<string, Record<string, string[]>>;
+  /** Per-contract: variable → [variables it depends on] (cross-function, transitive) */
+  byContract: Record<string, Record<string, string[]>>;
+  /** Variables tainted by external input (msg.sender, msg.value, function params) */
+  tainted: Record<string, string[]>;
 }
 
 // ---------------------------------------------------------------------------
