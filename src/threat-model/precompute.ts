@@ -7,7 +7,7 @@
 
 import { execSync } from "child_process";
 import { existsSync, readdirSync, readFileSync, statSync, rmSync } from "fs";
-import { join } from "path";
+import { join, resolve } from "path";
 import type {
   PrecomputedAnalysis,
   StructuralAnalysis,
@@ -28,6 +28,7 @@ export async function precomputeAnalysis(
     etherscanApiKey?: string;
   }
 ): Promise<PrecomputedAnalysis> {
+  projectDir = resolve(projectDir);
   validateFoundryProject(projectDir);
 
   // Build with --build-info --force to get a single build-info file with all
@@ -50,7 +51,22 @@ export async function precomputeAnalysis(
     const biCount = existsSync(biDir) ? readdirSync(biDir).length : 0;
     console.log(`  Build complete. ${biCount} build-info file(s).`);
   } catch (e: any) {
-    console.warn(`  Warning: forge build failed: ${e.message?.slice(0, 100)}`);
+    // Retry with --skip script test — build errors in script/test dirs
+    // shouldn't block AST analysis of src/ contracts.
+    console.warn("  Warning: full build failed, retrying with --skip script test...");
+    try {
+      if (existsSync(biDir)) {
+        rmSync(biDir, { recursive: true, force: true });
+      }
+      execSync(
+        "forge build --build-info --force --skip script test > /dev/null 2>&1",
+        { cwd: projectDir, timeout: 300_000, maxBuffer: 50 * 1024 * 1024 }
+      );
+      const biCount = existsSync(biDir) ? readdirSync(biDir).length : 0;
+      console.log(`  Build complete (src only). ${biCount} build-info file(s).`);
+    } catch (e2: any) {
+      console.warn(`  Warning: forge build failed: ${e2.message?.slice(0, 100)}`);
+    }
   }
 
   // 2. Structural analysis from solc AST — MUST run immediately after build,

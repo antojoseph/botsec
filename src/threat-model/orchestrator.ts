@@ -81,7 +81,49 @@ export async function generateThreatModel(
             actors: { type: "array", items: { type: "object" } },
             assets: { type: "array", items: { type: "object" } },
             trustBoundaries: { type: "array", items: { type: "object" } },
-            threats: { type: "array", items: { type: "object" } },
+            threats: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  id: { type: "string" },
+                  category: { type: "string" },
+                  title: { type: "string" },
+                  description: { type: "string" },
+                  affectedCode: { type: "array", items: { type: "string" } },
+                  assets: { type: "array", items: { type: "string" } },
+                  severity: { type: "string", enum: ["Critical", "High", "Medium", "Low"] },
+                  confidence: { type: "string", enum: ["high", "medium", "low"] },
+                  trace: {
+                    type: "object",
+                    properties: {
+                      steps: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            action: { type: "string" },
+                            target: { type: "string" },
+                            finding: { type: "string" },
+                          },
+                          required: ["action", "target", "finding"],
+                        },
+                      },
+                      ceiTimeline: { type: "object" },
+                      dataFlow: { type: "object" },
+                    },
+                    required: ["steps"],
+                  },
+                  suggestedProperties: { type: "array", items: { type: "string" } },
+                  attackScenario: { type: "string" },
+                  priority: { type: "number" },
+                },
+                required: [
+                  "id", "category", "title", "description", "affectedCode",
+                  "severity", "confidence", "trace", "suggestedProperties", "priority",
+                ],
+              },
+            },
           },
           required: ["contractType", "threats"],
         },

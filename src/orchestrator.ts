@@ -14,6 +14,7 @@ import { onchainAgent, type OnchainOpts } from "./agents/onchain.js";
 import { verifierAgent } from "./agents/verifier.js";
 import { scaffoldFoundryProject } from "./scaffold/foundry-project.js";
 import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import type { ThreatModel, Threat } from "./threat-model/types.js";
 
 export interface AnalyzeOptions {
@@ -54,7 +55,7 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
   let threatModel: ThreatModel | undefined;
   if (opts.threatModelPath) {
     try {
-      const raw = readFileSync(opts.threatModelPath, "utf-8");
+      const raw = readFileSync(resolve(opts.threatModelPath), "utf-8");
       threatModel = JSON.parse(raw) as ThreatModel;
       console.log(
         `  Threat model loaded: ${threatModel.threats.length} threats from ${opts.threatModelPath}`
