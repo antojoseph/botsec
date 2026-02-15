@@ -9,7 +9,7 @@
  */
 
 import { query } from "@anthropic-ai/claude-agent-sdk";
-import { writeFileSync, mkdirSync } from "fs";
+import { writeFileSync, mkdirSync, statSync } from "fs";
 import { join } from "path";
 
 import { threatModelerAgent } from "../agents/threat-modeler.js";
@@ -52,11 +52,33 @@ export async function generateThreatModel(
     etherscanApiKey: opts.etherscanApiKey,
   });
 
+  // Write structural data to disk for file-based agent access
+  const forgeProofDir = join(precomputed.projectDir, ".forge-proof");
+  mkdirSync(forgeProofDir, { recursive: true });
+
+  let blueprintPath: string | undefined;
+  let codemapPath: string | undefined;
+
+  if (precomputed.blueprint) {
+    blueprintPath = join(forgeProofDir, "blueprint.json");
+    writeFileSync(blueprintPath, JSON.stringify(precomputed.blueprint, null, 2), "utf-8");
+    console.log(`  Blueprint written to: ${blueprintPath}`);
+  }
+  if (precomputed.structural) {
+    codemapPath = join(forgeProofDir, "codemap.json");
+    const codemap = {
+      ...precomputed.structural,
+      storageLayout: precomputed.storageLayout,
+    };
+    writeFileSync(codemapPath, JSON.stringify(codemap, null, 2), "utf-8");
+    console.log(`  Code map written to: ${codemapPath} (${(statSync(codemapPath).size / 1024 / 1024).toFixed(1)}MB)`);
+  }
+
   // Phase 1: Agent exploration
   console.log("\n  Phase 1: Agentic code exploration...");
   console.log("─".repeat(60));
 
-  const agentDef = threatModelerAgent(precomputed, { costControl: opts.costControl });
+  const agentDef = threatModelerAgent(precomputed, { blueprintPath, codemapPath });
   const agents = { "threat-modeler": agentDef };
 
   const orchestratorPrompt = buildOrchestratorPrompt(precomputed);
@@ -336,37 +358,49 @@ Important: The threat-modeler agent has all the context it needs (AST structural
 // ---------------------------------------------------------------------------
 
 function parseAgentOutput(output: string): any {
-  // Try to extract JSON from the output
-  // The agent should output raw JSON, but it might be wrapped in markdown code blocks
-  let jsonStr = output;
+  // Strategy 1: Try raw JSON parse
+  try {
+    return JSON.parse(output);
+  } catch { /* continue */ }
 
-  // Strip markdown code blocks
+  // Strategy 2: Extract from markdown code blocks
   const jsonBlockMatch = output.match(/```(?:json)?\s*([\s\S]*?)```/);
   if (jsonBlockMatch) {
-    jsonStr = jsonBlockMatch[1];
+    try {
+      return JSON.parse(jsonBlockMatch[1].trim());
+    } catch { /* continue */ }
   }
 
-  // Try to find the start of JSON object
-  const jsonStart = jsonStr.indexOf("{");
-  const jsonEnd = jsonStr.lastIndexOf("}");
-  if (jsonStart !== -1 && jsonEnd !== -1) {
-    jsonStr = jsonStr.slice(jsonStart, jsonEnd + 1);
+  // Strategy 3: Find outermost JSON object
+  const jsonStart = output.indexOf("{");
+  const jsonEnd = output.lastIndexOf("}");
+  if (jsonStart !== -1 && jsonEnd > jsonStart) {
+    try {
+      return JSON.parse(output.slice(jsonStart, jsonEnd + 1));
+    } catch { /* continue */ }
   }
 
-  try {
-    return JSON.parse(jsonStr);
-  } catch {
-    console.warn(
-      "  Warning: Could not parse agent output as JSON. Creating empty threat model."
-    );
-    return {
-      contractType: "other",
-      actors: [],
-      assets: [],
-      trustBoundaries: [],
-      threats: [],
-    };
+  // Strategy 4: Extract just the threats array and wrap it
+  const threatsMatch = output.match(/"threats"\s*:\s*(\[[\s\S]*\])/);
+  if (threatsMatch) {
+    try {
+      const threats = JSON.parse(threatsMatch[1]);
+      console.log(`  Recovered ${threats.length} threat(s) from partial JSON.`);
+      return { contractType: "other", actors: [], assets: [], trustBoundaries: [], threats };
+    } catch { /* continue */ }
   }
+
+  console.warn(
+    "  Warning: Could not parse agent output as JSON. Creating empty threat model."
+  );
+  console.warn(`  First 500 chars: ${output.slice(0, 500)}`);
+  return {
+    contractType: "other",
+    actors: [],
+    assets: [],
+    trustBoundaries: [],
+    threats: [],
+  };
 }
 
 // ---------------------------------------------------------------------------
