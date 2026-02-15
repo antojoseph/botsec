@@ -13,7 +13,7 @@ import { explorerAgent } from "./agents/explorer.js";
 import { onchainAgent, type OnchainOpts } from "./agents/onchain.js";
 import { verifierAgent } from "./agents/verifier.js";
 import { scaffoldFoundryProject } from "./scaffold/foundry-project.js";
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { resolve, join } from "node:path";
 import type { ThreatModel, Threat } from "./threat-model/types.js";
 
@@ -92,6 +92,8 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
   console.log("  Starting analysis with Claude Agent SDK");
   console.log("─".repeat(60) + "\n");
 
+  let finalReport = "";
+
   for await (const message of query({
     prompt,
     options: {
@@ -116,6 +118,15 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
   })) {
     handleMessage(message);
 
+    // Capture assistant text for the report
+    if (message?.type === "assistant" && message.message?.content) {
+      for (const block of message.message.content) {
+        if (block.type === "text" && block.text) {
+          finalReport += block.text + "\n";
+        }
+      }
+    }
+
     // Log cost/duration on completion
     if (message?.type === "result") {
       const cost = (message as any).total_cost_usd;
@@ -130,6 +141,28 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
         console.error("  Budget limit ($100) reached.");
       }
     }
+  }
+
+  // Write report to output directory
+  if (finalReport.trim()) {
+    const outputDir = opts.outputDir || "forge-proof-output";
+    mkdirSync(outputDir, { recursive: true });
+
+    const mdPath = join(outputDir, "forge-proof-report.md");
+    const header = `# Forge Proof — Security Audit Report\n\n**Target:** ${opts.contractPath}\n**Date:** ${new Date().toISOString()}\n\n---\n\n`;
+    writeFileSync(mdPath, header + finalReport, "utf-8");
+
+    const jsonPath = join(outputDir, "forge-proof-report.json");
+    writeFileSync(jsonPath, JSON.stringify({
+      target: opts.contractPath,
+      timestamp: new Date().toISOString(),
+      threatModel: opts.threatModelPath || null,
+      verifyOnly: opts.verifyOnly || false,
+      report: finalReport,
+    }, null, 2), "utf-8");
+
+    console.log(`\n  Report: ${mdPath}`);
+    console.log(`  JSON:   ${jsonPath}`);
   }
 }
 
