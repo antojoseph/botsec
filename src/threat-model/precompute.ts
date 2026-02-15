@@ -45,6 +45,21 @@ export async function precomputeAnalysis(
       rmSync(biDir, { recursive: true, force: true });
       console.log("  Cleared stale build-info.");
     }
+    // Install dependencies if package.json exists but node_modules doesn't
+    if (
+      existsSync(join(projectDir, "package.json")) &&
+      !existsSync(join(projectDir, "node_modules"))
+    ) {
+      console.log("  Installing npm dependencies...");
+      try {
+        execSync("npm install --silent 2>/dev/null", {
+          cwd: projectDir,
+          timeout: 120_000,
+        });
+      } catch {
+        // Non-fatal — forge may still work with lib/ deps
+      }
+    }
     execSync("forge build --build-info --force > /dev/null 2>&1", {
       cwd: projectDir,
       timeout: 300_000,
@@ -53,15 +68,25 @@ export async function precomputeAnalysis(
     const biCount = existsSync(biDir) ? readdirSync(biDir).length : 0;
     console.log(`  Build complete. ${biCount} build-info file(s).`);
   } catch (e: any) {
-    // Retry with --skip script test — build errors in script/test dirs
-    // shouldn't block AST analysis of src/ contracts.
-    console.warn("  Warning: full build failed, retrying with --skip script test...");
+    // Retry skipping test and script dirs — errors there shouldn't block AST analysis.
+    // Read test/script dir names from foundry.toml since they may be non-standard.
+    console.warn("  Warning: full build failed, retrying without test/script dirs...");
+    let skipDirs = "script test";
+    try {
+      const toml = readFileSync(join(projectDir, "foundry.toml"), "utf-8");
+      const testMatch = toml.match(/^\s*test\s*=\s*['"]([^'"]+)['"]/m);
+      const scriptMatch = toml.match(/^\s*script\s*=\s*['"]([^'"]+)['"]/m);
+      const dirs = new Set(["script", "test"]);
+      if (testMatch) dirs.add(testMatch[1]);
+      if (scriptMatch) dirs.add(scriptMatch[1]);
+      skipDirs = [...dirs].join(" ");
+    } catch { /* use defaults */ }
     try {
       if (existsSync(biDir)) {
         rmSync(biDir, { recursive: true, force: true });
       }
       execSync(
-        "forge build --build-info --force --skip script test > /dev/null 2>&1",
+        `forge build --build-info --force --skip ${skipDirs} > /dev/null 2>&1`,
         { cwd: projectDir, timeout: 300_000, maxBuffer: 50 * 1024 * 1024 }
       );
       const biCount = existsSync(biDir) ? readdirSync(biDir).length : 0;
