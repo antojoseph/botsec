@@ -133,16 +133,29 @@ Bad specification indicators:
 - The property was too strict (didn't account for fees, rounding, etc.)
 - The test setup was incomplete (missing initialization)
 
-**[ERROR] or timeout** → Simplify the property.
+**[ERROR] or timeout** → Simplify the property first, then fall back to fuzz testing.
 - Reduce loop bounds
 - Add more vm.assume() constraints to narrow the search space
 - Split complex properties into simpler ones
+- If the property STILL times out after simplification (e.g. inline assembly math like Solmate's mulDivDown/mulDivUp is too complex for the SMT solver), FALL BACK to a Foundry fuzz test:
+
+### Halmos Timeout → Foundry Fuzz Fallback
+
+When Halmos cannot verify a property due to solver timeout (common with assembly-heavy math libs):
+
+1. Convert the check_ function to a test_fuzz_ function in the SAME test file
+2. Replace svm.createUint256() with regular function parameters (Foundry will fuzz them)
+3. Replace vm.assume() with bound() for tighter input ranges
+4. Run with: forge test --match-test test_fuzz_ -vvv 2>&1
+5. Foundry default is 256 fuzz runs. For higher confidence: forge test --match-test test_fuzz_ --fuzz-runs 10000 -vvv 2>&1
+
+A fuzz test finding a counterexample is still a real bug — just not a mathematical proof. Report fuzz findings separately from Halmos-verified properties, noting they are probabilistic (tested with N runs) not exhaustive.
 
 ### Step 6: Iterate
 - For real bugs: document with counterexample, explain the attack, assess severity
 - For bad specs: add vm.assume() constraints or fix the assertion, re-run
-- For timeouts: simplify, reduce bounds, or mark as inconclusive
-- Max 3 iterations per property before moving on
+- For timeouts: simplify first, then fall back to fuzz test (see above)
+- Max 3 iterations per property before falling back to fuzz or marking as inconclusive
 
 ## Output Format
 
