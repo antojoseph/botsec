@@ -297,6 +297,13 @@ export async function generateThreatModel(
   const outputPath = join(outputDir, "threat-model.json");
   writeFileSync(outputPath, JSON.stringify(threatModel, null, 2), "utf-8");
 
+  // Write blueprint for inspection
+  if (precomputed.blueprint) {
+    const blueprintPath = join(outputDir, "blueprint.json");
+    writeFileSync(blueprintPath, JSON.stringify(precomputed.blueprint, null, 2), "utf-8");
+    console.log(`  Blueprint: ${blueprintPath}`);
+  }
+
   // Print summary
   printSummary(threatModel, outputPath);
 

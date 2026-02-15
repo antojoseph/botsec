@@ -13,8 +13,8 @@ import { explorerAgent } from "./agents/explorer.js";
 import { onchainAgent, type OnchainOpts } from "./agents/onchain.js";
 import { verifierAgent } from "./agents/verifier.js";
 import { scaffoldFoundryProject } from "./scaffold/foundry-project.js";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { readFileSync, existsSync } from "node:fs";
+import { resolve, join } from "node:path";
 import type { ThreatModel, Threat } from "./threat-model/types.js";
 
 export interface AnalyzeOptions {
@@ -30,9 +30,18 @@ export interface AnalyzeOptions {
 }
 
 export async function analyze(opts: AnalyzeOptions): Promise<void> {
-  // 1. Scaffold Foundry project
-  console.log("\n  Setting up Foundry project...");
-  const projectDir = await scaffoldFoundryProject(opts.contractPath);
+  // 1. Detect Foundry project or scaffold from .sol file
+  const resolvedPath = resolve(opts.contractPath);
+  const isFoundryProject = existsSync(join(resolvedPath, "foundry.toml"));
+  let projectDir: string;
+
+  if (isFoundryProject) {
+    console.log("\n  Using existing Foundry project...");
+    projectDir = resolvedPath;
+  } else {
+    console.log("\n  Setting up Foundry project...");
+    projectDir = await scaffoldFoundryProject(opts.contractPath);
+  }
   console.log(`  Working directory: ${projectDir}\n`);
 
   // 2. Build agent definitions
@@ -168,7 +177,7 @@ function buildOrchestratorPrompt(
   return `You are Forge Proof, a smart contract security analyzer that combines deep code analysis, on-chain intelligence, and formal verification using Halmos.
 
 Your target contract is at: ${opts.contractPath}
-Working directory (Foundry project with contract copied to src/): ${projectDir}
+Working directory (Foundry project): ${projectDir}
 ${opts.address ? `On-chain address: ${opts.address} (chain: ${opts.chainId || "1"})` : "No on-chain address provided — skip on-chain analysis."}
 ${opts.etherscanApiKey ? "Etherscan API key is available." : ""}
 ${threatModelSection}
@@ -241,12 +250,19 @@ Be thorough. The Halmos tests and their results are the most important output �
 /**
  * Handle streaming messages from the SDK and display progress.
  */
+let turnCount = 0;
+const startTime = Date.now();
+
+function elapsed(): string {
+  return `${((Date.now() - startTime) / 1000).toFixed(0)}s`;
+}
+
 function handleMessage(message: any): void {
-  // The SDK emits different message types — handle the main ones
   if (!message) return;
 
   // Assistant text messages
   if (message.type === "assistant" && message.message?.content) {
+    turnCount++;
     for (const block of message.message.content) {
       if (block.type === "text" && block.text) {
         console.log(block.text);
@@ -257,11 +273,11 @@ function handleMessage(message: any): void {
           ? JSON.stringify(block.input).slice(0, 120)
           : "";
         if (name === "Task") {
-          const agentType =
-            block.input?.subagent_type || block.input?.description || "subagent";
-          console.log(`\n  >> Delegating to: ${agentType}`);
+          const agentName =
+            block.input?.description || block.input?.subagent_type || "subagent";
+          console.log(`\n  [${elapsed()}] >> Delegating to: ${agentName}`);
         } else {
-          console.log(`  [${name}] ${inputPreview}...`);
+          console.log(`  [${elapsed()}] [${name}] ${inputPreview}...`);
         }
       }
     }
@@ -269,10 +285,14 @@ function handleMessage(message: any): void {
 
   // Tool results
   if (message.type === "tool_result") {
-    // Tool results from subagents can be large — just note completion
     const content = message.content;
     if (typeof content === "string" && content.length > 500) {
-      console.log(`  [result] (${content.length} chars)`);
+      console.log(`  [${elapsed()}] [result] (${content.length} chars)`);
+    }
+    // Surface errors from tool calls
+    if (message.is_error) {
+      const errText = typeof content === "string" ? content.slice(0, 300) : JSON.stringify(content).slice(0, 300);
+      console.error(`  [${elapsed()}] [ERROR] ${errText}`);
     }
   }
 
@@ -280,13 +300,13 @@ function handleMessage(message: any): void {
   if (message.type === "result") {
     if (message.subtype === "success") {
       console.log("\n" + "═".repeat(60));
-      console.log("  Analysis complete.");
+      console.log(`  Analysis complete. (${turnCount} turns, ${elapsed()})`);
       console.log("═".repeat(60));
       if (message.result) {
         console.log(message.result);
       }
     } else if (message.subtype === "error") {
-      console.error(`\n  Error: ${message.error || "Unknown error"}`);
+      console.error(`\n  [${elapsed()}] Error: ${message.error || "Unknown error"}`);
     }
   }
 }
