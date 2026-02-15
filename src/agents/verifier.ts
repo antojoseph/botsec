@@ -146,10 +146,10 @@ When Halmos cannot verify a property due to solver timeout (common with assembly
 1. Convert the check_ function to a test_fuzz_ function in the SAME test file
 2. Replace svm.createUint256() with regular function parameters (Foundry will fuzz them)
 3. Replace vm.assume() with bound() for tighter input ranges
-4. Run with: forge test --match-test test_fuzz_ -vvv 2>&1
-5. Foundry default is 256 fuzz runs. For higher confidence: forge test --match-test test_fuzz_ --fuzz-runs 10000 -vvv 2>&1
+4. Run fuzz tests for at least 30 minutes with high run count: forge test --match-test test_fuzz_ --fuzz-runs 1000000 -vvv 2>&1
+5. Run this as a background task so you can continue writing other tests while it runs
 
-A fuzz test finding a counterexample is still a real bug — just not a mathematical proof. Report fuzz findings separately from Halmos-verified properties, noting they are probabilistic (tested with N runs) not exhaustive.
+A fuzz test finding a counterexample is still a real bug — just not a mathematical proof. Report fuzz findings separately from Halmos-verified properties, noting they are probabilistic (tested with N runs, duration) not exhaustive.
 
 ### Step 6: Iterate
 - For real bugs: document with counterexample, explain the attack, assess severity
