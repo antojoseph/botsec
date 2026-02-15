@@ -27,6 +27,7 @@ export interface AnalyzeOptions {
   maxTurns?: number;
   outputDir?: string;
   threatModelPath?: string;
+  verifyOnly?: boolean;
 }
 
 export async function analyze(opts: AnalyzeOptions): Promise<void> {
@@ -44,23 +45,7 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
   }
   console.log(`  Working directory: ${projectDir}\n`);
 
-  // 2. Build agent definitions
-  const agents: Record<string, ReturnType<typeof explorerAgent>> = {
-    "code-explorer": explorerAgent(),
-    "formal-verifier": verifierAgent(),
-  };
-
-  // Only include on-chain agent if address is provided
-  const hasOnchain = !!(opts.address && opts.etherscanApiKey);
-  if (hasOnchain) {
-    agents["onchain-analyst"] = onchainAgent({
-      address: opts.address,
-      chainId: opts.chainId,
-      etherscanApiKey: opts.etherscanApiKey,
-    });
-  }
-
-  // 3. Load threat model if provided
+  // 2. Load threat model if provided
   let threatModel: ThreatModel | undefined;
   if (opts.threatModelPath) {
     try {
@@ -76,8 +61,31 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
     }
   }
 
+  if (opts.verifyOnly && !threatModel) {
+    throw new Error("--verify-only requires --threat-model to provide the verification brief.");
+  }
+
+  // 3. Build agent definitions
+  const agents: Record<string, ReturnType<typeof explorerAgent>> = {
+    "formal-verifier": verifierAgent(),
+  };
+
+  const hasOnchain = !!(opts.address && opts.etherscanApiKey);
+  if (!opts.verifyOnly) {
+    agents["code-explorer"] = explorerAgent();
+    if (hasOnchain) {
+      agents["onchain-analyst"] = onchainAgent({
+        address: opts.address,
+        chainId: opts.chainId,
+        etherscanApiKey: opts.etherscanApiKey,
+      });
+    }
+  }
+
   // 4. Build the orchestrator prompt
-  const prompt = buildOrchestratorPrompt(opts, projectDir, hasOnchain, threatModel);
+  const prompt = opts.verifyOnly
+    ? buildVerifyOnlyPrompt(opts, projectDir, threatModel!)
+    : buildOrchestratorPrompt(opts, projectDir, hasOnchain, threatModel);
 
   // 5. Run the orchestrator query
   console.log("─".repeat(60));
@@ -159,6 +167,49 @@ ${threats}
 - The formal-verifier should prioritize writing check_ tests for the suggestedProperties listed above
 - Threats marked Critical/High should be verified FIRST
 `;
+}
+
+function buildVerifyOnlyPrompt(
+  opts: AnalyzeOptions,
+  projectDir: string,
+  threatModel: ThreatModel
+): string {
+  const loopBound = opts.loopBound || 3;
+  const solverTimeout = opts.solverTimeout || 10000;
+
+  const threatSection = formatThreatModelSection(threatModel);
+
+  return `You are Forge Proof, running in VERIFY-ONLY mode. Skip all exploration — go straight to formal verification.
+
+Working directory (Foundry project): ${projectDir}
+Source contracts are in: ${projectDir}/src/
+
+${threatSection}
+
+## Your Task
+
+Use the **formal-verifier** agent to write and run Halmos symbolic tests for the threats above. Do NOT run a code-explorer — the threat model is your brief.
+
+For each threat:
+1. Read the affected code locations listed in the threat
+2. Write a check_ test function that would catch the vulnerability
+3. Compile with forge build — fix errors iteratively
+4. Run halmos --function check_ --loop ${loopBound} --solver-timeout-assertion ${solverTimeout}
+5. If Halmos times out, fall back to forge test --match-test test_fuzz_ --fuzz-runs 1000000
+
+Check for existing test files in ${projectDir}/test/halmos/ — if previous tests exist from an interrupted run, READ them first, fix any issues, and continue from where they left off rather than rewriting from scratch.
+
+After verification, produce a FINAL REPORT:
+
+**VERIFIED PROPERTIES** — Properties proven to hold (within bounds): property name, Halmos bounds, path count, time.
+
+**VIOLATIONS FOUND** — Real bugs with counterexamples: description, concrete values, attack scenario, severity.
+
+**FUZZ RESULTS** — Properties verified by fuzz testing (not exhaustive): property name, run count, duration, any failures.
+
+**INCONCLUSIVE** — Properties that couldn't be verified: reason, partial results.
+
+**LIMITATIONS** — Loop bounds, properties not checked, timeouts encountered.`;
 }
 
 function buildOrchestratorPrompt(

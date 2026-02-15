@@ -53,6 +53,10 @@ program
     "--threat-model <file>",
     "Path to threat model JSON (from threat-model command)"
   )
+  .option(
+    "--verify-only",
+    "Skip exploration, go straight to verification (requires --threat-model)"
+  )
   .action(async (contractPath, opts) => {
     console.log(BANNER);
     console.log("  AI-Powered Formal Verification for Smart Contracts\n");
@@ -97,6 +101,7 @@ program
         maxTurns: parseInt(opts.maxTurns),
         outputDir: opts.output,
         threatModelPath: opts.threatModel,
+        verifyOnly: !!opts.verifyOnly,
       });
     } catch (err: any) {
       console.error(`\n  Fatal error: ${err.message || err}`);
