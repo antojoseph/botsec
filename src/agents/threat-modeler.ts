@@ -48,10 +48,19 @@ function buildThreatModelerPrompt(pre: PrecomputedAnalysis, opts?: ThreatModeler
   const dataSection = opts?.blueprintPath && opts?.codemapPath
     ? `## Pre-Computed Structural Data (on disk — read when needed)
 
-Analysis data has been written to disk. Use your Read and Grep tools to access it:
-- Read ${opts.blueprintPath} for the architectural blueprint (classification, investigation questions, attack surface scores, invariants, CEI violations, pattern findings)
-- Read ${opts.codemapPath} for full structural data (call graphs, function summaries, state var maps, auth checks, operation ordering, data dependencies, storage layout)
-- Use Grep to search within these files for specific contracts or functions
+Analysis data has been written to disk. Use your Read, Grep, and Glob tools to access it:
+
+**Blueprint** (start here):
+- Read ${opts.blueprintPath} — classification, investigation questions, attack surface scores, invariants, CEI violations, pattern findings
+
+**Code Map** (per-contract files for fast lookup):
+- Glob ${opts.codemapPath}/*.json to list available contract files
+- Read ${opts.codemapPath}/<ContractName>.json for a specific contract's function summaries, auth checks, guards, operation ordering, storage layout
+- Read ${opts.codemapPath}/_inheritance.json for all inheritance relationships
+- Read ${opts.codemapPath}/_callGraph.json for all call graph edges
+- Read ${opts.codemapPath}/_stateVarMap.json for all state variable read/write maps
+- Read ${opts.codemapPath}/_dataDependency.json for transitive data dependencies and taint tracking
+- Use Grep to search across all code map files: Grep pattern ${opts.codemapPath}/
 
 **START by reading the blueprint file** — it contains your prioritized investigation questions.`
     : `## No Pre-Computed Data

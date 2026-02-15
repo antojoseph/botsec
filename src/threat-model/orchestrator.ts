@@ -65,13 +65,52 @@ export async function generateThreatModel(
     console.log(`  Blueprint written to: ${blueprintPath}`);
   }
   if (precomputed.structural) {
-    codemapPath = join(forgeProofDir, "codemap.json");
-    const codemap = {
-      ...precomputed.structural,
-      storageLayout: precomputed.storageLayout,
-    };
-    writeFileSync(codemapPath, JSON.stringify(codemap, null, 2), "utf-8");
-    console.log(`  Code map written to: ${codemapPath} (${(statSync(codemapPath).size / 1024 / 1024).toFixed(1)}MB)`);
+    // Split code map into per-contract files for faster Grep access
+    const codemapDir = join(forgeProofDir, "codemap");
+    mkdirSync(codemapDir, { recursive: true });
+    codemapPath = codemapDir;
+
+    const s = precomputed.structural;
+
+    // Write global data (small, always useful)
+    writeFileSync(join(codemapDir, "_inheritance.json"), JSON.stringify(s.inheritance, null, 2), "utf-8");
+    writeFileSync(join(codemapDir, "_callGraph.json"), JSON.stringify(s.callGraph, null, 2), "utf-8");
+    writeFileSync(join(codemapDir, "_stateVarMap.json"), JSON.stringify(s.stateVarMap, null, 2), "utf-8");
+    writeFileSync(join(codemapDir, "_dataDependency.json"), JSON.stringify(s.dataDependency, null, 2), "utf-8");
+
+    // Write per-contract files (function summaries, auth, guards, operation order, storage)
+    const contracts = new Set<string>();
+    for (const key of Object.keys(s.functionSummary)) {
+      const contract = key.split(".")[0];
+      if (contract) contracts.add(contract);
+    }
+
+    for (const contract of contracts) {
+      const contractData: Record<string, any> = {
+        functionSummary: {},
+        operationOrder: {},
+        authChecks: {},
+        guardInventory: {},
+      };
+      for (const [k, v] of Object.entries(s.functionSummary)) {
+        if (k.startsWith(contract + ".")) contractData.functionSummary[k] = v;
+      }
+      for (const [k, v] of Object.entries(s.operationOrder)) {
+        if (k.startsWith(contract + ".")) contractData.operationOrder[k] = v;
+      }
+      for (const [k, v] of Object.entries(s.authChecks)) {
+        if (k.startsWith(contract + ".")) contractData.authChecks[k] = v;
+      }
+      for (const [k, v] of Object.entries(s.guardInventory)) {
+        if (k.startsWith(contract + ".")) contractData.guardInventory[k] = v;
+      }
+      if (precomputed.storageLayout[contract]) {
+        contractData.storageLayout = precomputed.storageLayout[contract];
+      }
+      writeFileSync(join(codemapDir, `${contract}.json`), JSON.stringify(contractData, null, 2), "utf-8");
+    }
+
+    console.log(`  Code map written to: ${codemapDir}/ (${contracts.size} contract files + 4 global files)`);
   }
 
   // Phase 1: Agent exploration

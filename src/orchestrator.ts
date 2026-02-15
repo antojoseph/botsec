@@ -230,7 +230,9 @@ For each threat:
 4. Run halmos --function check_ --loop ${loopBound} --solver-timeout-assertion ${solverTimeout}
 5. If Halmos times out, fall back to forge test --match-test test_fuzz_ --fuzz-runs 1000000
 
-Check for existing test files in ${projectDir}/test/halmos/ — if previous tests exist from an interrupted run, READ them first, fix any issues, and continue from where they left off rather than rewriting from scratch.
+Write all test files to ${projectDir}/.forge-proof/test/ — do NOT modify the project's own test/ directory or foundry.toml.
+Check for existing test files in ${projectDir}/.forge-proof/test/ — if previous tests exist from an interrupted run, READ them first, fix any issues, and continue from where they left off rather than rewriting from scratch.
+When running forge build or halmos, use: forge build --extra-output-files none && halmos --match-path .forge-proof/test/
 
 After verification, produce a FINAL REPORT:
 
@@ -294,7 +296,7 @@ ${hasOnchain ? `2. SIMULTANEOUSLY use the **onchain-analyst** agent to analyze r
    - The exact import paths and contract names from the source
 
 4. Use the **formal-verifier** agent to:
-   - Write Halmos symbolic tests (check_ prefix functions) in ${projectDir}/test/
+   - Write Halmos symbolic tests (check_ prefix functions) in ${projectDir}/.forge-proof/test/
    - Tests must import: SymTest from halmos-cheatcodes/SymTest.sol, Test from forge-std/Test.sol
    - Tests must inherit from both SymTest and Test
    - Use svm.createUint256(), svm.createAddress() for symbolic inputs
