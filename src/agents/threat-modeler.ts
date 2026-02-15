@@ -43,6 +43,8 @@ function buildThreatModelerPrompt(pre: PrecomputedAnalysis, costControl?: boolea
 
 CRITICAL RULE: Every threat you identify MUST include a TRACE showing the exact sequence of code locations you traversed to discover it. A threat without a trace is speculation — delete it. You are building an evidence chain, not generating opinions.
 
+FOCUS RULE: Concentrate ALL analysis on threats from UNTRUSTED actors (external users, depositors, withdrawers, arbitrary callers). Do NOT spend time on threats that require a trusted or semi-trusted actor to be malicious or compromised (owner, admin, strategist, rate updater, solver). Governance/admin misconfiguration is out of scope — assume privileged roles act honestly. The goal is to find vulnerabilities that an unprivileged attacker can exploit.
+
 Your working directory is: ${pre.projectDir}
 All source contracts are in: ${pre.projectDir}/src/
 
