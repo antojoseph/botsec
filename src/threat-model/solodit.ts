@@ -34,6 +34,7 @@ export async function searchSolodit(
 
     for (const keyword of keywords) {
       try {
+        console.log(`    Solodit query: "${keyword}"`);
         const searchResults = await querySolodit(keyword, soloditKey);
         findings.push(...searchResults);
       } catch {
@@ -89,7 +90,11 @@ function buildSearchQueries(
   };
 
   for (const category of categories) {
-    const baseKeywords = categoryKeywords[category] || [category];
+    // Normalize: "OracleManipulation" → "oracle-manipulation", "Reentrancy" → "reentrancy"
+    const normalized = category
+      .replace(/([a-z])([A-Z])/g, "$1-$2")
+      .toLowerCase() as ThreatCategory;
+    const baseKeywords = categoryKeywords[normalized] || categoryKeywords[category] || [category];
     const combined = typeKeyword
       ? baseKeywords.map((kw) => `${typeKeyword} ${kw}`)
       : baseKeywords;

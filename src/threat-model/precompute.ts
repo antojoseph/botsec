@@ -137,7 +137,7 @@ export async function precomputeAnalysis(
   let blueprint: ArchitecturalBlueprint | undefined;
   if (structural) {
     console.log("  Building architectural blueprint...");
-    blueprint = buildBlueprint(structural, abi);
+    blueprint = await buildBlueprint(structural, abi);
     console.log(
       `  Blueprint: classified as "${blueprint.classification.type}" (${blueprint.classification.confidence} confidence), ` +
         `${blueprint.attackSurface.length} functions scored, ` +

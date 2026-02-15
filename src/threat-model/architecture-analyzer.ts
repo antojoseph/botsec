@@ -13,6 +13,7 @@
  * rather than rediscovering structure.
  */
 
+import Anthropic from "@anthropic-ai/sdk";
 import type {
   StructuralAnalysis,
   ContractType,
@@ -30,11 +31,11 @@ import type {
 // Public API
 // ---------------------------------------------------------------------------
 
-export function buildBlueprint(
+export async function buildBlueprint(
   structural: StructuralAnalysis,
   abi: Record<string, any[]>
-): ArchitecturalBlueprint {
-  const classification = classifyContract(structural, abi);
+): Promise<ArchitecturalBlueprint> {
+  const classification = await classifyWithLLM(structural);
   const attackSurface = scoreAttackSurface(structural);
   const inferredInvariants = inferInvariants(structural, classification);
   const patternFindings = precomputePatternFindings(structural);
@@ -55,156 +56,78 @@ export function buildBlueprint(
 }
 
 // ---------------------------------------------------------------------------
-// 1. Contract Classification
+// 1. Contract Classification (LLM-based)
 // ---------------------------------------------------------------------------
 
-interface ClassificationSignal {
-  type: ContractType;
-  signal: string;
-  weight: number;
-}
+const VALID_TYPES: ContractType[] = [
+  "vault", "dex", "lending", "token", "governance",
+  "bridge", "staking", "nft", "oracle", "proxy", "other",
+];
 
 /**
- * Classify the contract type by matching structural patterns against known
- * archetypes. Uses a weighted signal approach — the type with the highest
- * cumulative weight wins.
+ * Classify the contract type using a fast LLM call (Haiku).
+ * Reads contract names and their public/external function signatures to
+ * determine the primary purpose. Far more accurate than static pattern
+ * matching, especially for projects with many support contracts.
  */
-function classifyContract(
-  s: StructuralAnalysis,
-  abi: Record<string, any[]>
-): ContractClassification {
-  const signals: ClassificationSignal[] = [];
-
-  const allFuncs = Object.keys(s.functionSummary);
-  const allFuncNames = allFuncs.map((f) => f.split(".").pop()!.toLowerCase());
-  const allVars = Object.keys(s.stateVarMap);
-  const allVarNames = allVars.map((v) => v.split(".").pop()!.toLowerCase());
-  const allExternalCalls = Object.values(s.functionSummary).flatMap(
-    (f) => f.externalCalls
-  );
-
-  // -- Vault signals --
-  if (hasFuncPattern(allFuncNames, ["deposit", "withdraw"])) {
-    signals.push({ type: "vault", signal: "has deposit() and withdraw() functions", weight: 3 });
-  }
-  if (hasFuncPattern(allFuncNames, ["converttoshares"]) || hasFuncPattern(allFuncNames, ["converttoassets"])) {
-    signals.push({ type: "vault", signal: "has share/asset conversion (ERC4626 pattern)", weight: 4 });
-  }
-  if (hasVarPattern(allVarNames, ["totalshares", "totalsupply"]) && hasVarPattern(allVarNames, ["totalassets"])) {
-    signals.push({ type: "vault", signal: "tracks totalShares and totalAssets", weight: 3 });
-  }
-  if (hasFuncPattern(allFuncNames, ["redeem"])) {
-    signals.push({ type: "vault", signal: "has redeem() function", weight: 2 });
+async function classifyWithLLM(
+  s: StructuralAnalysis
+): Promise<ContractClassification> {
+  // Build a compact summary: contract names → public/external functions
+  const contractFuncs: Record<string, string[]> = {};
+  for (const [qualifiedName, summary] of Object.entries(s.functionSummary)) {
+    if (summary.visibility !== "public" && summary.visibility !== "external") continue;
+    const [contract, func] = qualifiedName.includes(".")
+      ? [qualifiedName.split(".")[0], qualifiedName.split(".").slice(1).join(".")]
+      : ["Unknown", qualifiedName];
+    if (!contractFuncs[contract]) contractFuncs[contract] = [];
+    contractFuncs[contract].push(func);
   }
 
-  // -- DEX signals --
-  if (hasFuncPattern(allFuncNames, ["swap"])) {
-    signals.push({ type: "dex", signal: "has swap() function", weight: 3 });
-  }
-  if (hasVarPattern(allVarNames, ["reserve0", "reserve1"])) {
-    signals.push({ type: "dex", signal: "has reserve0/reserve1 state vars", weight: 4 });
-  }
-  if (hasFuncPattern(allFuncNames, ["addliquidity", "removeliquidity"])) {
-    signals.push({ type: "dex", signal: "has add/remove liquidity functions", weight: 3 });
-  }
-  if (hasFuncPattern(allFuncNames, ["getamountout", "getamountin"])) {
-    signals.push({ type: "dex", signal: "has getAmountOut/getAmountIn", weight: 3 });
-  }
+  // Limit to keep prompt small — show up to 30 contracts, 10 functions each
+  const contractEntries = Object.entries(contractFuncs).slice(0, 30);
+  const summary = contractEntries
+    .map(([c, funcs]) => `${c}: ${funcs.slice(0, 10).join(", ")}${funcs.length > 10 ? ` (+${funcs.length - 10} more)` : ""}`)
+    .join("\n");
 
-  // -- Lending signals --
-  if (hasFuncPattern(allFuncNames, ["borrow", "repay"])) {
-    signals.push({ type: "lending", signal: "has borrow() and repay() functions", weight: 4 });
-  }
-  if (hasFuncPattern(allFuncNames, ["liquidate"])) {
-    signals.push({ type: "lending", signal: "has liquidate() function", weight: 3 });
-  }
-  if (hasVarPattern(allVarNames, ["collateral", "debt"])) {
-    signals.push({ type: "lending", signal: "has collateral/debt state vars", weight: 3 });
-  }
+  const prompt = `Classify this Solidity project into exactly ONE type based on its contract names and public functions.
 
-  // -- Token signals --
-  if (hasFuncPattern(allFuncNames, ["transfer", "approve", "transferfrom"])) {
-    signals.push({ type: "token", signal: "has ERC20-like transfer/approve/transferFrom", weight: 3 });
-  }
-  if (hasFuncPattern(allFuncNames, ["mint", "burn"])) {
-    signals.push({ type: "token", signal: "has mint()/burn() functions", weight: 2 });
-  }
-  if (hasVarPattern(allVarNames, ["totalsupply"]) && hasVarPattern(allVarNames, ["allowance"])) {
-    signals.push({ type: "token", signal: "has totalSupply and allowance (ERC20)", weight: 3 });
-  }
+Valid types: ${VALID_TYPES.join(", ")}
 
-  // -- Staking signals --
-  if (hasFuncPattern(allFuncNames, ["stake", "unstake"])) {
-    signals.push({ type: "staking", signal: "has stake()/unstake() functions", weight: 4 });
-  }
-  if (hasVarPattern(allVarNames, ["totalstaked", "staked"])) {
-    signals.push({ type: "staking", signal: "has totalStaked/staked state vars", weight: 3 });
-  }
-  if (hasFuncPattern(allFuncNames, ["claimrewards", "getreward"])) {
-    signals.push({ type: "staking", signal: "has reward claiming function", weight: 2 });
-  }
+Contracts and their public/external functions:
+${summary}
 
-  // -- Governance signals --
-  if (hasFuncPattern(allFuncNames, ["propose", "vote", "execute"])) {
-    signals.push({ type: "governance", signal: "has propose/vote/execute pattern", weight: 4 });
-  }
-  if (hasVarPattern(allVarNames, ["proposals", "votingperiod"])) {
-    signals.push({ type: "governance", signal: "has proposals/votingPeriod state", weight: 3 });
-  }
+Respond with ONLY a JSON object: {"type": "<type>", "confidence": "high"|"medium"|"low", "signals": ["reason1", "reason2"]}
 
-  // -- Bridge signals --
-  if (hasFuncPattern(allFuncNames, ["lock", "unlock", "bridge"])) {
-    signals.push({ type: "bridge", signal: "has lock/unlock/bridge functions", weight: 3 });
-  }
-  if (hasFuncPattern(allFuncNames, ["relaymessage", "processmessage"])) {
-    signals.push({ type: "bridge", signal: "has message relay functions", weight: 4 });
-  }
+Important: DecoderAndSanitizer contracts are just whitelisting helpers — ignore them for classification. Focus on the core contract architecture.`;
 
-  // -- Oracle signals --
-  if (hasFuncPattern(allFuncNames, ["getprice", "latestanswer", "latestround"])) {
-    signals.push({ type: "oracle", signal: "has price feed functions", weight: 4 });
-  }
-  if (hasFuncPattern(allFuncNames, ["updateprice", "submit"])) {
-    signals.push({ type: "oracle", signal: "has price update functions", weight: 3 });
-  }
+  try {
+    const client = new Anthropic();
+    const response = await client.messages.create({
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 256,
+      messages: [{ role: "user", content: prompt }],
+    });
 
-  // -- Proxy signals --
-  if (hasFuncPattern(allFuncNames, ["upgradeto", "upgradetoandcall"])) {
-    signals.push({ type: "proxy", signal: "has upgrade functions (proxy pattern)", weight: 4 });
-  }
-  if (allExternalCalls.some((c) => c.includes("delegatecall"))) {
-    signals.push({ type: "proxy", signal: "uses delegatecall", weight: 3 });
-  }
+    const text = response.content[0].type === "text" ? response.content[0].text : "";
+    const json = JSON.parse(text.replace(/```json?\n?|\n?```/g, "").trim());
+    const type = VALID_TYPES.includes(json.type) ? json.type : "other";
 
-  // -- NFT signals --
-  if (hasFuncPattern(allFuncNames, ["safemint", "tokenuriof", "tokenuri", "ownerof"])) {
-    signals.push({ type: "nft", signal: "has NFT mint/tokenURI/ownerOf functions", weight: 3 });
+    return {
+      type,
+      confidence: json.confidence || "medium",
+      signals: Array.isArray(json.signals) ? json.signals : [],
+      knownVulnerabilityClasses: KNOWN_VULNS[type] || KNOWN_VULNS["other"],
+    };
+  } catch (err: any) {
+    console.warn(`  Warning: LLM classification failed (${err.message?.slice(0, 80)}), defaulting to "other"`);
+    return {
+      type: "other",
+      confidence: "low",
+      signals: ["LLM classification unavailable"],
+      knownVulnerabilityClasses: KNOWN_VULNS["other"],
+    };
   }
-
-  // Tally scores
-  const scores: Record<string, number> = {};
-  for (const sig of signals) {
-    scores[sig.type] = (scores[sig.type] || 0) + sig.weight;
-  }
-
-  let bestType: ContractType = "other";
-  let bestScore = 0;
-  for (const [type, score] of Object.entries(scores)) {
-    if (score > bestScore) {
-      bestScore = score;
-      bestType = type as ContractType;
-    }
-  }
-
-  const confidence: "high" | "medium" | "low" =
-    bestScore >= 6 ? "high" : bestScore >= 3 ? "medium" : "low";
-
-  return {
-    type: bestType,
-    confidence,
-    signals: signals.filter((s) => s.type === bestType).map((s) => s.signal),
-    knownVulnerabilityClasses: KNOWN_VULNS[bestType] || KNOWN_VULNS["other"],
-  };
 }
 
 const KNOWN_VULNS: Record<string, string[]> = {
@@ -991,10 +914,3 @@ function shortName(qualified: string): string {
   return qualified.includes(".") ? qualified.split(".").pop()! : qualified;
 }
 
-function hasFuncPattern(funcNames: string[], patterns: string[]): boolean {
-  return patterns.every((p) => funcNames.some((f) => f.includes(p)));
-}
-
-function hasVarPattern(varNames: string[], patterns: string[]): boolean {
-  return patterns.every((p) => varNames.some((v) => v.includes(p)));
-}

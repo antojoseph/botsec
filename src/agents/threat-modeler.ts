@@ -18,7 +18,8 @@ import type { AgentDefinition } from "./explorer.js";
 import type { PrecomputedAnalysis } from "../threat-model/types.js";
 
 export function threatModelerAgent(
-  precomputed: PrecomputedAnalysis
+  precomputed: PrecomputedAnalysis,
+  opts?: { costControl?: boolean }
 ): AgentDefinition {
   return {
     description:
@@ -27,13 +28,13 @@ export function threatModelerAgent(
       "invariants, pre-organized pattern findings) and uses it to trace call graphs, " +
       "build CEI timelines, follow inheritance chains, and resolve interface implementations. " +
       "Every threat includes the exact code trace that found it.",
-    prompt: buildThreatModelerPrompt(precomputed),
+    prompt: buildThreatModelerPrompt(precomputed, opts?.costControl),
     tools: ["Read", "Grep", "Glob", "Bash"],
     model: "opus",
   };
 }
 
-function buildThreatModelerPrompt(pre: PrecomputedAnalysis): string {
+function buildThreatModelerPrompt(pre: PrecomputedAnalysis, costControl?: boolean): string {
   const hasStructural = !!pre.structural;
   const hasBlueprint = !!pre.blueprint;
   const hasOnChain = !!pre.onChain;
@@ -55,7 +56,7 @@ Produce a structured threat model as JSON. You must:
 5. After exhausting the pre-computed leads, apply the cross-referencing patterns to find anything missed
 
 ${hasBlueprint ? buildBlueprintSection(pre) : ""}
-${hasStructural ? buildCodeMapSection(pre) : buildFallbackSection()}
+${hasStructural ? (costControl ? buildTruncatedCodeMapSection(pre) : buildFullCodeMapSection(pre)) : buildFallbackSection()}
 ${hasOnChain ? buildOnChainSection(pre) : "## No On-Chain Data\nNo on-chain address was provided. Analyze based on code alone."}
 
 ## How to Work
@@ -372,11 +373,11 @@ ${pf.valueFlowPaths
 // Raw Code Map Section — structural data for deep reference
 // ---------------------------------------------------------------------------
 
-function buildCodeMapSection(pre: PrecomputedAnalysis): string {
+function buildFullCodeMapSection(pre: PrecomputedAnalysis): string {
   const s = pre.structural!;
   return `## Raw Code Map (structural AST data — use for deep reference)
 
-The blueprint above summarizes the most important findings. This raw data is available if you need to check specific details during investigation.
+The blueprint above summarizes the most important findings. This raw data is available for detailed investigation.
 
 ### Contract Inheritance
 ${JSON.stringify(s.inheritance, null, 2)}
@@ -408,6 +409,79 @@ ${JSON.stringify(s.dataDependency.tainted, null, 2)}
 
 ### Storage Layout
 ${JSON.stringify(pre.storageLayout, null, 2)}`;
+}
+
+// Max code map size in characters (~200KB = ~50K tokens).
+// Used with --cost-control to keep token usage low.
+const CODE_MAP_BUDGET = 200_000;
+
+function buildTruncatedCodeMapSection(pre: PrecomputedAnalysis): string {
+  const s = pre.structural!;
+
+  // Filter to high-value functions: those with external calls, CEI violations,
+  // or that appear in the blueprint's attack surface (score > 0).
+  const highValueFuncs = new Set<string>();
+  if (pre.blueprint) {
+    for (const entry of pre.blueprint.attackSurface) {
+      if (entry.score > 0) highValueFuncs.add(entry.function);
+    }
+  }
+  // Always include functions with external calls
+  for (const [name, summary] of Object.entries(s.functionSummary)) {
+    if (summary.externalCalls.length > 0) highValueFuncs.add(name);
+  }
+
+  // Filter function-keyed data to high-value functions only
+  const filteredFuncSummary = filterByKeys(s.functionSummary, highValueFuncs);
+  const filteredOpOrder = filterByKeys(s.operationOrder, highValueFuncs);
+  const filteredAuthChecks = filterByKeys(s.authChecks, highValueFuncs);
+  const filteredGuards = filterByKeys(s.guardInventory, highValueFuncs);
+
+  // Filter storage layout to exclude DecoderAndSanitizer contracts
+  const filteredStorage: Record<string, any> = {};
+  for (const [name, layout] of Object.entries(pre.storageLayout)) {
+    if (!name.includes("DecoderAndSanitizer") && !name.includes("Decoder")) {
+      filteredStorage[name] = layout;
+    }
+  }
+
+  // Build sections in priority order, tracking budget
+  const sections: Array<{ label: string; data: string }> = [
+    { label: "Contract Inheritance", data: JSON.stringify(s.inheritance) },
+    { label: "Function Summary (filtered to high-value)", data: JSON.stringify(filteredFuncSummary) },
+    { label: "State Variable Read/Write Map", data: JSON.stringify(s.stateVarMap) },
+    { label: "Call Graph", data: JSON.stringify(s.callGraph) },
+    { label: "Operation Order (for CEI analysis)", data: JSON.stringify(filteredOpOrder) },
+    { label: "Auth Checks", data: JSON.stringify(filteredAuthChecks) },
+    { label: "Guard Inventory", data: JSON.stringify(filteredGuards) },
+    { label: "Tainted Variables", data: JSON.stringify(s.dataDependency.tainted) },
+    { label: "Data Dependencies (contract-level)", data: JSON.stringify(s.dataDependency.byContract) },
+    { label: "Storage Layout (core contracts)", data: JSON.stringify(filteredStorage) },
+  ];
+
+  let output = "## Raw Code Map (structural AST data — use for deep reference)\n\n";
+  output += "The blueprint above summarizes the most important findings. This raw data is available for detailed investigation.\n";
+  let budget = CODE_MAP_BUDGET - output.length;
+
+  for (const section of sections) {
+    const entry = `\n### ${section.label}\n${section.data}\n`;
+    if (entry.length <= budget) {
+      output += entry;
+      budget -= entry.length;
+    } else {
+      output += `\n### ${section.label}\n(truncated — ${(section.data.length / 1024).toFixed(0)}KB exceeded budget)\n`;
+    }
+  }
+
+  return output;
+}
+
+function filterByKeys<T>(obj: Record<string, T>, keys: Set<string>): Record<string, T> {
+  const result: Record<string, T> = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (keys.has(k)) result[k] = v;
+  }
+  return result;
 }
 
 function buildFallbackSection(): string {

@@ -152,10 +152,12 @@ program
     "--etherscan-key <key>",
     "Etherscan API key (or set ETHERSCAN_API_KEY env var)"
   )
+  .option("--solodit", "Enable Solodit historical vulnerability enrichment")
   .option(
     "--solodit-key <key>",
     "Solodit API key (or set SOLODIT_API_KEY env var)"
   )
+  .option("--cost-control", "Truncate code map to reduce token usage (~$2 vs ~$17)")
   .option("-o, --output <dir>", "Output directory", "forge-proof-output")
   .option("--max-turns <n>", "Max agent turns (default: 200)", "200")
   .action(async (projectPath, opts) => {
@@ -184,7 +186,9 @@ program
         chainId: opts.chain,
         etherscanApiKey:
           opts.etherscanKey || process.env.ETHERSCAN_API_KEY,
+        solodit: !!opts.solodit,
         soloditKey: opts.soloditKey || process.env.SOLODIT_API_KEY,
+        costControl: !!opts.costControl,
         outputDir: opts.output,
         maxTurns: parseInt(opts.maxTurns),
       });

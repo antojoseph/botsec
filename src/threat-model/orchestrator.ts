@@ -19,6 +19,7 @@ import type {
   ThreatModel,
   Threat,
   ThreatCategory,
+  ContractType,
   PrecomputedAnalysis,
 } from "./types.js";
 
@@ -29,7 +30,11 @@ export interface ThreatModelOptions {
   address?: string;
   chainId?: string;
   etherscanApiKey?: string;
+  /** Enable Solodit historical vulnerability enrichment */
+  solodit?: boolean;
   soloditKey?: string;
+  /** Truncate code map to reduce token usage */
+  costControl?: boolean;
   outputDir?: string;
   maxTurns?: number;
 }
@@ -51,7 +56,7 @@ export async function generateThreatModel(
   console.log("\n  Phase 1: Agentic code exploration...");
   console.log("─".repeat(60));
 
-  const agentDef = threatModelerAgent(precomputed);
+  const agentDef = threatModelerAgent(precomputed, { costControl: opts.costControl });
   const agents = { "threat-modeler": agentDef };
 
   const orchestratorPrompt = buildOrchestratorPrompt(precomputed);
@@ -65,6 +70,7 @@ export async function generateThreatModel(
     prompt: orchestratorPrompt,
     options: {
       model: "opus",
+      betas: ["context-1m-2025-08-07"],
       allowedTools: ["Read", "Grep", "Glob", "Bash", "Task"],
       permissionMode: "bypassPermissions",
       maxTurns: opts.maxTurns || 200,
@@ -87,7 +93,15 @@ export async function generateThreatModel(
                 type: "object",
                 properties: {
                   id: { type: "string" },
-                  category: { type: "string" },
+                  category: {
+                    type: "string",
+                    enum: [
+                      "access-control", "reentrancy", "oracle-manipulation", "flash-loan",
+                      "arithmetic", "denial-of-service", "front-running", "token-handling",
+                      "upgradeability", "cross-contract", "governance", "randomness",
+                      "unchecked-calls", "logic-error",
+                    ],
+                  },
                   title: { type: "string" },
                   description: { type: "string" },
                   affectedCode: { type: "array", items: { type: "string" } },
@@ -166,14 +180,16 @@ export async function generateThreatModel(
     ...new Set(rawModel.threats.map((t: Threat) => t.category)),
   ] as ThreatCategory[];
 
-  // Query Solodit for historical findings
+  // Query Solodit for historical findings (only when --solodit is passed)
   let soloditCount = 0;
-  if (opts.soloditKey || true) {
-    // Try Solodit regardless (may work without key via public endpoint)
+  if (opts.solodit) {
     console.log("  Querying Solodit for historical findings...");
     try {
+      // Use the blueprint's LLM-classified type (a clean enum value like "vault")
+      // instead of the agent's free-form contractType string which breaks search queries
+      const classifiedType = (precomputed.blueprint?.classification.type || "other") as ContractType;
       const soloditResults = await searchSolodit(
-        rawModel.contractType,
+        classifiedType,
         categories,
         opts.soloditKey
       );
@@ -210,6 +226,29 @@ export async function generateThreatModel(
       `  Anti-slop filter: dropped ${droppedCount} threat(s) with no code trace.`
     );
   }
+
+  // Self-contradiction filter: downgrade threats that describe themselves as safe
+  const EXONERATING = [
+    /properly handled/i, /actually safe/i, /mitigated by/i,
+    /not exploitable/i, /by design/i, /correctly implemented/i,
+  ];
+  let downgraded = 0;
+  for (const t of rawModel.threats) {
+    const text = `${t.description} ${t.attackScenario || ""}`;
+    if (EXONERATING.some((re) => re.test(text))) {
+      t.confidence = "low";
+      if (t.severity === "Critical") t.severity = "High";
+      else if (t.severity === "High") t.severity = "Medium";
+      else if (t.severity === "Medium") t.severity = "Low";
+      downgraded++;
+    }
+  }
+  if (downgraded > 0) {
+    console.log(`  Severity filter: downgraded ${downgraded} self-contradicting threat(s).`);
+  }
+
+  // Deduplication: merge threats with >50% affectedCode overlap
+  rawModel.threats = deduplicateThreats(rawModel.threats);
 
   // Rank threats by severity × confidence × on-chain activity
   rankThreats(rawModel.threats, precomputed);
@@ -339,6 +378,41 @@ const CONFIDENCE_WEIGHTS: Record<string, number> = {
   medium: 2,
   low: 1,
 };
+
+function deduplicateThreats(threats: Threat[]): Threat[] {
+  const merged = new Set<number>();
+  for (let i = 0; i < threats.length; i++) {
+    if (merged.has(i)) continue;
+    for (let j = i + 1; j < threats.length; j++) {
+      if (merged.has(j)) continue;
+      const setA = new Set(threats[i].affectedCode);
+      const setB = new Set(threats[j].affectedCode);
+      const intersection = [...setA].filter((x) => setB.has(x)).length;
+      const smaller = Math.min(setA.size, setB.size);
+      if (smaller > 0 && intersection / smaller > 0.5) {
+        // Merge j into i
+        threats[i].description += `\n\nRelated: ${threats[j].title} — ${threats[j].description}`;
+        // Keep the higher severity
+        const sevOrder = ["Critical", "High", "Medium", "Low"];
+        if (sevOrder.indexOf(threats[j].severity) < sevOrder.indexOf(threats[i].severity)) {
+          threats[i].severity = threats[j].severity;
+        }
+        // Merge suggested properties
+        for (const prop of threats[j].suggestedProperties) {
+          if (!threats[i].suggestedProperties.includes(prop)) {
+            threats[i].suggestedProperties.push(prop);
+          }
+        }
+        merged.add(j);
+      }
+    }
+  }
+  const result = threats.filter((_, i) => !merged.has(i));
+  if (merged.size > 0) {
+    console.log(`  Deduplication: merged ${merged.size} overlapping threat(s).`);
+  }
+  return result;
+}
 
 function rankThreats(threats: Threat[], pre: PrecomputedAnalysis): void {
   for (const threat of threats) {

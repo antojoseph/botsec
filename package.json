@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.42",
+    "@anthropic-ai/sdk": "^0.74.0",
     "commander": "^12.0.0",
     "solidity-ast": "^0.4.61"
   },

@@ -79,6 +79,7 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
     prompt,
     options: {
       model: "opus",
+      betas: ["context-1m-2025-08-07"],
       allowedTools: [
         "Read",
         "Grep",
