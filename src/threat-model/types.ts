@@ -197,8 +197,11 @@ export interface ThreatModel {
   onChainProfile?: OnChainProfile;
   precomputed: {
     astAnalysisAvailable: boolean;
+    blueprintAvailable?: boolean;
     functionsAnalyzed: number;
     stateVarsTracked: number;
+    invariantsInferred?: number;
+    ceiViolationsDetected?: number;
     etherscanDataAvailable: boolean;
   };
   metadata: {
@@ -295,6 +298,143 @@ export interface DataDependencyMap {
 }
 
 // ---------------------------------------------------------------------------
+// ArchitecturalBlueprint — semantic layer above raw structural analysis
+// ---------------------------------------------------------------------------
+
+/** Classification of a contract's architectural pattern with confidence */
+export interface ContractClassification {
+  /** Primary pattern detected */
+  type: ContractType;
+  /** Detection confidence: how many signals matched */
+  confidence: "high" | "medium" | "low";
+  /** Signals that led to this classification */
+  signals: string[];
+  /** Known vulnerability classes for this contract type */
+  knownVulnerabilityClasses: string[];
+}
+
+/** A function scored by its attack surface exposure */
+export interface AttackSurfaceEntry {
+  /** Qualified function name: Contract.function */
+  function: string;
+  /** Numeric score (higher = more exposed). Range: 0-100 */
+  score: number;
+  /** Factors that contribute to the score */
+  factors: string[];
+  /** Whether this function can receive ETH */
+  receivesValue: boolean;
+  /** Whether this function makes external calls */
+  makesExternalCalls: boolean;
+  /** Whether this function lacks access control */
+  unguarded: boolean;
+}
+
+/** An invariant inferred from code structure */
+export interface InferredInvariant {
+  /** Human-readable description */
+  description: string;
+  /** Category of invariant */
+  kind: "solvency" | "conservation" | "monotonicity" | "access" | "state-machine" | "no-profit";
+  /** State variables involved */
+  stateVars: string[];
+  /** Functions that could violate this invariant */
+  threatenedBy: string[];
+  /** Informal Solidity-like assertion */
+  assertion: string;
+  /** Confidence that this invariant should hold */
+  confidence: "high" | "medium" | "low";
+}
+
+/** A CEI violation detected by operation ordering analysis */
+export interface CeiViolation {
+  /** Function where the violation occurs */
+  function: string;
+  /** The external call that creates the window */
+  externalCall: string;
+  /** State variables written after the external call */
+  stateWritesAfter: string[];
+  /** Whether there's a reentrancy guard (modifier) present */
+  hasReentrancyGuard: boolean;
+  /** Functions reachable from the external call that touch the same state */
+  reentrantPaths: string[];
+}
+
+/** A pair of state variables that should track each other */
+export interface StateVarPairing {
+  /** The "aggregate" variable (e.g., totalDeposits) */
+  aggregate: string;
+  /** The "individual" variable (e.g., balances mapping) */
+  individual: string;
+  /** Functions that update aggregate but not individual, or vice versa */
+  mismatchedUpdates: string[];
+  /** Inferred relationship */
+  relationship: string;
+}
+
+/** A value flow path from entry to exit */
+export interface ValueFlowPath {
+  /** Entry point function */
+  source: string;
+  /** Exit point function */
+  sink: string;
+  /** State variables value passes through */
+  intermediateState: string[];
+  /** Whether the path uses balance-before/after pattern */
+  checksActualReceived: boolean;
+  /** Whether external calls on this path could divert value */
+  hasExternalCallOnPath: boolean;
+}
+
+/** Pre-computed findings organized by cross-reference pattern */
+export interface PatternFindings {
+  /** Pattern 1: External calls with trust boundary analysis */
+  externalCallReceivers: Array<{
+    function: string;
+    call: string;
+    receiverType: "immutable" | "state-var" | "msg-sender" | "parameter" | "unknown";
+    callbackRisk: "high" | "medium" | "low" | "none";
+  }>;
+  /** Pattern 2: CEI violations pre-detected */
+  ceiViolations: CeiViolation[];
+  /** Pattern 3: State variable conservation pairings */
+  stateVarPairings: StateVarPairing[];
+  /** Pattern 5: Interface assumptions that need validation */
+  interfaceAssumptions: Array<{
+    interface: string;
+    calledBy: string[];
+    assumptions: string[];
+  }>;
+  /** Pattern 6: Privilege escalation surface */
+  privilegeSurface: {
+    adminFunctions: string[];
+    unguardedStateMutators: string[];
+    guardedBy: Record<string, string[]>;
+  };
+  /** Pattern 7: Value flow paths */
+  valueFlowPaths: ValueFlowPath[];
+}
+
+/**
+ * ArchitecturalBlueprint — a semantic layer built on top of StructuralAnalysis.
+ *
+ * Where StructuralAnalysis answers "what does the code structurally do?",
+ * the blueprint answers "what does this contract *mean*, what should hold true,
+ * and where should the agent look first?"
+ */
+export interface ArchitecturalBlueprint {
+  /** What kind of contract this is and why we think so */
+  classification: ContractClassification;
+  /** Functions ranked by attack surface exposure */
+  attackSurface: AttackSurfaceEntry[];
+  /** Invariants inferred from code patterns */
+  inferredInvariants: InferredInvariant[];
+  /** Pre-computed findings organized by the 7 cross-reference patterns */
+  patternFindings: PatternFindings;
+  /** Top-level questions the agent should investigate, ordered by priority */
+  investigationQuestions: string[];
+}
+
+// ---------------------------------------------------------------------------
 // PrecomputedAnalysis — everything gathered before the agent runs
 // ---------------------------------------------------------------------------
 
@@ -311,6 +451,9 @@ export interface PrecomputedAnalysis {
 
   /** Structural analysis from solc AST (always available after forge build) */
   structural?: StructuralAnalysis;
+
+  /** Semantic blueprint built on top of structural analysis */
+  blueprint?: ArchitecturalBlueprint;
 
   /** Available if --address provided (Etherscan v2) */
   onChain?: OnChainProfile;

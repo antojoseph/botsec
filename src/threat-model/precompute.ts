@@ -11,10 +11,12 @@ import { join, resolve } from "path";
 import type {
   PrecomputedAnalysis,
   StructuralAnalysis,
+  ArchitecturalBlueprint,
   OnChainProfile,
   ValueFlow,
 } from "./types.js";
 import { analyzeFromAST } from "./ast-analysis.js";
+import { buildBlueprint } from "./architecture-analyzer.js";
 
 // ---------------------------------------------------------------------------
 // Main entry point
@@ -131,6 +133,29 @@ export async function precomputeAnalysis(
 
   // Structural analysis was computed in step 2 above (before forge inspect).
 
+  // 2b. Build architectural blueprint from structural analysis
+  let blueprint: ArchitecturalBlueprint | undefined;
+  if (structural) {
+    console.log("  Building architectural blueprint...");
+    blueprint = buildBlueprint(structural, abi);
+    console.log(
+      `  Blueprint: classified as "${blueprint.classification.type}" (${blueprint.classification.confidence} confidence), ` +
+        `${blueprint.attackSurface.length} functions scored, ` +
+        `${blueprint.inferredInvariants.length} invariants inferred, ` +
+        `${blueprint.investigationQuestions.length} investigation questions`
+    );
+    if (blueprint.patternFindings.ceiViolations.length > 0) {
+      console.log(
+        `  CEI violations pre-detected: ${blueprint.patternFindings.ceiViolations.length}`
+      );
+    }
+    if (blueprint.patternFindings.valueFlowPaths.filter((p) => !p.checksActualReceived).length > 0) {
+      console.log(
+        `  Value flow paths without balance check: ${blueprint.patternFindings.valueFlowPaths.filter((p) => !p.checksActualReceived).length}`
+      );
+    }
+  }
+
   // 3. Etherscan v2 (if address provided)
   let onChain: OnChainProfile | undefined;
   if (opts?.address && opts.etherscanApiKey) {
@@ -148,7 +173,7 @@ export async function precomputeAnalysis(
     );
   }
 
-  return { projectDir, abi, storageLayout, methodIds, structural, onChain };
+  return { projectDir, abi, storageLayout, methodIds, structural, blueprint, onChain };
 }
 
 // ---------------------------------------------------------------------------
