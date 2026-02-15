@@ -54,7 +54,7 @@ export function analyzeFromAST(projectDir: string): StructuralAnalysis | undefin
   let srcDir = "src";
   try {
     const toml = readFileSync(join(projectDir, "foundry.toml"), "utf-8");
-    const m = toml.match(/^\s*src\s*=\s*"([^"]+)"/m);
+    const m = toml.match(/^\s*src\s*=\s*['"]([^'"]+)['"]/m);
     if (m) srcDir = m[1];
   } catch { /* default */ }
 

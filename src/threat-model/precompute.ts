@@ -251,7 +251,7 @@ function listContractsFromOut(projectDir: string): string[] {
   let srcDir = "src";
   try {
     const toml = readFileSync(join(projectDir, "foundry.toml"), "utf-8");
-    const srcMatch = toml.match(/^\s*src\s*=\s*"([^"]+)"/m);
+    const srcMatch = toml.match(/^\s*src\s*=\s*['"]([^'"]+)['"]/m);
     if (srcMatch) srcDir = srcMatch[1];
   } catch { /* use default */ }
 
