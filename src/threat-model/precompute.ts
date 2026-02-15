@@ -39,11 +39,12 @@ export async function precomputeAnalysis(
   console.log("  Building Foundry project (with build-info for AST)...");
   const biDir = join(projectDir, "out", "build-info");
   try {
-    // Remove stale build-info to get a single file with full AST data.
-    // Incremental builds produce fragmented files without output.sources.
-    if (existsSync(biDir)) {
-      rmSync(biDir, { recursive: true, force: true });
-      console.log("  Cleared stale build-info.");
+    // Remove stale build artifacts to get clean build-info with AST data.
+    // Multi-solc incremental builds produce fragmented files without output.sources.
+    const outDir = join(projectDir, "out");
+    if (existsSync(outDir)) {
+      rmSync(outDir, { recursive: true, force: true });
+      console.log("  Cleared stale build artifacts.");
     }
     // Install dependencies if package.json exists but node_modules doesn't
     if (
