@@ -185,11 +185,18 @@ export async function generateThreatModel(
     onChainProfile: precomputed.onChain,
     precomputed: {
       astAnalysisAvailable: !!precomputed.structural,
+      blueprintAvailable: !!precomputed.blueprint,
       functionsAnalyzed: precomputed.structural
         ? Object.keys(precomputed.structural.functionSummary).length
         : 0,
       stateVarsTracked: precomputed.structural
         ? Object.keys(precomputed.structural.stateVarMap).length
+        : 0,
+      invariantsInferred: precomputed.blueprint
+        ? precomputed.blueprint.inferredInvariants.length
+        : 0,
+      ceiViolationsDetected: precomputed.blueprint
+        ? precomputed.blueprint.patternFindings.ceiViolations.length
         : 0,
       etherscanDataAvailable: !!precomputed.onChain,
     },
