@@ -209,7 +209,9 @@ After verification, produce a FINAL REPORT:
 
 **INCONCLUSIVE** — Properties that couldn't be verified: reason, partial results.
 
-**LIMITATIONS** — Loop bounds, properties not checked, timeouts encountered.`;
+**LIMITATIONS** — Loop bounds, properties not checked, timeouts encountered.
+
+IMPORTANT: After producing your FINAL REPORT, STOP. Do not summarize again, do not re-state findings, do not check on background tasks. Your job is done once the report is written.`;
 }
 
 function buildOrchestratorPrompt(
@@ -295,7 +297,9 @@ ${hasOnchain ? "- On-chain correlation: has this been exploited in production?" 
 - Properties NOT checked and why
 - Any Halmos timeouts encountered
 
-Be thorough. The Halmos tests and their results are the most important output — they provide mathematical evidence, not opinions.`;
+Be thorough. The Halmos tests and their results are the most important output — they provide mathematical evidence, not opinions.
+
+IMPORTANT: After producing your FINAL REPORT, STOP. Do not summarize again, do not re-state findings, do not check on background tasks. Your job is done once the report is written.`;
 }
 
 /**
