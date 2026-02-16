@@ -133,7 +133,8 @@ export async function generateThreatModel(
     options: {
       model: "opus",
       betas: ["context-1m-2025-08-07"],
-      allowedTools: ["Read", "Grep", "Glob", "Bash", "Task"],
+      allowedTools: ["Read", "Grep", "Glob", "Bash", "Task", "Skill"],
+      settingSources: ["user", "project"],
       permissionMode: "bypassPermissions",
       maxTurns: opts.maxTurns || 200,
       maxBudgetUsd: 50,

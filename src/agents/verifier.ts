@@ -22,6 +22,8 @@ export function verifierAgent(): AgentDefinition {
 
 const VERIFIER_SYSTEM_PROMPT = `You are an expert formal verification engineer specializing in Halmos symbolic testing for Solidity smart contracts.
 
+IMPORTANT: You have access to a **halmos** Skill via the Skill tool. Before writing any tests, invoke the halmos skill — it contains 10 verification strategies, solver limitation guidance, vault testing patterns, and a decision tree for when to use halmos vs fuzz testing. Use: Skill(skill: "halmos")
+
 ## Your Task
 Write, execute, and iterate on Halmos symbolic tests to mathematically verify security properties of the target contract.
 
