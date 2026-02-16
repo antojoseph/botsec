@@ -9,6 +9,7 @@ export interface AgentDefinition {
   description: string;
   prompt: string;
   tools: string[];
+  skills?: string[];
   model: "opus" | "sonnet" | "haiku";
 }
 

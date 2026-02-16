@@ -131,12 +131,14 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
 
     // Log cost/duration on completion and break to stop the loop
     if (message?.type === "result") {
-      const cost = (message as any).total_cost_usd;
+      const cost = (message as any).total_cost_usd || 0;
       const turns = (message as any).num_turns;
       const duration = (message as any).duration_ms;
+      const phaseCost = cost - lastCostSnapshot;
+      lastCostSnapshot = cost;
       if (cost) {
         console.log(
-          `\n  Completed: ${turns} turns, $${cost.toFixed(2)}, ${(duration / 1000).toFixed(1)}s`
+          `\n  Completed: ${turns} turns, $${cost.toFixed(2)} total ($${phaseCost.toFixed(2)} this phase), ${(duration / 1000).toFixed(1)}s`
         );
       }
       if (message.subtype === "error_max_budget_usd") {
@@ -347,6 +349,8 @@ IMPORTANT: After producing your FINAL REPORT, STOP. Do not summarize again, do n
  */
 let turnCount = 0;
 const startTime = Date.now();
+let lastCostSnapshot = 0;
+let currentAgent = "orchestrator";
 
 function elapsed(): string {
   return `${((Date.now() - startTime) / 1000).toFixed(0)}s`;
@@ -370,6 +374,7 @@ function handleMessage(message: any): void {
         if (name === "Task") {
           const agentName =
             block.input?.description || block.input?.subagent_type || "subagent";
+          currentAgent = agentName;
           console.log(`\n  [${elapsed()}] >> Delegating to: ${agentName}`);
         } else {
           console.log(`  [${elapsed()}] [${name}] ${inputPreview}...`);
@@ -378,13 +383,12 @@ function handleMessage(message: any): void {
     }
   }
 
-  // Tool results
+  // Tool results — track sub-agent costs
   if (message.type === "tool_result") {
     const content = message.content;
     if (typeof content === "string" && content.length > 500) {
       console.log(`  [${elapsed()}] [result] (${content.length} chars)`);
     }
-    // Surface errors from tool calls
     if (message.is_error) {
       const errText = typeof content === "string" ? content.slice(0, 300) : JSON.stringify(content).slice(0, 300);
       console.error(`  [${elapsed()}] [ERROR] ${errText}`);
