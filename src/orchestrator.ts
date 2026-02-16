@@ -144,16 +144,18 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
     }
   }
 
-  // Write report to output directory
+  // Write report to timestamped run directory
   if (finalReport.trim()) {
-    const outputDir = opts.outputDir || "forge-proof-output";
-    mkdirSync(outputDir, { recursive: true });
+    const baseOutputDir = opts.outputDir || "forge-proof-output";
+    const ts = new Date().toISOString().replace(/[T:]/g, "-").replace(/\..+/, "");
+    const runDir = join(baseOutputDir, `analyze-${ts}`);
+    mkdirSync(runDir, { recursive: true });
 
-    const mdPath = join(outputDir, "forge-proof-report.md");
+    const mdPath = join(runDir, "forge-proof-report.md");
     const header = `# Forge Proof — Security Audit Report\n\n**Target:** ${opts.contractPath}\n**Date:** ${new Date().toISOString()}\n\n---\n\n`;
     writeFileSync(mdPath, header + finalReport, "utf-8");
 
-    const jsonPath = join(outputDir, "forge-proof-report.json");
+    const jsonPath = join(runDir, "forge-proof-report.json");
     writeFileSync(jsonPath, JSON.stringify({
       target: opts.contractPath,
       timestamp: new Date().toISOString(),

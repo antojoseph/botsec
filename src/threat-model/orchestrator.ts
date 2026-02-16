@@ -42,7 +42,8 @@ export interface ThreatModelOptions {
 export async function generateThreatModel(
   opts: ThreatModelOptions
 ): Promise<ThreatModel> {
-  const outputDir = opts.outputDir || "forge-proof-output";
+  const baseOutputDir = opts.outputDir || "forge-proof-output";
+  const runDir = join(baseOutputDir, `threat-model-${timestamp()}`);
 
   // Phase 0: Pre-computation
   console.log("\n  Phase 0: Pre-computing analysis data...");
@@ -353,14 +354,14 @@ export async function generateThreatModel(
     },
   };
 
-  // Write output
-  mkdirSync(outputDir, { recursive: true });
-  const outputPath = join(outputDir, "threat-model.json");
+  // Write output to timestamped run directory
+  mkdirSync(runDir, { recursive: true });
+  const outputPath = join(runDir, "threat-model.json");
   writeFileSync(outputPath, JSON.stringify(threatModel, null, 2), "utf-8");
 
   // Write blueprint for inspection
   if (precomputed.blueprint) {
-    const blueprintPath = join(outputDir, "blueprint.json");
+    const blueprintPath = join(runDir, "blueprint.json");
     writeFileSync(blueprintPath, JSON.stringify(precomputed.blueprint, null, 2), "utf-8");
     console.log(`  Blueprint: ${blueprintPath}`);
   }
@@ -573,6 +574,10 @@ function handleMessage(message: any): void {
 // ---------------------------------------------------------------------------
 // Summary output
 // ---------------------------------------------------------------------------
+
+function timestamp(): string {
+  return new Date().toISOString().replace(/[T:]/g, "-").replace(/\..+/, "");
+}
 
 function printSummary(model: ThreatModel, outputPath: string): void {
   console.log("\n" + "═".repeat(60));
