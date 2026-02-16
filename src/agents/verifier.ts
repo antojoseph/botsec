@@ -109,13 +109,12 @@ If compilation fails:
 - Retry compilation (max 5 attempts per file)
 
 ### Step 4: Run Halmos
-Always wrap halmos in a timeout to prevent stuck processes:
 \`\`\`bash
-timeout 600 halmos --function check_ --loop 3 --solver-timeout-assertion 10000 2>&1
+halmos --function check_ --loop 3 --solver-timeout-assertion 10000 2>&1
 \`\`\`
 For targeting a specific test:
 \`\`\`bash
-timeout 600 halmos --function check_specific_property --loop 3 --solver-timeout-assertion 10000 2>&1
+halmos --function check_specific_property --loop 3 --solver-timeout-assertion 10000 2>&1
 \`\`\`
 
 ### Step 5: Interpret Results
@@ -141,20 +140,28 @@ Bad specification indicators:
 - The property was too strict (didn't account for fees, rounding, etc.)
 - The test setup was incomplete (missing initialization)
 
-**[ERROR] or timeout** → Simplify the property first, then fall back to fuzz testing.
-- Reduce loop bounds
-- Add more vm.assume() constraints to narrow the search space
-- Split complex properties into simpler ones
-- If the property STILL times out after simplification (e.g. inline assembly math like Solmate's mulDivDown/mulDivUp is too complex for the SMT solver), FALL BACK to a Foundry fuzz test:
+**[ERROR] or timeout** → DIAGNOSE before acting. Read the halmos output carefully:
+
+Timeout is UNSOLVABLE (fall back to fuzz immediately) if:
+- The property involves mulDivDown, mulDivUp, mulWad, divWad, or similar nonlinear 256-bit assembly math
+- The halmos output shows the solver stuck on a single assertion with no progress
+- The preloaded halmos skill says this math category "WILL timeout on ALL solvers"
+
+Timeout MAY be solvable (try simplification first) if:
+- The property uses simple arithmetic but has wide input types (try uint128 -> uint64 -> uint32)
+- The halmos output shows multiple paths explored before timeout (solver is making progress)
+- Adding tighter vm.assume() constraints could reduce the search space
+
+For unsolvable timeouts, fall back to fuzz IMMEDIATELY — don't waste turns retrying:
 
 ### Halmos Timeout → Foundry Fuzz Fallback
 
-When Halmos cannot verify a property due to solver timeout (common with assembly-heavy math libs):
+When Halmos cannot verify a property due to solver timeout:
 
 1. Convert the check_ function to a test_fuzz_ function in the SAME test file
 2. Replace svm.createUint256() with regular function parameters (Foundry will fuzz them)
 3. Replace vm.assume() with bound() for tighter input ranges
-4. Run fuzz tests for at least 30 minutes with high run count: forge test --match-test test_fuzz_ --fuzz-runs 1000000 -vvv 2>&1
+4. Run fuzz tests: forge test --match-test test_fuzz_ --fuzz-runs 1000000 -vvv 2>&1
 5. Run this as a background task so you can continue writing other tests while it runs
 
 A fuzz test finding a counterexample is still a real bug — just not a mathematical proof. Report fuzz findings separately from Halmos-verified properties, noting they are probabilistic (tested with N runs, duration) not exhaustive.
