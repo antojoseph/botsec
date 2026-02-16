@@ -207,6 +207,7 @@ Validated against production DeFi protocols with active bug bounty programs. All
 | Project Alpha | 8 threats (2M, 6L) | 8/8 confirmed, 10 fuzz tests | ~$22 |
 | Project Gamma | 14 threats (3M, 11L) | 19 Halmos proofs, 3 violations, 15 fuzz tests | ~$12 |
 | Project Delta | 17 threats (1H, 3M, 13L) | 11 Halmos proofs, 1 violation, 6 fuzz tests | ~$13 |
+| DVF Benchmark | 19 threats (11C, 5H, 3M) | 16 Halmos violations, 8 verified properties, 19/19 confirmed | ~$11 |
 
 ## Source Structure
 
