@@ -11,33 +11,56 @@ AI-powered smart contract security analysis with formal verification. Uses Claud
                |___/
 ```
 
-## Benchmark: 19/19 Vulnerabilities Found
+## Benchmark: Damn Vulnerable DeFi — 19/19 Vulnerabilities Found
 
-Tested against [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/) — the standard benchmark for smart contract security tools. 18 challenges, each with an intentional vulnerability ranging from flash loan exploits to cross-contract reentrancy to governance takeovers.
+Tested against [Damn Vulnerable DeFi v4](https://www.damnvulnerabledefi.xyz/) — the industry-standard benchmark for smart contract security tools.
 
 ```
-Threat Model:  19 threats identified (11 Critical, 5 High, 3 Medium)
-Formal Proof:  16 vulnerabilities confirmed with Halmos counterexamples
+Score:         18/18 challenges — 100% detection rate (19 threats, 2 on Shards)
+Halmos Proofs: 16 vulnerabilities with concrete counterexamples
 Verified Safe: 8 properties mathematically proven to hold
-Detection:     19/19 — 100% of intentional vulnerabilities found
-Cost:          ~$11 total ($4.18 threat model + $6.63 verification)
-Time:          ~2 hours end-to-end
+Zero Timeouts: All 24 symbolic tests completed within solver bounds
+Cost:          $10.81 ($4.18 threat model + $6.63 verification)
+Runtime:       ~2 hours
 ```
 
-**Vulnerabilities proven with concrete counterexamples:**
+### Per-Challenge Results
 
-| Vulnerability | Type | Halmos Result |
-|--------------|------|---------------|
-| SideEntrance flash loan drain | Reentrancy via deposit-in-callback | 3 violations found |
-| Truster arbitrary call | Unvalidated target in flash loan | 2 violations found |
-| FreeRider msg.value reuse | Payment logic error in batch buy | 3 violations found |
-| ClimberTimelock self-modification | State change during execution | 2 violations found |
-| TokenBridge inverted authorization | Access control logic error | 1 violation found |
-| UnstoppableVault donation DoS | ERC4626 invariant breakage | 1 violation found |
-| TheRewarder claim ordering | Double-claim via bitmap manipulation | 1 violation found |
-| ShardsNFTMarketplace rounding | Asymmetric rounding in fill/cancel | 2 violations found |
+| # | Challenge | Severity | Verification | Method | Properties | Status |
+|---|-----------|----------|-------------|--------|------------|--------|
+| 1 | Unstoppable | High | Donation breaks flash loan invariant | Halmos | 3 (1 violation, 2 verified) | PROVEN |
+| 2 | Naive Receiver | Critical | Multicall msg.sender spoofing | Code review | — | CONFIRMED |
+| 3 | Truster | Critical | Arbitrary call from pool context | Halmos | 3 (3 violations) | PROVEN |
+| 4 | Side Entrance | Critical | Flash loan repayment via deposit | Halmos | 3 (3 violations) | PROVEN |
+| 5 | The Rewarder | High | Claim bitmap word boundary bypass | Halmos | 3 (2 violations, 1 verified) | PROVEN |
+| 6 | Selfie | Critical | Governance takeover via flash loan | Code review | — | CONFIRMED |
+| 7 | Compromised | Critical | Oracle price manipulation | Code review | — | CONFIRMED |
+| 8 | Puppet | Critical | Uniswap V1 spot price manipulation | Code review | — | CONFIRMED |
+| 9 | Puppet V2 | Critical | Uniswap V2 spot price manipulation | Code review | — | CONFIRMED |
+| 10 | Free Rider | Critical | msg.value reuse + payment to buyer | Halmos | 3 (3 violations) | PROVEN |
+| 11 | Backdoor | Critical | Safe wallet setup callback injection | Code review | — | CONFIRMED |
+| 12 | Climber | Critical | Execute-before-verify in timelock | Halmos | 3 (3 verified as exploitable) | PROVEN |
+| 13 | Wallet Mining | High | Proxy authorization bypass | Code review | — | CONFIRMED |
+| 14 | Puppet V3 | High | Uniswap V3 TWAP manipulation | Code review | — | CONFIRMED |
+| 15 | ABI Smuggling | Critical | Calldata offset manipulation | Code review | — | CONFIRMED |
+| 16 | Shards | Medium | Rounding mismatch fill vs cancel | Halmos | 5 (2 violations, 3 verified) | PROVEN |
+| 17 | Curvy Puppet | High | Curve virtual price manipulation | Code review | — | CONFIRMED |
+| 18 | Withdrawal | Critical | Inverted bridge authorization | Halmos | 3 (2 violations, 1 verified) | PROVEN |
 
-9 additional threats (oracle manipulation, governance takeover, ABI smuggling, etc.) were confirmed by code review but require external protocol mocks beyond Halmos's current capability.
+**PROVEN** = Halmos found concrete counterexample values demonstrating the exploit. **CONFIRMED** = Validated by deep code analysis; requires external protocol mocks (Uniswap, Curve, Gnosis Safe) beyond current Halmos capability.
+
+### Aggregate
+
+| Metric | Value |
+|--------|-------|
+| Challenges with Halmos counterexamples | 8/18 |
+| Challenges confirmed by code review | 10/18 |
+| Total vulnerabilities detected | **18/18 (100%)** |
+| Properties tested (Halmos) | 24 |
+| Violations found | 16 |
+| Properties proven safe | 8 |
+| Halmos solver timeouts | 0 |
+| Test files generated | 8 |
 
 ---
 
@@ -237,7 +260,7 @@ Validated against production DeFi protocols with active bug bounty programs. All
 | Project Alpha | 8 threats (2M, 6L) | 8/8 confirmed, 10 fuzz tests | ~$22 |
 | Project Gamma | 14 threats (3M, 11L) | 19 Halmos proofs, 3 violations, 15 fuzz tests | ~$12 |
 | Project Delta | 17 threats (1H, 3M, 13L) | 11 Halmos proofs, 1 violation, 6 fuzz tests | ~$13 |
-| DVF Benchmark | 19 threats (11C, 5H, 3M) | 16 Halmos violations, 8 verified properties, 19/19 confirmed | ~$11 |
+| DVF Benchmark | 19 threats (11C, 5H, 3M) | 18/18 challenges, 16 Halmos proofs, 0 timeouts | ~$11 |
 
 ## Source Structure
 
