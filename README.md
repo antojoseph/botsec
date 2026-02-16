@@ -19,12 +19,12 @@ Two-stage pipeline: **threat model** identifies what to look for, **analyze** pr
 
 Generates a ranked threat model for a Foundry project.
 
-1. **Pre-computation** — Builds the project, walks the solc AST to extract call graphs, state variable maps, inheritance, CEI ordering, auth checks, guards, and data dependencies. Auto-installs npm dependencies if needed. Writes structural data to `.forge-proof/blueprint.json` and `.forge-proof/codemap.json`.
+1. **Pre-computation** — Builds the project, walks the solc AST to extract call graphs, state variable maps, inheritance, CEI ordering, auth checks, guards, and data dependencies. Auto-installs npm dependencies if needed. Filters out test/script contracts. Writes per-contract structural data to `.forge-proof/codemap/` and blueprint to `.forge-proof/blueprint.json`.
 2. **LLM classification** — Haiku classifies the contract type (vault, lending, dex, staking, etc.) to inform invariant inference and investigation questions.
-3. **Agentic exploration** — Opus agent reads the blueprint and code map files on-demand (file-based context — no prompt size limits). Traces code paths using 7 systematic cross-referencing patterns. Every threat requires a TRACE with exact file:line locations.
-4. **Synthesis** — Anti-slop filter drops traceless threats, self-contradiction filter downgrades threats that exonerate themselves, deduplication merges overlapping findings, threats ranked by severity x confidence.
+3. **Agentic exploration** — Opus agent reads the blueprint and per-contract code map files on-demand (file-based context — no prompt size limits). Focuses exclusively on untrusted-actor attack paths. Every threat requires a TRACE with exact file:line locations.
+4. **Synthesis** — Anti-slop filter drops traceless threats, self-contradiction filter downgrades primarily-exonerating threats, deduplication merges overlapping findings, threats ranked by severity x confidence.
 
-Output: `threat-model.json` + `blueprint.json`
+Output: timestamped directory with `threat-model.json` + `blueprint.json`
 
 ### Stage 2: `forge-proof analyze <project> --threat-model <file>`
 
@@ -32,9 +32,11 @@ Formally verifies threats using Halmos symbolic execution.
 
 1. **Explorer Agent** (Opus) — Validates known threats from the threat model, identifies additional ones
 2. **On-Chain Agent** (Sonnet) — Fetches Etherscan v2 transaction data for concrete test values *(optional)*
-3. **Verifier Agent** (Opus) — Writes `check_` Halmos tests, compiles, runs the SMT solver, interprets counterexamples. If Halmos times out (common with assembly math), falls back to Foundry fuzz testing with 1M runs.
+3. **Verifier Agent** (Opus, with halmos skill preloaded) — Discovers existing tests before writing new ones. Writes `check_` Halmos tests, compiles, runs the SMT solver, interprets counterexamples. Diagnoses timeouts: if nonlinear 256-bit math (unsolvable), falls back to Foundry fuzz immediately. If solvable, tries input narrowing first.
 
 Use `--verify-only` to restart just the verification phase without re-running exploration.
+
+Output: timestamped directory with `forge-proof-report.md` + `forge-proof-report.json`
 
 ## Prerequisites
 
@@ -58,18 +60,18 @@ npm run build
 # 1. Generate threat model
 npm run dev -- threat-model ./my-defi-project
 
-# 2. Formally verify the threats
-npm run dev -- analyze ./my-defi-project --threat-model ./forge-proof-output/threat-model.json
+# 2. Formally verify the threats (use the timestamped path from step 1)
+npm run dev -- analyze ./my-defi-project --threat-model forge-proof-output/threat-model-<timestamp>/threat-model.json
 
 # 3. If verification is interrupted, restart just that phase
-npm run dev -- analyze ./my-defi-project --threat-model ./forge-proof-output/threat-model.json --verify-only
+npm run dev -- analyze ./my-defi-project --threat-model forge-proof-output/threat-model-<timestamp>/threat-model.json --verify-only
 ```
 
 ### With on-chain data
 
 ```bash
 npm run dev -- threat-model ./my-defi-project --address 0x1234... --etherscan-key YOUR_KEY
-npm run dev -- analyze ./my-defi-project --threat-model ./forge-proof-output/threat-model.json \
+npm run dev -- analyze ./my-defi-project --threat-model forge-proof-output/threat-model-<timestamp>/threat-model.json \
   --address 0x1234... --etherscan-key YOUR_KEY
 ```
 
@@ -82,7 +84,6 @@ forge-proof threat-model <project-path>
   --etherscan-key <key>     Etherscan API key
   --solodit                 Enable Solodit historical vulnerability enrichment
   --solodit-key <key>       Solodit API key
-  --cost-control            Truncate code map to reduce token usage
   -o, --output <dir>        Output directory [default: forge-proof-output]
   --max-turns <n>           Max agent turns [default: 200]
 
@@ -100,6 +101,38 @@ forge-proof analyze <path>
 forge-proof check           Verify dependencies
 ```
 
+## Output Structure
+
+Each run creates a timestamped directory — nothing is overwritten:
+
+```
+forge-proof-output/
+  threat-model-2026-02-16-01-55-57/
+    threat-model.json
+    blueprint.json
+  analyze-2026-02-16-03-36-19/
+    forge-proof-report.md
+    forge-proof-report.json
+```
+
+The `.forge-proof/` directory in the project contains working state for the agent (overwritten each run):
+
+```
+<project>/.forge-proof/
+  blueprint.json                  Architectural blueprint
+  codemap/
+    _inheritance.json             Global inheritance relationships
+    _callGraph.json               Global call graph edges
+    _stateVarMap.json             Global state variable maps
+    _dataDependency.json          Transitive data dependencies + taint tracking
+    StrategyBase.json             Per-contract: functions, auth, guards, operations, storage
+    DelegationManager.json
+    ...
+  test/                           Halmos tests (created during analyze)
+    HalmosVerification.t.sol
+    foundry.toml
+```
+
 ## Architecture
 
 ```
@@ -108,37 +141,47 @@ threat-model <project>                    analyze <project> --threat-model <file
   +-- Pre-Computation                       +-- Detect Foundry project or scaffold
   |   forge build --build-info              |
   |   solc AST -> structural analysis       +-- Load threat-model.json
-  |   Haiku -> contract classification      |   Inject threats into orchestrator prompt
-  |   -> blueprint + invariants             |
-  |   Write .forge-proof/blueprint.json     +-- Phase 1: Parallel Analysis
-  |   Write .forge-proof/codemap.json       |   Explorer (Opus) + On-Chain (Sonnet)
-  |                                         |   [skipped with --verify-only]
-  +-- Agentic Exploration                   |
-  |   Threat Modeler (Opus, 1M context)     +-- Phase 2: Formal Verification
-  |   Reads files on-demand via Read/Grep   |   Verifier (Opus)
-  |   7 xref patterns, untrusted-actor      |   check_ tests -> halmos
-  |   focus, anti-slop trace requirement    |   Timeout -> fuzz fallback (1M runs)
+  |   Filter out test/script contracts      |   Inject threats into orchestrator prompt
+  |   Haiku -> contract classification      |
+  |   -> blueprint + invariants             +-- Phase 1: Parallel Analysis
+  |   Write .forge-proof/codemap/*.json     |   Explorer (Opus) + On-Chain (Sonnet)
+  |   Write .forge-proof/blueprint.json     |   [skipped with --verify-only]
   |                                         |
-  +-- Synthesis                             +-- Final Report
-  |   Anti-slop filter                      |   Verified properties
-  |   Self-contradiction filter             |   Violations + counterexamples
-  |   Deduplication (>50% overlap)          |   Fuzz results
-  |   Threat ranking                        |   Inconclusive + limitations
+  +-- Agentic Exploration                   +-- Phase 2: Formal Verification
+  |   Threat Modeler (Opus, 1M context)     |   Verifier (Opus, halmos skill preloaded)
+  |   Reads per-contract files on-demand    |   Discovers existing tests first
+  |   Untrusted-actor focus only            |   check_ tests -> halmos
+  |   Anti-slop trace requirement           |   Diagnoses timeouts (solvable vs not)
+  |                                         |   Unsolvable -> fuzz fallback (1M runs)
+  +-- Synthesis                             |
+  |   Anti-slop filter                      +-- Report Output
+  |   Self-contradiction filter             |   forge-proof-report.md
+  |   Deduplication (>50% overlap)          |   forge-proof-report.json
+  |   Threat ranking                        |   (timestamped directory)
   |                                         |
   v                                         v
-  threat-model.json ----------------------> Console output
+  threat-model.json ----------------------> Console + files
   blueprint.json
+  (timestamped directory)
 ```
 
 ## Key Design Decisions
 
-**File-based context** — Pre-computed structural data (blueprint + code map) is written to `.forge-proof/` directory files. The threat modeler agent reads them on-demand via Read/Grep tools instead of having them inline in the prompt. This keeps the system prompt at ~5KB regardless of codebase size, enabling analysis of 500+ contract projects.
+**File-based context** — Pre-computed structural data is split into per-contract JSON files in `.forge-proof/codemap/`. The threat modeler agent reads them on-demand via Read/Grep tools. This keeps the system prompt at ~5KB regardless of codebase size and lets the agent selectively load only relevant contracts.
 
-**Untrusted-actor focus** — The threat modeler is instructed to skip admin/owner misconfiguration scenarios and focus exclusively on what an unprivileged attacker can exploit. This avoids governance-heavy threat models that waste verification budget.
+**Per-contract code map** — Instead of one large file, each contract gets its own JSON (function summaries, auth checks, guards, operation ordering, storage layout) plus 4 global files (inheritance, call graph, state vars, data dependencies). For a large project (800+ contracts), this means 42 targeted files instead of one 9MB blob.
 
-**Anti-slop trace requirement** — Every threat must include a TRACE with exact code locations the agent read. Threats without traces are dropped in synthesis. Self-contradicting threats (description says "properly handled") are automatically downgraded.
+**Test contract filtering** — The AST analysis reads test/script directory paths from `foundry.toml` and excludes them. This prevents investigation questions about test harness setUp methods (previously 81% of questions were test noise).
 
-**Halmos -> fuzz fallback** — Solmate's `mulDivDown`/`mulDivUp` assembly reliably times out Halmos's SMT solver. When this happens, the verifier converts `check_` functions to `test_fuzz_` and runs them with `forge test --fuzz-runs 1000000`. Fuzz results are reported separately as probabilistic evidence.
+**Untrusted-actor focus** — The threat modeler skips admin/owner misconfiguration scenarios and focuses exclusively on what an unprivileged attacker can exploit.
+
+**Anti-slop trace requirement** — Every threat must include a TRACE with exact code locations. Threats without traces are dropped. Self-contradicting threats (primarily exonerating language) are downgraded — but only if the description is short or contains multiple exonerating phrases, so real threats mentioning mitigations aren't penalized.
+
+**Halmos timeout diagnosis** — Instead of a hard timeout, the verifier diagnoses WHY halmos timed out using its preloaded halmos skill knowledge. Nonlinear 256-bit math (mulDivDown, etc.) is recognized as unsolvable and falls back to fuzz immediately. Simpler constraints are retried with narrowed input types.
+
+**Halmos skill preloaded** — The verifier agent has `skills: ["halmos"]` which auto-loads the halmos skill (10 verification strategies, solver limitations, vault patterns) into its context without needing a tool call.
+
+**Timestamped outputs** — Each run creates a unique directory (`threat-model-<timestamp>/`, `analyze-<timestamp>/`). Previous runs are never overwritten, enabling comparison across development iterations.
 
 ## AST Analysis Engine
 
@@ -157,12 +200,12 @@ threat-model <project>                    analyze <project> --threat-model <file
 
 ## Tested On
 
-| Project | Contracts | Threats Found | Cost | Time |
-|---------|-----------|---------------|------|------|
-| Project Alpha | 267 | 8 (2M, 6L) | ~$19 | ~7min |
-| Project Beta | 557 | 10 | ~$5 | ~10min |
-| Project Gamma | 800+ | 9 (1H, 3M, 5L) | ~$5 | ~10min |
-| Project Gamma (full analyze) | 800+ | 9/9 confirmed, 2 Halmos proofs | ~$32 | ~39min |
+| Project | Contracts | Threat Model | Analyze | Total Cost |
+|---------|-----------|-------------|---------|------------|
+| Project Alpha | 267 | 8 threats (2M, 6L) | 8/8 confirmed | ~$22 |
+| Project Beta | 557 | 10 threats | N/A | ~$5 |
+| Project Gamma | 800+ | 14 threats (3M, 11L) | 19 Halmos proofs, 3 violations | ~$12 |
+| Project Delta | 100+ (multi-solc) | 17 threats (1H, 16L) | 11 Halmos proofs, 1 violation | ~$13 |
 
 ## Source Structure
 
@@ -174,14 +217,14 @@ src/
     explorer.ts                     Deep code analysis (read-only)
     onchain.ts                      Etherscan transaction analysis
     threat-modeler.ts               Threat modeling (file-based context)
-    verifier.ts                     Halmos tests + fuzz fallback
+    verifier.ts                     Halmos tests + fuzz fallback (halmos skill preloaded)
   threat-model/
     orchestrator.ts                 Threat model pipeline coordinator
     precompute.ts                   AST + forge inspect + Etherscan v2
     ast-analysis.ts                 solc AST structural extraction (~1000 lines)
     architecture-analyzer.ts        Blueprint: LLM classification, attack surface, invariants
     types.ts                        Shared type definitions
-    solodit.ts                      Historical vulnerability search
+    solodit.ts                      Historical vulnerability search (opt-in via --solodit)
   scaffold/
     foundry-project.ts              Temp Foundry project creation
     dependencies.ts                 forge/halmos/cast validation
@@ -189,37 +232,36 @@ src/
     halmos-output.ts                Halmos result parser
     etherscan.ts                    Etherscan API types
   report/
-    generator.ts                    Markdown + JSON report (not yet wired)
+    generator.ts                    Markdown + JSON report generation
 ```
-
-~5,350 lines of TypeScript across 17 source files.
 
 ## Current Status
 
 ### What's Connected
 
-- Threat model -> analyze workflow via `--threat-model`
-- Verify-only mode for restarting interrupted runs
-- File-based context for large codebases
-- LLM contract classification
+- Two-stage threat model -> analyze workflow via `--threat-model`
+- Verify-only mode for restarting interrupted verification
+- File-based context with per-contract code map split
+- LLM contract classification (Haiku)
+- Test/script contract filtering from AST analysis
 - Anti-slop, self-contradiction, and deduplication filters
-- Halmos -> Foundry fuzz fallback
-- Blueprint persistence to disk
-
-### What's Disconnected
-
-- **Report generation** — `src/report/generator.ts` is fully implemented but never called. Analysis results are streamed as console text, not parsed into structured reports.
-- **`--output` flag** — Unused by the analyze orchestrator.
+- Halmos timeout diagnosis + Foundry fuzz fallback
+- Halmos skill preloaded into verifier agent
+- Timestamped output directories
+- Report persistence (MD + JSON)
+- Existing test discovery before writing new ones
 
 ### TODO
 
-- [ ] Wire report generation into analyze pipeline
+- [ ] AST support for non-Foundry projects (Hardhat, multi-compiler like Project Delta)
 - [ ] Temp directory cleanup (`/tmp/forge-proof-*` accumulates)
 - [ ] Auto-detect solc pragma version
 - [ ] Merge existing remappings from target project
+- [ ] Per-phase cost tracking (Explorer vs Verifier breakdown)
 - [ ] Unit tests for parsers and AST analysis
 - [ ] Integration tests on benchmark contracts
 - [ ] Resume interrupted analysis (checkpoint intermediate state)
+- [ ] Diff reports across timestamped runs
 
 ## License
 
