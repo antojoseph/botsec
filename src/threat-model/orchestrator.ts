@@ -146,7 +146,13 @@ export async function generateThreatModel(
         schema: {
           type: "object",
           properties: {
-            contractType: { type: "string" },
+            contractType: {
+              type: "string",
+              enum: [
+                "vault", "dex", "lending", "token", "governance",
+                "bridge", "staking", "nft", "oracle", "proxy", "other",
+              ],
+            },
             actors: { type: "array", items: { type: "object" } },
             assets: { type: "array", items: { type: "object" } },
             trustBoundaries: { type: "array", items: { type: "object" } },
@@ -290,15 +296,20 @@ export async function generateThreatModel(
     );
   }
 
-  // Self-contradiction filter: downgrade threats that describe themselves as safe
+  // Self-contradiction filter: downgrade threats that are PRIMARILY exonerating
+  // Only triggers if the description is short AND contains exonerating language,
+  // or if multiple exonerating phrases appear. A longer analysis that mentions
+  // mitigations alongside real risks should NOT be downgraded.
   const EXONERATING = [
-    /properly handled/i, /actually safe/i, /mitigated by/i,
-    /not exploitable/i, /by design/i, /correctly implemented/i,
+    /properly handled/i, /actually safe/i, /not exploitable/i,
+    /correctly implemented/i, /^not a vulnerability/i, /false positive/i,
   ];
   let downgraded = 0;
   for (const t of rawModel.threats) {
     const text = `${t.description} ${t.attackScenario || ""}`;
-    if (EXONERATING.some((re) => re.test(text))) {
+    const matches = EXONERATING.filter((re) => re.test(text)).length;
+    // Only downgrade if: multiple exonerating phrases, or description is short (<200 chars) with one
+    if (matches >= 2 || (matches >= 1 && t.description.length < 200)) {
       t.confidence = "low";
       if (t.severity === "Critical") t.severity = "High";
       else if (t.severity === "High") t.severity = "Medium";

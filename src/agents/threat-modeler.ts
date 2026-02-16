@@ -62,9 +62,12 @@ Analysis data has been written to disk. Use your Read, Grep, and Glob tools to a
 - Read ${opts.codemapPath}/_dataDependency.json for transitive data dependencies and taint tracking
 - Use Grep to search across all code map files: Grep pattern ${opts.codemapPath}/
 
-**START by reading the blueprint file** — it contains your prioritized investigation questions.`
+**START by reading the blueprint file** — it contains your prioritized investigation questions.
+
+IMPORTANT: Only read data from the paths listed above. Do NOT read files from forge-proof-output/ or any other directory — those may contain stale data from previous runs on different projects.`
     : `## No Pre-Computed Data
-No structural analysis data is available. Use Read/Grep/Glob to explore the codebase manually.`;
+No structural analysis data is available. Use Read/Grep/Glob to explore the codebase manually.
+Do NOT read files from forge-proof-output/ or .forge-proof/ — no pre-computed data was generated for this project.`;
 
   return `You are a smart contract security researcher performing SYSTEMATIC THREAT MODELING through deep code exploration.
 
