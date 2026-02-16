@@ -200,14 +200,14 @@ threat-model <project>                    analyze <project> --threat-model <file
 
 ## Tested On
 
-Validated against 4 production DeFi protocols with active bug bounty programs. All findings were responsibly disclosed.
+Validated against production DeFi protocols with active bug bounty programs. All findings were responsibly disclosed.
 
-| Contracts | Threat Model | Analyze | Total Cost |
-|-----------|-------------|---------|------------|
-| 267 | 8 threats | 8/8 confirmed | ~$22 |
-| 557 | 10 threats | N/A | ~$5 |
-| 800+ | 14 threats | 19 Halmos proofs, 3 violations | ~$12 |
-| 100+ | 17 threats | 11 Halmos proofs, 1 violation | ~$13 |
+| Project | Threat Model | Analyze | Total Cost |
+|---------|-------------|---------|------------|
+| Project Alpha | 8 threats (2M, 6L) | 8/8 confirmed, 10 fuzz tests | ~$22 |
+| Project Beta | 10 threats (3M, 7L) | — | ~$5 |
+| Project Gamma | 14 threats (3M, 11L) | 19 Halmos proofs, 3 violations, 15 fuzz tests | ~$12 |
+| Project Delta | 17 threats (1H, 3M, 13L) | 11 Halmos proofs, 1 violation, 6 fuzz tests | ~$13 |
 
 ## Source Structure
 
