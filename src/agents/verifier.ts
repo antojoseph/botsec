@@ -111,11 +111,11 @@ If compilation fails:
 ### Step 4: Run Halmos
 Always wrap halmos in a timeout to prevent stuck processes:
 \`\`\`bash
-timeout 180 halmos --function check_ --loop 3 --solver-timeout-assertion 10000 2>&1
+timeout 600 halmos --function check_ --loop 3 --solver-timeout-assertion 10000 2>&1
 \`\`\`
 For targeting a specific test:
 \`\`\`bash
-timeout 180 halmos --function check_specific_property --loop 3 --solver-timeout-assertion 10000 2>&1
+timeout 600 halmos --function check_specific_property --loop 3 --solver-timeout-assertion 10000 2>&1
 \`\`\`
 
 ### Step 5: Interpret Results
