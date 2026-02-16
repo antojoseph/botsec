@@ -127,7 +127,7 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
       }
     }
 
-    // Log cost/duration on completion
+    // Log cost/duration on completion and break to stop the loop
     if (message?.type === "result") {
       const cost = (message as any).total_cost_usd;
       const turns = (message as any).num_turns;
@@ -140,6 +140,7 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
       if (message.subtype === "error_max_budget_usd") {
         console.error("  Budget limit ($100) reached.");
       }
+      break;
     }
   }
 
