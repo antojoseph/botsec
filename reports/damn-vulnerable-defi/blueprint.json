@@ -1,0 +1,3451 @@
+{
+  "classification": {
+    "type": "vault",
+    "confidence": "high",
+    "signals": [
+      "Multiple vault contracts present: SelfAuthorizedVault, ClimberVault with withdraw/sweepFunds functions",
+      "ClimberTimelock and ClimberTimelockBase implement timelock mechanism typical of vault security",
+      "WalletRegistry manages beneficiaries and proxy creation for vault access control",
+      "Core vault operations: deposit, withdraw, emergency sweep functions across multiple contracts",
+      "Staking and governance components (DamnValuableStaking, SimpleGovernance) are secondary features supporting the primary vault architecture"
+    ],
+    "knownVulnerabilityClasses": [
+      "First-depositor / inflation attack (ERC4626)",
+      "Share price manipulation via donation",
+      "Rounding errors in share/asset conversion",
+      "Reentrancy in withdraw (CEI violation)",
+      "Fee-on-transfer token incompatibility",
+      "Flash loan deposit/withdraw for profit"
+    ]
+  },
+  "attackSurface": [
+    {
+      "function": "NaiveReceiverPool.constructor",
+      "score": 90,
+      "factors": [
+        "public visibility",
+        "receives ETH (payable)",
+        "1 external call(s): WETH.WETH",
+        "STATE WRITE AFTER EXTERNAL CALL (CEI violation)",
+        "no access control but writes state",
+        "writes 3 state vars"
+      ],
+      "receivesValue": true,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "PuppetPool.borrow",
+      "score": 80,
+      "factors": [
+        "external visibility",
+        "receives ETH (payable)",
+        "2 external call(s): external.sendValue, low_level.transfer",
+        "no access control but writes state",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": true,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "NaiveReceiverPool.flashLoan",
+      "score": 70,
+      "factors": [
+        "external visibility",
+        "3 external call(s): low_level.transfer, external.onFlashLoan, external.transferFrom",
+        "STATE WRITE AFTER EXTERNAL CALL (CEI violation)",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "PuppetV2Pool.constructor",
+      "score": 70,
+      "factors": [
+        "public visibility",
+        "1 external call(s): IERC20.IERC20",
+        "STATE WRITE AFTER EXTERNAL CALL (CEI violation)",
+        "no access control but writes state",
+        "writes 4 state vars"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "WalletDeployer.constructor",
+      "score": 70,
+      "factors": [
+        "public visibility",
+        "1 external call(s): SafeProxyFactory.SafeProxyFactory",
+        "STATE WRITE AFTER EXTERNAL CALL (CEI violation)",
+        "no access control but writes state",
+        "writes 4 state vars"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "FreeRiderRecoveryManager.constructor",
+      "score": 65,
+      "factors": [
+        "public visibility",
+        "receives ETH (payable)",
+        "2 external call(s): IERC721.IERC721, external.setApprovalForAll",
+        "no access control but writes state",
+        "writes 3 state vars"
+      ],
+      "receivesValue": true,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "PuppetPool.constructor",
+      "score": 65,
+      "factors": [
+        "public visibility",
+        "1 external call(s): DamnValuableToken.DamnValuableToken",
+        "STATE WRITE AFTER EXTERNAL CALL (CEI violation)",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "NaiveReceiverPool.withdraw",
+      "score": 60,
+      "factors": [
+        "external visibility",
+        "1 external call(s): low_level.transfer",
+        "no access control but writes state",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "ShardsNFTMarketplace.openOffer",
+      "score": 55,
+      "factors": [
+        "external visibility",
+        "1 external call(s): external.safeTransferFrom",
+        "no access control but writes state",
+        "writes 3 state vars",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "PuppetV3Pool.borrow",
+      "score": 50,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.transferFrom, external.safeTransfer",
+        "no access control but writes state",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "DamnValuableStaking.transfer",
+      "score": 45,
+      "factors": [
+        "public visibility",
+        "1 external call(s): low_level.transfer",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "DamnValuableStaking.withdraw",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "1 external call(s): low_level.transfer",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "DamnValuableStaking.claim",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "1 external call(s): low_level.transfer",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "WalletRegistry.constructor",
+      "score": 45,
+      "factors": [
+        "public visibility",
+        "1 external call(s): IERC20.IERC20",
+        "no access control but writes state",
+        "writes 4 state vars"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "Exchange.buyOne",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "receives ETH (payable)",
+        "4 external call(s): external.getMedianPrice, external.symbol, external.safeMint, external.sendValue"
+      ],
+      "receivesValue": true,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "CurvyPuppetLending.constructor",
+      "score": 45,
+      "factors": [
+        "public visibility",
+        "1 external call(s): external.lp_token",
+        "no access control but writes state",
+        "writes 5 state vars"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "CurvyPuppetLending.withdraw",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "2 external call(s): low_level.transfer, IERC20.IERC20",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "CurvyPuppetLending.borrow",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "3 external call(s): external.divWadDown, low_level.transfer, IERC20.IERC20",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "CurvyPuppetLending.redeem",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "2 external call(s): low_level.transfer, IERC20.IERC20",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "CurvyPuppetLending.liquidate",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "2 external call(s): low_level.transfer, IERC20.IERC20",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "PuppetV2Pool.borrow",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.transferFrom, low_level.transfer",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "SelfiePool.flashLoan",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "3 external call(s): low_level.transfer, external.onFlashLoan, external.transferFrom",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "SelfiePool.emergencyExit",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.balanceOf, low_level.transfer",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "ShardsFeeVault.withdraw",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "4 external call(s): external.balanceOf, external.claim, external.withdraw, low_level.transfer",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "ShardsNFTMarketplace.constructor",
+      "score": 45,
+      "factors": [
+        "public visibility",
+        "4 external call(s): ShardsFeeVault.ShardsFeeVault, external.clone, external.initialize, external.approve",
+        "no access control but writes state",
+        "writes 5 state vars"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "ShardsNFTMarketplace.cancel",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "2 external call(s): low_level.transfer, external.mulDivUp",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "SideEntranceLenderPool.deposit",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "receives ETH (payable)",
+        "no access control but writes state"
+      ],
+      "receivesValue": true,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "TheRewarderDistributor.clean",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "2 external call(s): low_level.transfer, external.balanceOf",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "TheRewarderDistributor.claimRewards",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "3 external call(s): external.encodePacked, external.verify, low_level.transfer",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "TrusterLenderPool.flashLoan",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "3 external call(s): external.balanceOf, low_level.transfer, external.functionCall",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "WalletDeployer.drop",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "4 external call(s): external.createProxyWithNonce, external.balanceOf, IERC20.IERC20, low_level.transfer",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "L1Forwarder.forwardMessage",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.encodeWithSignature, external.xSender",
+        "no access control but writes state",
+        "writes 3 state vars"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "L1Gateway.finalizeWithdrawal",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.encode, external.verify",
+        "no access control but writes state",
+        "writes 3 state vars"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "TokenBridge.executeTokenWithdrawal",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.getSender, low_level.transfer",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "Exchange.constructor",
+      "score": 40,
+      "factors": [
+        "public visibility",
+        "2 external call(s): external.renounceOwnership, TrustfulOracle.TrustfulOracle",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "TrustfulOracleInitializer.constructor",
+      "score": 40,
+      "factors": [
+        "public visibility",
+        "1 external call(s): external.setupInitialPrices",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "FreeRiderNFTMarketplace.constructor",
+      "score": 40,
+      "factors": [
+        "public visibility",
+        "2 external call(s): external.renounceOwnership, external.safeMint",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "ShardsFeeVault.enableStaking",
+      "score": 40,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.token, external.approve",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "ShardsNFTMarketplace.depositFees",
+      "score": 40,
+      "factors": [
+        "external visibility",
+        "1 external call(s): external.deposit",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "UnstoppableMonitor.constructor",
+      "score": 40,
+      "factors": [
+        "public visibility",
+        "1 external call(s): UnstoppableVault.UnstoppableVault",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "L2Handler.sendMessage",
+      "score": 40,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.store, external.encodeCall",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "L2MessageStore.store",
+      "score": 40,
+      "factors": [
+        "external visibility",
+        "1 external call(s): external.encode",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "DamnValuableStaking.stake",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "1 external call(s): external.transferFrom",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "DamnValuableStaking.transferFrom",
+      "score": 35,
+      "factors": [
+        "public visibility",
+        "1 external call(s): external.transferFrom",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "SelfAuthorizedVault.withdraw",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "1 external call(s): external.safeTransfer",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "SelfAuthorizedVault.sweepFunds",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.safeTransfer, external.balanceOf",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "WalletRegistry.proxyCreated",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "5 external call(s): external.balanceOf, external.getThreshold, Safe.Safe, external.getOwners, external.safeTransfer",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "ClimberVault.withdraw",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "1 external call(s): external.safeTransfer",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "ClimberVault.sweepFunds",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "3 external call(s): external.safeTransfer, external.balanceOf, IERC20.IERC20",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "Exchange.sellOne",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "7 external call(s): external.ownerOf, external.getApproved, external.getMedianPrice, external.symbol, external.transferFrom, external.burn, external.sendValue",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "ShardsFeeVault.deposit",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.transferFrom, external.stake",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "ShardsNFTMarketplace.redeem",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.ownerOf, external.safeTransferFrom",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "ShardsNFTMarketplace.fill",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "3 external call(s): external.push, external.transferFrom, external.mulDivDown",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "SideEntranceLenderPool.withdraw",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "1 external call(s): external.safeTransferETH",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "SideEntranceLenderPool.flashLoan",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "2 external call(s): low_level.execute, IFlashLoanEtherReceiver.IFlashLoanEtherReceiver",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "TheRewarderDistributor.createDistribution",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "1 external call(s): external.safeTransferFrom",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "UnstoppableMonitor.checkFlashLoan",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "4 external call(s): external.asset, external.setPause, external.transferOwnership, external.flashLoan",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "UnstoppableVault.flashLoan",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "4 external call(s): external.safeTransfer, ERC20.ERC20, external.onFlashLoan, external.safeTransferFrom",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "UnstoppableVault.execute",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "1 external call(s): low_level.delegatecall",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "DamnValuableStaking.constructor",
+      "score": 30,
+      "factors": [
+        "public visibility",
+        "no access control but writes state",
+        "writes 3 state vars"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "NaiveReceiverPool.deposit",
+      "score": 30,
+      "factors": [
+        "external visibility",
+        "receives ETH (payable)"
+      ],
+      "receivesValue": true,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "PuppetV3Pool.constructor",
+      "score": 30,
+      "factors": [
+        "public visibility",
+        "no access control but writes state",
+        "writes 3 state vars"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "TokenBridge.constructor",
+      "score": 30,
+      "factors": [
+        "public visibility",
+        "no access control but writes state",
+        "writes 3 state vars"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "DamnValuableNFT.safeMint",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "DamnValuableVotes.nonces",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "1 external call(s): external.nonces"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "AuthorizedExecutor.setPermissions",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "AuthorizedExecutor.execute",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "1 external call(s): external.functionCall"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "AuthorizedExecutor.getActionId",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "1 external call(s): external.encodePacked"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "WalletRegistry.addBeneficiary",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "ClimberTimelock.execute",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "1 external call(s): external.functionCallWithValue"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "ClimberTimelockBase.getOperationId",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "1 external call(s): external.encode"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "CurvyPuppetLending.getBorrowValue",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "1 external call(s): external.mulWadUp"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "CurvyPuppetLending.getCollateralValue",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "2 external call(s): external.mulWadDown, external.getPrice"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "CurvyPuppetOracle.setPrice",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "FreeRiderRecoveryManager.onERC721Received",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "3 external call(s): external.ownerOf, external.decode, external.sendValue"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "BasicForwarder.execute",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "1 external call(s): external.encodePacked"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "BasicForwarder.getDataHash",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "1 external call(s): external.encode"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "FlashLoanReceiver.constructor",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "FlashLoanReceiver.onFlashLoan",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "5 external call(s): external.weth, NaiveReceiverPool.NaiveReceiverPool, external.UnsupportedCurrency, external.approve, WETH.WETH"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "Multicall.multicall",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "1 external call(s): external.functionDelegateCall"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "NaiveReceiverPool.maxFlashLoan",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "1 external call(s): external.balanceOf"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "SelfiePool.constructor",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "SelfiePool.maxFlashLoan",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "1 external call(s): external.balanceOf"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "SimpleGovernance.constructor",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "SimpleGovernance.executeAction",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "1 external call(s): external.functionCallWithValue"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "ShardsFeeVault.initialize",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "ShardsNFTMarketplace.getFee",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "1 external call(s): external.mulDivDown"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "TheRewarderDistributor.getRemaining",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "1 external call(s): IERC20.IERC20"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "TheRewarderDistributor.getNextBatchNumber",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "1 external call(s): IERC20.IERC20"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "TheRewarderDistributor.getRoot",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "1 external call(s): IERC20.IERC20"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "TrusterLenderPool.constructor",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "UnstoppableMonitor.onFlashLoan",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "3 external call(s): external.asset, external.approve, ERC20.ERC20"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "UnstoppableVault.constructor",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "UnstoppableVault.flashFee",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "1 external call(s): external.mulWadUp"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "UnstoppableVault.totalAssets",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "1 external call(s): external.balanceOf"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "AuthorizerFactory.deployWithProxy",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "5 external call(s): external.encodeCall, external.needsInit, AuthorizerUpgradeable.AuthorizerUpgradeable, external.setUpgrader, TransparentProxy.TransparentProxy"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "AuthorizerUpgradeable.constructor",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "AuthorizerUpgradeable.init",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "TransparentProxy.constructor",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "1 external call(s): external.changeAdmin"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "TransparentProxy.setUpgrader",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "1 external call(s): external.getAdmin"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "L1Forwarder.constructor",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "L1Forwarder.setL2Handler",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "L1Gateway.setRoot",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "L2Handler.constructor",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "DamnValuableNFT.constructor",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "DamnValuableStaking.rewardsPerToken",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "DamnValuableStaking.earned",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "DamnValuableToken.constructor",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "DamnValuableVotes.constructor",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "SelfAuthorizedVault.getLastWithdrawalTimestamp",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "ClimberTimelock.constructor",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "ClimberTimelock.schedule",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "ClimberTimelock.updateDelay",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "ClimberTimelockBase.getOperationState",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "ClimberTimelockBase.receive",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "ClimberVault.constructor",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "ClimberVault.initialize",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "ClimberVault.getSweeper",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "ClimberVault.getLastWithdrawalTimestamp",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Exchange.receive",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "TrustfulOracle.constructor",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "TrustfulOracle.setupInitialPrices",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "TrustfulOracle.postPrice",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "TrustfulOracle.getMedianPrice",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "TrustfulOracle.getAllPricesForSymbol",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "TrustfulOracle.getPriceBySource",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "CurvyPuppetLending.deposit",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "CurvyPuppetLending.getBorrowAmount",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "CurvyPuppetLending.getCollateralAmount",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "CurvyPuppetOracle.constructor",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "CurvyPuppetOracle.getPrice",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "FreeRiderNFTMarketplace.offerMany",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "FreeRiderNFTMarketplace.buyMany",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "FreeRiderNFTMarketplace.receive",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "BasicForwarder.domainSeparator",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "BasicForwarder.getRequestTypehash",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "NaiveReceiverPool.flashFee",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "PuppetPool.calculateDepositRequired",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "PuppetV2Pool.calculateDepositOfWETHRequired",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "PuppetV3Pool.calculateDepositOfWETHRequired",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "SelfiePool.flashFee",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "SimpleGovernance.queueAction",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "SimpleGovernance.getActionDelay",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "SimpleGovernance.getVotingToken",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "SimpleGovernance.getAction",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "SimpleGovernance.getActionCounter",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "ShardsFeeVault.constructor",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "ShardsNFTMarketplace.setRate",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "ShardsNFTMarketplace.getOffer",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "ShardsNFTMarketplace.onERC721Received",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "UnstoppableVault.maxFlashLoan",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "UnstoppableVault.setFeeRecipient",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "UnstoppableVault.setPause",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "AuthorizerUpgradeable.can",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "TransparentProxy.isUpgrader",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "WalletDeployer.rule",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "WalletDeployer.can",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "L1Forwarder.getSender",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "L1Gateway.constructor",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    }
+  ],
+  "inferredInvariants": [
+    {
+      "description": "NaiveReceiverPool.totalDeposits should equal the sum of all NaiveReceiverPool.deposits entries",
+      "kind": "conservation",
+      "stateVars": [
+        "NaiveReceiverPool.totalDeposits",
+        "NaiveReceiverPool.deposits"
+      ],
+      "threatenedBy": [
+        "DamnValuableNFT.constructor",
+        "DamnValuableNFT.safeMint",
+        "DamnValuableStaking.constructor"
+      ],
+      "assertion": "assert(totalDeposits == sum(deposits[*]))",
+      "confidence": "high"
+    },
+    {
+      "description": "Contract's actual token/ETH balance should always be >= totalDeposits",
+      "kind": "solvency",
+      "stateVars": [
+        "NaiveReceiverPool.totalDeposits"
+      ],
+      "threatenedBy": [
+        "NaiveReceiverPool.flashLoan",
+        "NaiveReceiverPool.withdraw",
+        "NaiveReceiverPool._deposit"
+      ],
+      "assertion": "assert(token.balanceOf(address(this)) >= totalDeposits)",
+      "confidence": "high"
+    },
+    {
+      "description": "Contract's actual token/ETH balance should always be >= totalDeposits",
+      "kind": "solvency",
+      "stateVars": [
+        "TokenBridge.totalDeposits"
+      ],
+      "threatenedBy": [
+        "TokenBridge.executeTokenWithdrawal"
+      ],
+      "assertion": "assert(token.balanceOf(address(this)) >= totalDeposits)",
+      "confidence": "high"
+    },
+    {
+      "description": "A deposit of non-zero assets should always produce non-zero shares (prevents inflation attack)",
+      "kind": "no-profit",
+      "stateVars": [],
+      "threatenedBy": [
+        "CurvyPuppetLending.deposit",
+        "NaiveReceiverPool.deposit",
+        "NaiveReceiverPool._deposit",
+        "PuppetPool.calculateDepositRequired",
+        "PuppetV2Pool.calculateDepositOfWETHRequired",
+        "PuppetV3Pool.calculateDepositOfWETHRequired",
+        "ShardsFeeVault.deposit",
+        "ShardsNFTMarketplace.depositFees",
+        "SideEntranceLenderPool.deposit",
+        "UnstoppableVault.afterDeposit"
+      ],
+      "assertion": "assert(assets > 0 implies shares > 0)",
+      "confidence": "high"
+    },
+    {
+      "description": "Admin-only functions (execute, withdraw, sweepFunds, proxyCreated, updateDelay, sweepFunds, sellOne, _offerOne, onERC721Received, flashLoan, borrow, flashLoan, emergencyExit, queueAction, cancel, setRate, onFlashLoan, checkFlashLoan, flashLoan, setFeeRecipient, execute, setPause, setUpgrader, rule, executeTokenWithdrawal) should revert when called by non-admin",
+      "kind": "access",
+      "stateVars": [],
+      "threatenedBy": [
+        "AuthorizedExecutor.execute",
+        "SelfAuthorizedVault.withdraw",
+        "SelfAuthorizedVault.sweepFunds",
+        "WalletRegistry.proxyCreated",
+        "ClimberTimelock.updateDelay",
+        "ClimberVault.sweepFunds",
+        "Exchange.sellOne",
+        "FreeRiderNFTMarketplace._offerOne",
+        "FreeRiderRecoveryManager.onERC721Received",
+        "NaiveReceiverPool.flashLoan",
+        "PuppetV2Pool.borrow",
+        "SelfiePool.flashLoan",
+        "SelfiePool.emergencyExit",
+        "SimpleGovernance.queueAction",
+        "ShardsNFTMarketplace.cancel",
+        "ShardsNFTMarketplace.setRate",
+        "UnstoppableMonitor.onFlashLoan",
+        "UnstoppableMonitor.checkFlashLoan",
+        "UnstoppableVault.flashLoan",
+        "UnstoppableVault.setFeeRecipient",
+        "UnstoppableVault.execute",
+        "UnstoppableVault.setPause",
+        "TransparentProxy.setUpgrader",
+        "WalletDeployer.rule",
+        "TokenBridge.executeTokenWithdrawal"
+      ],
+      "assertion": "assert(msg.sender != admin implies revert)",
+      "confidence": "high"
+    },
+    {
+      "description": "An immediate deposit-then-withdraw cycle should not yield profit for the depositor",
+      "kind": "no-profit",
+      "stateVars": [],
+      "threatenedBy": [
+        "DamnValuableStaking.stake",
+        "DamnValuableStaking.withdraw",
+        "SelfAuthorizedVault.withdraw",
+        "SelfAuthorizedVault.getLastWithdrawalTimestamp",
+        "ClimberVault.withdraw",
+        "ClimberVault.getLastWithdrawalTimestamp",
+        "ClimberVault._updateLastWithdrawalTimestamp",
+        "CurvyPuppetLending.deposit",
+        "CurvyPuppetLending.withdraw",
+        "CurvyPuppetLending.redeem",
+        "NaiveReceiverPool.withdraw",
+        "NaiveReceiverPool.deposit",
+        "NaiveReceiverPool._deposit",
+        "PuppetPool.calculateDepositRequired",
+        "PuppetV2Pool.calculateDepositOfWETHRequired",
+        "PuppetV3Pool.calculateDepositOfWETHRequired",
+        "ShardsFeeVault.deposit",
+        "ShardsFeeVault.withdraw",
+        "ShardsNFTMarketplace.redeem",
+        "ShardsNFTMarketplace.depositFees",
+        "SideEntranceLenderPool.deposit",
+        "SideEntranceLenderPool.withdraw",
+        "UnstoppableVault.beforeWithdraw",
+        "UnstoppableVault.afterDeposit",
+        "L1Gateway.finalizeWithdrawal",
+        "TokenBridge.executeTokenWithdrawal"
+      ],
+      "assertion": "assert(balance_after_withdraw <= balance_before_deposit)",
+      "confidence": "medium"
+    }
+  ],
+  "patternFindings": {
+    "externalCallReceivers": [
+      {
+        "function": "DamnValuableStaking.stake",
+        "call": "external.transferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "low"
+      },
+      {
+        "function": "DamnValuableStaking.transfer",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "DamnValuableStaking.transferFrom",
+        "call": "external.transferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "low"
+      },
+      {
+        "function": "DamnValuableStaking.withdraw",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "DamnValuableStaking.claim",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "DamnValuableVotes._update",
+        "call": "external._update",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "DamnValuableVotes.nonces",
+        "call": "external.nonces",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "AuthorizedExecutor.execute",
+        "call": "external.functionCall",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "AuthorizedExecutor.getActionId",
+        "call": "external.encodePacked",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "SelfAuthorizedVault.withdraw",
+        "call": "external.safeTransfer",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "SelfAuthorizedVault.sweepFunds",
+        "call": "external.safeTransfer",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "SelfAuthorizedVault.sweepFunds",
+        "call": "external.balanceOf",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      },
+      {
+        "function": "WalletRegistry.constructor",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WalletRegistry.proxyCreated",
+        "call": "external.balanceOf",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      },
+      {
+        "function": "WalletRegistry.proxyCreated",
+        "call": "external.getThreshold",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WalletRegistry.proxyCreated",
+        "call": "Safe.Safe",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WalletRegistry.proxyCreated",
+        "call": "external.getOwners",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WalletRegistry.proxyCreated",
+        "call": "external.safeTransfer",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WalletRegistry._getFallbackManager",
+        "call": "external.decode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WalletRegistry._getFallbackManager",
+        "call": "external.getStorageAt",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WalletRegistry._getFallbackManager",
+        "call": "Safe.Safe",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ClimberTimelock.execute",
+        "call": "external.functionCallWithValue",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ClimberTimelockBase.getOperationId",
+        "call": "external.encode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ClimberVault.withdraw",
+        "call": "external.safeTransfer",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ClimberVault.sweepFunds",
+        "call": "external.safeTransfer",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ClimberVault.sweepFunds",
+        "call": "external.balanceOf",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      },
+      {
+        "function": "ClimberVault.sweepFunds",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exchange.constructor",
+        "call": "external.renounceOwnership",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exchange.constructor",
+        "call": "TrustfulOracle.TrustfulOracle",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exchange.buyOne",
+        "call": "external.getMedianPrice",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exchange.buyOne",
+        "call": "external.symbol",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exchange.buyOne",
+        "call": "external.safeMint",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exchange.buyOne",
+        "call": "external.sendValue",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exchange.sellOne",
+        "call": "external.ownerOf",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exchange.sellOne",
+        "call": "external.getApproved",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exchange.sellOne",
+        "call": "external.getMedianPrice",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exchange.sellOne",
+        "call": "external.symbol",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exchange.sellOne",
+        "call": "external.transferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "low"
+      },
+      {
+        "function": "Exchange.sellOne",
+        "call": "external.burn",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exchange.sellOne",
+        "call": "external.sendValue",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "TrustfulOracle._computeMedianPrice",
+        "call": "external.insertionSort",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "TrustfulOracleInitializer.constructor",
+        "call": "external.setupInitialPrices",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "CurvyPuppetLending.constructor",
+        "call": "external.lp_token",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "CurvyPuppetLending.withdraw",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "CurvyPuppetLending.withdraw",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "CurvyPuppetLending.borrow",
+        "call": "external.divWadDown",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "CurvyPuppetLending.borrow",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "CurvyPuppetLending.borrow",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "CurvyPuppetLending.redeem",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "CurvyPuppetLending.redeem",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "CurvyPuppetLending.liquidate",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "CurvyPuppetLending.liquidate",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "CurvyPuppetLending.getBorrowValue",
+        "call": "external.mulWadUp",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "CurvyPuppetLending.getCollateralValue",
+        "call": "external.mulWadDown",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "CurvyPuppetLending.getCollateralValue",
+        "call": "external.getPrice",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "CurvyPuppetLending._pullAssets",
+        "call": "external.transferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "low"
+      },
+      {
+        "function": "CurvyPuppetLending._pullAssets",
+        "call": "external.toUint160",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "CurvyPuppetLending._getLPTokenPrice",
+        "call": "external.mulWadDown",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "CurvyPuppetLending._getLPTokenPrice",
+        "call": "external.get_virtual_price",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "CurvyPuppetLending._getLPTokenPrice",
+        "call": "external.getPrice",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "CurvyPuppetLending._getLPTokenPrice",
+        "call": "external.coins",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "FreeRiderNFTMarketplace.constructor",
+        "call": "external.renounceOwnership",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "FreeRiderNFTMarketplace.constructor",
+        "call": "external.safeMint",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "FreeRiderNFTMarketplace._offerOne",
+        "call": "external.ownerOf",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "FreeRiderNFTMarketplace._offerOne",
+        "call": "external.getApproved",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "FreeRiderNFTMarketplace._offerOne",
+        "call": "external.isApprovedForAll",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "FreeRiderNFTMarketplace._buyOne",
+        "call": "external.safeTransferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "FreeRiderNFTMarketplace._buyOne",
+        "call": "external.ownerOf",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "FreeRiderNFTMarketplace._buyOne",
+        "call": "external.sendValue",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "FreeRiderRecoveryManager.constructor",
+        "call": "IERC721.IERC721",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "FreeRiderRecoveryManager.constructor",
+        "call": "external.setApprovalForAll",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "FreeRiderRecoveryManager.onERC721Received",
+        "call": "external.ownerOf",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "FreeRiderRecoveryManager.onERC721Received",
+        "call": "external.decode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "FreeRiderRecoveryManager.onERC721Received",
+        "call": "external.sendValue",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "BasicForwarder._checkRequest",
+        "call": "external.trustedForwarder",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "BasicForwarder._checkRequest",
+        "call": "IHasTrustedForwarder.IHasTrustedForwarder",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "BasicForwarder._checkRequest",
+        "call": "external.recover",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "BasicForwarder.execute",
+        "call": "external.encodePacked",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "BasicForwarder.getDataHash",
+        "call": "external.encode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "FlashLoanReceiver.onFlashLoan",
+        "call": "external.weth",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "FlashLoanReceiver.onFlashLoan",
+        "call": "NaiveReceiverPool.NaiveReceiverPool",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "FlashLoanReceiver.onFlashLoan",
+        "call": "external.UnsupportedCurrency",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "FlashLoanReceiver.onFlashLoan",
+        "call": "external.approve",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "FlashLoanReceiver.onFlashLoan",
+        "call": "WETH.WETH",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Multicall.multicall",
+        "call": "external.functionDelegateCall",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "NaiveReceiverPool.constructor",
+        "call": "WETH.WETH",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "NaiveReceiverPool.maxFlashLoan",
+        "call": "external.balanceOf",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      },
+      {
+        "function": "NaiveReceiverPool.flashLoan",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "NaiveReceiverPool.flashLoan",
+        "call": "external.onFlashLoan",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "NaiveReceiverPool.flashLoan",
+        "call": "external.transferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "low"
+      },
+      {
+        "function": "NaiveReceiverPool.withdraw",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "NaiveReceiverPool._deposit",
+        "call": "low_level.deposit",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "NaiveReceiverPool._msgSender",
+        "call": "external._msgSender",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PuppetPool.constructor",
+        "call": "DamnValuableToken.DamnValuableToken",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PuppetPool.borrow",
+        "call": "external.sendValue",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PuppetPool.borrow",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "PuppetPool._computeOraclePrice",
+        "call": "external.balanceOf",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      },
+      {
+        "function": "PuppetV2Pool.constructor",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PuppetV2Pool.borrow",
+        "call": "external.transferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "low"
+      },
+      {
+        "function": "PuppetV2Pool.borrow",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "PuppetV2Pool._getOracleQuote",
+        "call": "external.getReserves",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PuppetV2Pool._getOracleQuote",
+        "call": "external.quote",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PuppetV3Pool.borrow",
+        "call": "external.transferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "low"
+      },
+      {
+        "function": "PuppetV3Pool.borrow",
+        "call": "external.safeTransfer",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PuppetV3Pool._getOracleQuote",
+        "call": "external.consult",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PuppetV3Pool._getOracleQuote",
+        "call": "external.getQuoteAtTick",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "SelfiePool.maxFlashLoan",
+        "call": "external.balanceOf",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      },
+      {
+        "function": "SelfiePool.flashLoan",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "SelfiePool.flashLoan",
+        "call": "external.onFlashLoan",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "SelfiePool.flashLoan",
+        "call": "external.transferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "low"
+      },
+      {
+        "function": "SelfiePool.emergencyExit",
+        "call": "external.balanceOf",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      },
+      {
+        "function": "SelfiePool.emergencyExit",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "SimpleGovernance.executeAction",
+        "call": "external.functionCallWithValue",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "SimpleGovernance._hasEnoughVotes",
+        "call": "external.getVotes",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "SimpleGovernance._hasEnoughVotes",
+        "call": "external.totalSupply",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      },
+      {
+        "function": "ShardsFeeVault.deposit",
+        "call": "external.transferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "low"
+      },
+      {
+        "function": "ShardsFeeVault.deposit",
+        "call": "external.stake",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ShardsFeeVault.withdraw",
+        "call": "external.balanceOf",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      },
+      {
+        "function": "ShardsFeeVault.withdraw",
+        "call": "external.claim",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ShardsFeeVault.withdraw",
+        "call": "external.withdraw",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ShardsFeeVault.withdraw",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "ShardsFeeVault.enableStaking",
+        "call": "external.token",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ShardsFeeVault.enableStaking",
+        "call": "external.approve",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ShardsNFTMarketplace.constructor",
+        "call": "ShardsFeeVault.ShardsFeeVault",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ShardsNFTMarketplace.constructor",
+        "call": "external.clone",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ShardsNFTMarketplace.constructor",
+        "call": "external.initialize",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ShardsNFTMarketplace.constructor",
+        "call": "external.approve",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ShardsNFTMarketplace.openOffer",
+        "call": "external.safeTransferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ShardsNFTMarketplace.redeem",
+        "call": "external.ownerOf",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ShardsNFTMarketplace.redeem",
+        "call": "external.safeTransferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ShardsNFTMarketplace.depositFees",
+        "call": "external.deposit",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ShardsNFTMarketplace.fill",
+        "call": "external.push",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ShardsNFTMarketplace.fill",
+        "call": "external.transferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "low"
+      },
+      {
+        "function": "ShardsNFTMarketplace.fill",
+        "call": "external.mulDivDown",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ShardsNFTMarketplace.cancel",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "ShardsNFTMarketplace.cancel",
+        "call": "external.mulDivUp",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ShardsNFTMarketplace.getFee",
+        "call": "external.mulDivDown",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ShardsNFTMarketplace._chargeFees",
+        "call": "external.transferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "low"
+      },
+      {
+        "function": "ShardsNFTMarketplace._chargeFees",
+        "call": "external.balanceOf",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      },
+      {
+        "function": "ShardsNFTMarketplace._closeOffer",
+        "call": "external.mulWadUp",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "ShardsNFTMarketplace._closeOffer",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "ShardsNFTMarketplace._toDVT",
+        "call": "external.mulDivDown",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "SideEntranceLenderPool.withdraw",
+        "call": "external.safeTransferETH",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "SideEntranceLenderPool.flashLoan",
+        "call": "low_level.execute",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "SideEntranceLenderPool.flashLoan",
+        "call": "IFlashLoanEtherReceiver.IFlashLoanEtherReceiver",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "TheRewarderDistributor.getRemaining",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "TheRewarderDistributor.getNextBatchNumber",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "TheRewarderDistributor.getRoot",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "TheRewarderDistributor.createDistribution",
+        "call": "external.safeTransferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "TheRewarderDistributor.clean",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "TheRewarderDistributor.clean",
+        "call": "external.balanceOf",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      },
+      {
+        "function": "TheRewarderDistributor.claimRewards",
+        "call": "external.encodePacked",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "TheRewarderDistributor.claimRewards",
+        "call": "external.verify",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "TheRewarderDistributor.claimRewards",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "TrusterLenderPool.flashLoan",
+        "call": "external.balanceOf",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      },
+      {
+        "function": "TrusterLenderPool.flashLoan",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "TrusterLenderPool.flashLoan",
+        "call": "external.functionCall",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "UnstoppableMonitor.constructor",
+        "call": "UnstoppableVault.UnstoppableVault",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "UnstoppableMonitor.onFlashLoan",
+        "call": "external.asset",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "UnstoppableMonitor.onFlashLoan",
+        "call": "external.approve",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "UnstoppableMonitor.onFlashLoan",
+        "call": "ERC20.ERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "UnstoppableMonitor.checkFlashLoan",
+        "call": "external.asset",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "UnstoppableMonitor.checkFlashLoan",
+        "call": "external.setPause",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "UnstoppableMonitor.checkFlashLoan",
+        "call": "external.transferOwnership",
+        "receiverType": "state-var",
+        "callbackRisk": "low"
+      },
+      {
+        "function": "UnstoppableMonitor.checkFlashLoan",
+        "call": "external.flashLoan",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "UnstoppableVault.flashFee",
+        "call": "external.mulWadUp",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "UnstoppableVault.totalAssets",
+        "call": "external.balanceOf",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      },
+      {
+        "function": "UnstoppableVault.flashLoan",
+        "call": "external.safeTransfer",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "UnstoppableVault.flashLoan",
+        "call": "ERC20.ERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "UnstoppableVault.flashLoan",
+        "call": "external.onFlashLoan",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "UnstoppableVault.flashLoan",
+        "call": "external.safeTransferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "UnstoppableVault.execute",
+        "call": "low_level.delegatecall",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "AuthorizerFactory.deployWithProxy",
+        "call": "external.encodeCall",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "AuthorizerFactory.deployWithProxy",
+        "call": "external.needsInit",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "AuthorizerFactory.deployWithProxy",
+        "call": "AuthorizerUpgradeable.AuthorizerUpgradeable",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "AuthorizerFactory.deployWithProxy",
+        "call": "external.setUpgrader",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "AuthorizerFactory.deployWithProxy",
+        "call": "TransparentProxy.TransparentProxy",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "TransparentProxy.constructor",
+        "call": "external.changeAdmin",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "TransparentProxy.setUpgrader",
+        "call": "external.getAdmin",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "TransparentProxy._fallback",
+        "call": "external._fallback",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "TransparentProxy._dispatchUpgradeToAndCall",
+        "call": "external.decode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "TransparentProxy._dispatchUpgradeToAndCall",
+        "call": "external.upgradeToAndCall",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WalletDeployer.constructor",
+        "call": "SafeProxyFactory.SafeProxyFactory",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WalletDeployer.drop",
+        "call": "external.createProxyWithNonce",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WalletDeployer.drop",
+        "call": "external.balanceOf",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      },
+      {
+        "function": "WalletDeployer.drop",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WalletDeployer.drop",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "L1Forwarder.forwardMessage",
+        "call": "external.encodeWithSignature",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "L1Forwarder.forwardMessage",
+        "call": "external.xSender",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "L1Gateway.finalizeWithdrawal",
+        "call": "external.encode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "L1Gateway.finalizeWithdrawal",
+        "call": "external.verify",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "L2Handler.sendMessage",
+        "call": "external.store",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "L2Handler.sendMessage",
+        "call": "external.encodeCall",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "L2MessageStore.store",
+        "call": "external.encode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "TokenBridge.executeTokenWithdrawal",
+        "call": "external.getSender",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "TokenBridge.executeTokenWithdrawal",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      }
+    ],
+    "ceiViolations": [
+      {
+        "function": "NaiveReceiverPool.constructor",
+        "externalCall": "WETH.WETH",
+        "stateWritesAfter": [
+          "NaiveReceiverPool.trustedForwarder",
+          "NaiveReceiverPool.feeReceiver"
+        ],
+        "hasReentrancyGuard": false,
+        "reentrantPaths": []
+      },
+      {
+        "function": "NaiveReceiverPool.flashLoan",
+        "externalCall": "external.transfer",
+        "stateWritesAfter": [
+          "NaiveReceiverPool.totalDeposits",
+          "NaiveReceiverPool.totalDeposits",
+          "NaiveReceiverPool.deposits"
+        ],
+        "hasReentrancyGuard": false,
+        "reentrantPaths": [
+          "NaiveReceiverPool.withdraw"
+        ]
+      },
+      {
+        "function": "PuppetPool.constructor",
+        "externalCall": "DamnValuableToken.DamnValuableToken",
+        "stateWritesAfter": [
+          "PuppetPool.uniswapPair"
+        ],
+        "hasReentrancyGuard": false,
+        "reentrantPaths": []
+      },
+      {
+        "function": "PuppetV2Pool.constructor",
+        "externalCall": "IERC20.IERC20",
+        "stateWritesAfter": [
+          "PuppetV2Pool._token",
+          "PuppetV2Pool._uniswapPair",
+          "PuppetV2Pool._uniswapFactory"
+        ],
+        "hasReentrancyGuard": false,
+        "reentrantPaths": []
+      },
+      {
+        "function": "WalletDeployer.constructor",
+        "externalCall": "SafeProxyFactory.SafeProxyFactory",
+        "stateWritesAfter": [
+          "WalletDeployer.cpy",
+          "WalletDeployer.chief"
+        ],
+        "hasReentrancyGuard": false,
+        "reentrantPaths": []
+      }
+    ],
+    "stateVarPairings": [
+      {
+        "aggregate": "NaiveReceiverPool.totalDeposits",
+        "individual": "NaiveReceiverPool.deposits",
+        "mismatchedUpdates": [],
+        "relationship": "totalDeposits == sum(deposits)"
+      }
+    ],
+    "interfaceAssumptions": [],
+    "privilegeSurface": {
+      "adminFunctions": [
+        "AuthorizedExecutor.execute",
+        "SelfAuthorizedVault.withdraw",
+        "SelfAuthorizedVault.sweepFunds",
+        "WalletRegistry.proxyCreated",
+        "ClimberTimelock.updateDelay",
+        "ClimberVault.sweepFunds",
+        "Exchange.sellOne",
+        "FreeRiderRecoveryManager.onERC721Received",
+        "NaiveReceiverPool.flashLoan",
+        "PuppetV2Pool.borrow",
+        "SelfiePool.flashLoan",
+        "SelfiePool.emergencyExit",
+        "SimpleGovernance.queueAction",
+        "ShardsNFTMarketplace.cancel",
+        "ShardsNFTMarketplace.setRate",
+        "UnstoppableMonitor.onFlashLoan",
+        "UnstoppableMonitor.checkFlashLoan",
+        "UnstoppableVault.flashLoan",
+        "UnstoppableVault.setFeeRecipient",
+        "UnstoppableVault.execute",
+        "UnstoppableVault.setPause",
+        "TransparentProxy.setUpgrader",
+        "WalletDeployer.rule",
+        "TokenBridge.executeTokenWithdrawal"
+      ],
+      "unguardedStateMutators": [
+        "DamnValuableNFT.safeMint",
+        "DamnValuableStaking.constructor",
+        "AuthorizedExecutor.setPermissions",
+        "WalletRegistry.constructor",
+        "WalletRegistry.addBeneficiary",
+        "Exchange.constructor",
+        "TrustfulOracleInitializer.constructor",
+        "CurvyPuppetLending.constructor",
+        "CurvyPuppetOracle.setPrice",
+        "FreeRiderNFTMarketplace.constructor",
+        "FreeRiderRecoveryManager.constructor",
+        "FlashLoanReceiver.constructor",
+        "NaiveReceiverPool.constructor",
+        "NaiveReceiverPool.withdraw",
+        "PuppetPool.constructor",
+        "PuppetPool.borrow",
+        "PuppetV2Pool.constructor",
+        "PuppetV3Pool.constructor",
+        "PuppetV3Pool.borrow",
+        "SelfiePool.constructor",
+        "SimpleGovernance.constructor",
+        "ShardsFeeVault.initialize",
+        "ShardsFeeVault.enableStaking",
+        "ShardsNFTMarketplace.constructor",
+        "ShardsNFTMarketplace.openOffer",
+        "ShardsNFTMarketplace.depositFees",
+        "SideEntranceLenderPool.deposit",
+        "TrusterLenderPool.constructor",
+        "UnstoppableMonitor.constructor",
+        "UnstoppableVault.constructor",
+        "AuthorizerUpgradeable.constructor",
+        "AuthorizerUpgradeable.init",
+        "WalletDeployer.constructor",
+        "L1Forwarder.constructor",
+        "L1Forwarder.setL2Handler",
+        "L1Forwarder.forwardMessage",
+        "L1Gateway.setRoot",
+        "L1Gateway.finalizeWithdrawal",
+        "L2Handler.constructor",
+        "L2Handler.sendMessage",
+        "L2MessageStore.store",
+        "TokenBridge.constructor"
+      ],
+      "guardedBy": {
+        "AuthorizedExecutor.execute": [
+          "if-revert: if-revert"
+        ],
+        "SelfAuthorizedVault.withdraw": [
+          "modifier: onlyThis"
+        ],
+        "SelfAuthorizedVault.sweepFunds": [
+          "modifier: onlyThis"
+        ],
+        "WalletRegistry.proxyCreated": [
+          "if-revert: msg.sender == walletFactory"
+        ],
+        "ClimberTimelock.updateDelay": [
+          "if-revert: if-revert"
+        ],
+        "ClimberVault.sweepFunds": [
+          "modifier: msg.sender == _sweeper"
+        ],
+        "Exchange.sellOne": [
+          "if-revert: if-revert"
+        ],
+        "FreeRiderRecoveryManager.onERC721Received": [
+          "if-revert: if-revert"
+        ],
+        "NaiveReceiverPool.flashLoan": [
+          "if-revert: if-revert"
+        ],
+        "PuppetV2Pool.borrow": [
+          "require: require"
+        ],
+        "SelfiePool.flashLoan": [
+          "if-revert: if-revert"
+        ],
+        "SelfiePool.emergencyExit": [
+          "modifier: onlyGovernance"
+        ],
+        "SimpleGovernance.queueAction": [
+          "if-revert: if-revert"
+        ],
+        "ShardsNFTMarketplace.cancel": [
+          "if-revert: msg.sender == buyer"
+        ],
+        "ShardsNFTMarketplace.setRate": [
+          "if-revert: msg.sender == oracle"
+        ],
+        "UnstoppableMonitor.onFlashLoan": [
+          "if-revert: if-revert"
+        ],
+        "UnstoppableMonitor.checkFlashLoan": [
+          "modifier: msg.sender == owner"
+        ],
+        "UnstoppableVault.flashLoan": [
+          "if-revert: if-revert"
+        ],
+        "UnstoppableVault.setFeeRecipient": [
+          "modifier: msg.sender == owner"
+        ],
+        "UnstoppableVault.execute": [
+          "modifier: msg.sender == owner"
+        ],
+        "UnstoppableVault.setPause": [
+          "modifier: msg.sender == owner"
+        ],
+        "TransparentProxy.setUpgrader": [
+          "require: require"
+        ],
+        "WalletDeployer.rule": [
+          "if-revert: msg.sender == chief"
+        ],
+        "TokenBridge.executeTokenWithdrawal": [
+          "if-revert: if-revert"
+        ]
+      }
+    },
+    "valueFlowPaths": [
+      {
+        "source": "NaiveReceiverPool.constructor",
+        "sink": "NaiveReceiverPool.flashLoan",
+        "intermediateState": [
+          "NaiveReceiverPool.weth",
+          "NaiveReceiverPool.feeReceiver"
+        ],
+        "checksActualReceived": false,
+        "hasExternalCallOnPath": true
+      },
+      {
+        "source": "NaiveReceiverPool.constructor",
+        "sink": "NaiveReceiverPool.withdraw",
+        "intermediateState": [
+          "NaiveReceiverPool.weth"
+        ],
+        "checksActualReceived": false,
+        "hasExternalCallOnPath": true
+      },
+      {
+        "source": "NaiveReceiverPool.flashLoan",
+        "sink": "NaiveReceiverPool.flashLoan",
+        "intermediateState": [
+          "NaiveReceiverPool.totalDeposits",
+          "NaiveReceiverPool.deposits"
+        ],
+        "checksActualReceived": false,
+        "hasExternalCallOnPath": true
+      },
+      {
+        "source": "NaiveReceiverPool.flashLoan",
+        "sink": "NaiveReceiverPool.withdraw",
+        "intermediateState": [
+          "NaiveReceiverPool.totalDeposits",
+          "NaiveReceiverPool.deposits"
+        ],
+        "checksActualReceived": false,
+        "hasExternalCallOnPath": true
+      },
+      {
+        "source": "PuppetPool.borrow",
+        "sink": "PuppetPool.borrow",
+        "intermediateState": [
+          "PuppetPool.deposits"
+        ],
+        "checksActualReceived": false,
+        "hasExternalCallOnPath": true
+      },
+      {
+        "source": "PuppetV2Pool.borrow",
+        "sink": "PuppetV2Pool.borrow",
+        "intermediateState": [
+          "PuppetV2Pool.deposits"
+        ],
+        "checksActualReceived": false,
+        "hasExternalCallOnPath": true
+      },
+      {
+        "source": "SelfiePool.flashLoan",
+        "sink": "SelfiePool.flashLoan",
+        "intermediateState": [],
+        "checksActualReceived": false,
+        "hasExternalCallOnPath": true
+      }
+    ]
+  },
+  "investigationQuestions": [
+    "CRITICAL: NaiveReceiverPool.constructor writes state (NaiveReceiverPool.trustedForwarder, NaiveReceiverPool.feeReceiver) after external call to WETH.WETH. No reentrancy guard detected. Can the external call re-enter and exploit the stale state?",
+    "CRITICAL: NaiveReceiverPool.flashLoan writes state (NaiveReceiverPool.totalDeposits, NaiveReceiverPool.totalDeposits, NaiveReceiverPool.deposits) after external call to external.transfer. No reentrancy guard detected. Can the external call re-enter and exploit the stale state?",
+    "CRITICAL: PuppetPool.constructor writes state (PuppetPool.uniswapPair) after external call to DamnValuableToken.DamnValuableToken. No reentrancy guard detected. Can the external call re-enter and exploit the stale state?",
+    "CRITICAL: PuppetV2Pool.constructor writes state (PuppetV2Pool._token, PuppetV2Pool._uniswapPair, PuppetV2Pool._uniswapFactory) after external call to IERC20.IERC20. No reentrancy guard detected. Can the external call re-enter and exploit the stale state?",
+    "CRITICAL: WalletDeployer.constructor writes state (WalletDeployer.cpy, WalletDeployer.chief) after external call to SafeProxyFactory.SafeProxyFactory. No reentrancy guard detected. Can the external call re-enter and exploit the stale state?",
+    "Invariant [conservation]: NaiveReceiverPool.totalDeposits should equal the sum of all NaiveReceiverPool.deposits entries. Assertion: assert(totalDeposits == sum(deposits[*])). Threatened by: constructor, safeMint, constructor. Read the code to verify this holds and identify any violation path.",
+    "Invariant [solvency]: Contract's actual token/ETH balance should always be >= totalDeposits. Assertion: assert(token.balanceOf(address(this)) >= totalDeposits). Threatened by: flashLoan, withdraw, _deposit. Read the code to verify this holds and identify any violation path.",
+    "Invariant [no-profit]: A deposit of non-zero assets should always produce non-zero shares (prevents inflation attack). Assertion: assert(assets > 0 implies shares > 0). Threatened by: deposit, deposit, _deposit, calculateDepositRequired, calculateDepositOfWETHRequired, calculateDepositOfWETHRequired, deposit, depositFees, deposit, afterDeposit. Read the code to verify this holds and identify any violation path.",
+    "Invariant [access]: Admin-only functions (execute, withdraw, sweepFunds, proxyCreated, updateDelay, sweepFunds, sellOne, _offerOne, onERC721Received, flashLoan, borrow, flashLoan, emergencyExit, queueAction, cancel, setRate, onFlashLoan, checkFlashLoan, flashLoan, setFeeRecipient, execute, setPause, setUpgrader, rule, executeTokenWithdrawal) should revert when called by non-admin. Assertion: assert(msg.sender != admin implies revert). Threatened by: execute, withdraw, sweepFunds, proxyCreated, updateDelay, sweepFunds, sellOne, _offerOne, onERC721Received, flashLoan, borrow, flashLoan, emergencyExit, queueAction, cancel, setRate, onFlashLoan, checkFlashLoan, flashLoan, setFeeRecipient, execute, setPause, setUpgrader, rule, executeTokenWithdrawal. Read the code to verify this holds and identify any violation path.",
+    "Invariant [no-profit]: An immediate deposit-then-withdraw cycle should not yield profit for the depositor. Assertion: assert(balance_after_withdraw <= balance_before_deposit). Threatened by: stake, withdraw, withdraw, getLastWithdrawalTimestamp, withdraw, getLastWithdrawalTimestamp, _updateLastWithdrawalTimestamp, deposit, withdraw, redeem, withdraw, deposit, _deposit, calculateDepositRequired, calculateDepositOfWETHRequired, calculateDepositOfWETHRequired, deposit, withdraw, redeem, depositFees, deposit, withdraw, beforeWithdraw, afterDeposit, finalizeWithdrawal, executeTokenWithdrawal. Read the code to verify this holds and identify any violation path.",
+    "WalletRegistry.constructor writes state but has no access control. What prevents a malicious caller from abusing this? Factors: public visibility, 1 external call(s): IERC20.IERC20, no access control but writes state, writes 4 state vars",
+    "Exchange.constructor writes state but has no access control. What prevents a malicious caller from abusing this? Factors: public visibility, 2 external call(s): external.renounceOwnership, TrustfulOracle.TrustfulOracle, no access control but writes state",
+    "TrustfulOracleInitializer.constructor writes state but has no access control. What prevents a malicious caller from abusing this? Factors: public visibility, 1 external call(s): external.setupInitialPrices, no access control but writes state",
+    "CurvyPuppetLending.constructor writes state but has no access control. What prevents a malicious caller from abusing this? Factors: public visibility, 1 external call(s): external.lp_token, no access control but writes state, writes 5 state vars",
+    "FreeRiderNFTMarketplace.constructor writes state but has no access control. What prevents a malicious caller from abusing this? Factors: public visibility, 2 external call(s): external.renounceOwnership, external.safeMint, no access control but writes state",
+    "FreeRiderRecoveryManager.constructor writes state but has no access control. What prevents a malicious caller from abusing this? Factors: public visibility, receives ETH (payable), 2 external call(s): IERC721.IERC721, external.setApprovalForAll, no access control but writes state, writes 3 state vars",
+    "NaiveReceiverPool.constructor writes state but has no access control. What prevents a malicious caller from abusing this? Factors: public visibility, receives ETH (payable), 1 external call(s): WETH.WETH, STATE WRITE AFTER EXTERNAL CALL (CEI violation), no access control but writes state, writes 3 state vars",
+    "NaiveReceiverPool.withdraw writes state but has no access control. What prevents a malicious caller from abusing this? Factors: external visibility, 1 external call(s): low_level.transfer, no access control but writes state, handles token transfers, uses low-level call",
+    "PuppetPool.constructor writes state but has no access control. What prevents a malicious caller from abusing this? Factors: public visibility, 1 external call(s): DamnValuableToken.DamnValuableToken, STATE WRITE AFTER EXTERNAL CALL (CEI violation), no access control but writes state",
+    "PuppetPool.borrow writes state but has no access control. What prevents a malicious caller from abusing this? Factors: external visibility, receives ETH (payable), 2 external call(s): external.sendValue, low_level.transfer, no access control but writes state, handles token transfers, uses low-level call",
+    "PuppetV2Pool.constructor writes state but has no access control. What prevents a malicious caller from abusing this? Factors: public visibility, 1 external call(s): IERC20.IERC20, STATE WRITE AFTER EXTERNAL CALL (CEI violation), no access control but writes state, writes 4 state vars",
+    "PuppetV3Pool.borrow writes state but has no access control. What prevents a malicious caller from abusing this? Factors: external visibility, 2 external call(s): external.transferFrom, external.safeTransfer, no access control but writes state, handles token transfers",
+    "ShardsFeeVault.enableStaking writes state but has no access control. What prevents a malicious caller from abusing this? Factors: external visibility, 2 external call(s): external.token, external.approve, no access control but writes state",
+    "ShardsNFTMarketplace.constructor writes state but has no access control. What prevents a malicious caller from abusing this? Factors: public visibility, 4 external call(s): ShardsFeeVault.ShardsFeeVault, external.clone, external.initialize, external.approve, no access control but writes state, writes 5 state vars",
+    "ShardsNFTMarketplace.openOffer writes state but has no access control. What prevents a malicious caller from abusing this? Factors: external visibility, 1 external call(s): external.safeTransferFrom, no access control but writes state, writes 3 state vars, handles token transfers",
+    "ShardsNFTMarketplace.depositFees writes state but has no access control. What prevents a malicious caller from abusing this? Factors: external visibility, 1 external call(s): external.deposit, no access control but writes state",
+    "SideEntranceLenderPool.deposit writes state but has no access control. What prevents a malicious caller from abusing this? Factors: external visibility, receives ETH (payable), no access control but writes state",
+    "UnstoppableMonitor.constructor writes state but has no access control. What prevents a malicious caller from abusing this? Factors: public visibility, 1 external call(s): UnstoppableVault.UnstoppableVault, no access control but writes state",
+    "WalletDeployer.constructor writes state but has no access control. What prevents a malicious caller from abusing this? Factors: public visibility, 1 external call(s): SafeProxyFactory.SafeProxyFactory, STATE WRITE AFTER EXTERNAL CALL (CEI violation), no access control but writes state, writes 4 state vars",
+    "L1Forwarder.forwardMessage writes state but has no access control. What prevents a malicious caller from abusing this? Factors: external visibility, 2 external call(s): external.encodeWithSignature, external.xSender, no access control but writes state, writes 3 state vars",
+    "L1Gateway.finalizeWithdrawal writes state but has no access control. What prevents a malicious caller from abusing this? Factors: external visibility, 2 external call(s): external.encode, external.verify, no access control but writes state, writes 3 state vars",
+    "L2Handler.sendMessage writes state but has no access control. What prevents a malicious caller from abusing this? Factors: external visibility, 2 external call(s): external.store, external.encodeCall, no access control but writes state",
+    "L2MessageStore.store writes state but has no access control. What prevents a malicious caller from abusing this? Factors: external visibility, 1 external call(s): external.encode, no access control but writes state",
+    "Value flow constructor → weth → feeReceiver → flashLoan: Source does not check actual amount received. Is this vulnerable to fee-on-transfer tokens?",
+    "Value flow constructor → weth → withdraw: Source does not check actual amount received. Is this vulnerable to fee-on-transfer tokens?",
+    "Value flow flashLoan → totalDeposits → deposits → flashLoan: Source does not check actual amount received. Is this vulnerable to fee-on-transfer tokens?",
+    "Value flow borrow → deposits → borrow: Source does not check actual amount received. Is this vulnerable to fee-on-transfer tokens?",
+    "Value flow flashLoan →  → flashLoan: Source does not check actual amount received. Is this vulnerable to fee-on-transfer tokens?",
+    "Known vault vulnerability: \"First-depositor / inflation attack (ERC4626)\". Trace the relevant code path to confirm or rule out.",
+    "Known vault vulnerability: \"Share price manipulation via donation\". Trace the relevant code path to confirm or rule out.",
+    "Known vault vulnerability: \"Rounding errors in share/asset conversion\". Trace the relevant code path to confirm or rule out."
+  ]
+}

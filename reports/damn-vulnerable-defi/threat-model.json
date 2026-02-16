@@ -1,0 +1,1128 @@
+{
+  "version": "1.0",
+  "target": "damn-vulnerable-defi",
+  "contractType": "other",
+  "timestamp": "2026-02-16T07:51:30.792Z",
+  "actors": [
+    {
+      "name": "attacker",
+      "type": "user",
+      "capabilities": [
+        "call any public/external function",
+        "deploy contracts",
+        "hold ETH and tokens",
+        "manipulate DEX prices",
+        "take flash loans"
+      ]
+    },
+    {
+      "name": "depositor",
+      "type": "user",
+      "capabilities": [
+        "deposit ETH/tokens",
+        "withdraw",
+        "take flash loans"
+      ]
+    },
+    {
+      "name": "borrower",
+      "type": "user",
+      "capabilities": [
+        "borrow tokens with collateral",
+        "repay loans"
+      ]
+    },
+    {
+      "name": "NFT buyer",
+      "type": "user",
+      "capabilities": [
+        "buy NFTs from marketplace",
+        "sell NFTs"
+      ]
+    },
+    {
+      "name": "governance participant",
+      "type": "user",
+      "capabilities": [
+        "queue governance actions",
+        "execute governance actions",
+        "vote with tokens"
+      ]
+    },
+    {
+      "name": "bridge user",
+      "type": "user",
+      "capabilities": [
+        "finalize withdrawals via merkle proofs",
+        "forward messages"
+      ]
+    },
+    {
+      "name": "reward claimer",
+      "type": "user",
+      "capabilities": [
+        "claim rewards via merkle proofs"
+      ]
+    },
+    {
+      "name": "wallet deployer",
+      "type": "user",
+      "capabilities": [
+        "deploy Safe wallets",
+        "receive deployment rewards"
+      ]
+    },
+    {
+      "name": "admin/owner",
+      "type": "admin",
+      "capabilities": [
+        "pause contracts",
+        "set fees",
+        "update oracle prices",
+        "sweep funds",
+        "upgrade proxies"
+      ]
+    },
+    {
+      "name": "trusted oracle source",
+      "type": "admin",
+      "capabilities": [
+        "post prices to TrustfulOracle"
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "name": "ETH in SideEntranceLenderPool",
+      "type": "funds",
+      "location": "SideEntranceLenderPool:balances"
+    },
+    {
+      "name": "WETH in NaiveReceiverPool",
+      "type": "funds",
+      "location": "NaiveReceiverPool:deposits"
+    },
+    {
+      "name": "DVT in TrusterLenderPool",
+      "type": "funds",
+      "location": "TrusterLenderPool:token.balanceOf"
+    },
+    {
+      "name": "DVT in SelfiePool",
+      "type": "funds",
+      "location": "SelfiePool:token.balanceOf"
+    },
+    {
+      "name": "DVT in UnstoppableVault",
+      "type": "funds",
+      "location": "UnstoppableVault:asset.balanceOf"
+    },
+    {
+      "name": "ETH in PuppetPool",
+      "type": "funds",
+      "location": "PuppetPool:deposits"
+    },
+    {
+      "name": "DVT in PuppetPool",
+      "type": "funds",
+      "location": "PuppetPool:token.balanceOf"
+    },
+    {
+      "name": "DVT in PuppetV2Pool",
+      "type": "funds",
+      "location": "PuppetV2Pool:_token.balanceOf"
+    },
+    {
+      "name": "DVT in PuppetV3Pool",
+      "type": "funds",
+      "location": "PuppetV3Pool:token.balanceOf"
+    },
+    {
+      "name": "ETH in FreeRiderNFTMarketplace",
+      "type": "funds",
+      "location": "FreeRiderNFTMarketplace:balance"
+    },
+    {
+      "name": "NFTs in FreeRiderNFTMarketplace",
+      "type": "NFTs",
+      "location": "FreeRiderNFTMarketplace:token"
+    },
+    {
+      "name": "ETH in Exchange",
+      "type": "funds",
+      "location": "Exchange:balance"
+    },
+    {
+      "name": "DVT in ClimberVault",
+      "type": "funds",
+      "location": "ClimberVault:token.balanceOf"
+    },
+    {
+      "name": "DVT in SelfAuthorizedVault",
+      "type": "funds",
+      "location": "SelfAuthorizedVault:token.balanceOf"
+    },
+    {
+      "name": "DVT in TokenBridge",
+      "type": "funds",
+      "location": "TokenBridge:token.balanceOf"
+    },
+    {
+      "name": "DVT in TheRewarderDistributor",
+      "type": "funds",
+      "location": "TheRewarderDistributor:distributions"
+    },
+    {
+      "name": "DVT in WalletRegistry",
+      "type": "funds",
+      "location": "WalletRegistry:token.balanceOf"
+    },
+    {
+      "name": "DVT in WalletDeployer",
+      "type": "funds",
+      "location": "WalletDeployer:gem.balanceOf"
+    },
+    {
+      "name": "DVT in ShardsNFTMarketplace",
+      "type": "funds",
+      "location": "ShardsNFTMarketplace:paymentToken.balanceOf"
+    },
+    {
+      "name": "ETH bounty in FreeRiderRecoveryManager",
+      "type": "funds",
+      "location": "FreeRiderRecoveryManager:balance"
+    }
+  ],
+  "trustBoundaries": [
+    {
+      "name": "Flash loan callback",
+      "description": "Flash loan pools call user-controlled receiver contracts during loan execution, allowing attacker code to run mid-transaction",
+      "crossedBy": [
+        "src/side-entrance/SideEntranceLenderPool.sol:flashLoan",
+        "src/naive-receiver/NaiveReceiverPool.sol:flashLoan",
+        "src/truster/TrusterLenderPool.sol:flashLoan",
+        "src/selfie/SelfiePool.sol:flashLoan",
+        "src/unstoppable/UnstoppableVault.sol:flashLoan"
+      ]
+    },
+    {
+      "name": "DEX price oracle",
+      "description": "PuppetPool and PuppetV2Pool read spot prices from Uniswap pairs that can be manipulated by swapping",
+      "crossedBy": [
+        "src/puppet/PuppetPool.sol:_computeOraclePrice",
+        "src/puppet-v2/PuppetV2Pool.sol:_getOracleQuote"
+      ]
+    },
+    {
+      "name": "Governance execution",
+      "description": "SimpleGovernance executes arbitrary calls on target contracts after delay period",
+      "crossedBy": [
+        "src/selfie/SimpleGovernance.sol:executeAction"
+      ]
+    },
+    {
+      "name": "Timelock execution",
+      "description": "ClimberTimelock executes calls before verifying scheduling, allowing execute-then-schedule pattern",
+      "crossedBy": [
+        "src/climber/ClimberTimelock.sol:execute"
+      ]
+    },
+    {
+      "name": "Multicall delegatecall",
+      "description": "NaiveReceiverPool's Multicall uses delegatecall to self, preserving msg.sender and msg.value context",
+      "crossedBy": [
+        "src/naive-receiver/Multicall.sol:multicall"
+      ]
+    },
+    {
+      "name": "Trusted forwarder sender spoofing",
+      "description": "NaiveReceiverPool trusts the last 20 bytes of msg.data as sender when called by trustedForwarder",
+      "crossedBy": [
+        "src/naive-receiver/NaiveReceiverPool.sol:_msgSender"
+      ]
+    },
+    {
+      "name": "Bridge message forwarding",
+      "description": "L1Gateway calls arbitrary targets with arbitrary messages based on merkle proofs",
+      "crossedBy": [
+        "src/withdrawal/L1Gateway.sol:finalizeWithdrawal",
+        "src/withdrawal/L1Forwarder.sol:forwardMessage"
+      ]
+    },
+    {
+      "name": "Arbitrary function call in TrusterLenderPool",
+      "description": "TrusterLenderPool calls any target with any data during flash loan",
+      "crossedBy": [
+        "src/truster/TrusterLenderPool.sol:flashLoan"
+      ]
+    },
+    {
+      "name": "Proxy upgrade boundary",
+      "description": "ClimberVault is upgradeable; if attacker gains owner role through timelock, they can upgrade to malicious implementation",
+      "crossedBy": [
+        "src/climber/ClimberVault.sol:_authorizeUpgrade"
+      ]
+    },
+    {
+      "name": "Safe wallet creation callback",
+      "description": "WalletRegistry callback is triggered by SafeProxyFactory during wallet creation, but the setup data controls wallet behavior",
+      "crossedBy": [
+        "src/backdoor/WalletRegistry.sol:proxyCreated"
+      ]
+    }
+  ],
+  "threats": [
+    {
+      "id": "T-001",
+      "category": "flash-loan",
+      "title": "SideEntranceLenderPool: flash loan repayment via deposit() allows draining all ETH",
+      "description": "The flashLoan function only checks that the contract's ETH balance hasn't decreased after the callback. An attacker can receive the flash loan ETH, call deposit() during the callback to credit their balance, satisfying the balance check. Then withdraw() to drain all funds.",
+      "affectedCode": [
+        "src/side-entrance/SideEntranceLenderPool.sol:35-43",
+        "src/side-entrance/SideEntranceLenderPool.sol:19-24",
+        "src/side-entrance/SideEntranceLenderPool.sol:26-33"
+      ],
+      "assets": [
+        "ETH in SideEntranceLenderPool"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/side-entrance/SideEntranceLenderPool.sol:35-43",
+            "finding": "flashLoan sends ETH to msg.sender via IFlashLoanEtherReceiver(msg.sender).execute{value: amount}(), then only checks address(this).balance >= balanceBefore"
+          },
+          {
+            "action": "Read",
+            "target": "src/side-entrance/SideEntranceLenderPool.sol:19-24",
+            "finding": "deposit() is external payable with no reentrancy guard, increments balances[msg.sender] += msg.value"
+          },
+          {
+            "action": "Read",
+            "target": "src/side-entrance/SideEntranceLenderPool.sol:26-33",
+            "finding": "withdraw() sends the full balance to msg.sender with no restrictions beyond having a balance"
+          },
+          {
+            "action": "Grep",
+            "target": "reentrancy guard in SideEntranceLenderPool",
+            "finding": "No ReentrancyGuard imported or used; deposit() can be called during flashLoan callback"
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker calls flashLoan(poolBalance)\n2. In execute() callback, attacker calls deposit{value: poolBalance}()\n3. Pool balance is restored, check passes\n4. Attacker calls withdraw() to drain entire pool balance",
+      "suggestedProperties": [
+        "check_flashloan_cannot_increase_user_balance",
+        "check_pool_solvency_after_flashloan"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "T-002",
+      "category": "cross-contract",
+      "title": "TrusterLenderPool: arbitrary function call during flash loan enables token approval theft",
+      "description": "The flashLoan function takes a target address and arbitrary calldata, calling target.functionCall(data) after transferring tokens to the borrower. An attacker can request a 0-amount flash loan and pass data that calls token.approve(attacker, type(uint256).max) on the token contract, then transferFrom all tokens.",
+      "affectedCode": [
+        "src/truster/TrusterLenderPool.sol:20-35"
+      ],
+      "assets": [
+        "DVT in TrusterLenderPool"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/truster/TrusterLenderPool.sol:20-35",
+            "finding": "flashLoan(amount, borrower, target, data) calls target.functionCall(data) with no restriction on target or data content"
+          },
+          {
+            "action": "Read",
+            "target": "src/truster/TrusterLenderPool.sol:25-31",
+            "finding": "Balance check only verifies token.balanceOf(address(this)) >= balanceBefore; with amount=0 the check trivially passes"
+          },
+          {
+            "action": "Read",
+            "target": "src/truster/TrusterLenderPool.sol:28",
+            "finding": "target.functionCall(data) can be token.approve(attacker, max) since target is unrestricted"
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker calls flashLoan(0, attacker, address(token), abi.encodeCall(token.approve, (attacker, type(uint256).max)))\n2. Pool approves attacker for max tokens\n3. Balance check passes (0 transferred)\n4. Attacker calls token.transferFrom(pool, attacker, pool.balance) to drain all tokens",
+      "suggestedProperties": [
+        "check_pool_cannot_approve_external_addresses",
+        "check_no_token_loss_after_flashloan"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "T-003",
+      "category": "governance",
+      "title": "SelfiePool: flash loan enables governance takeover to drain pool via emergencyExit",
+      "description": "SelfiePool offers zero-fee flash loans of DamnValuableVotes tokens. An attacker can flash-borrow more than half the total supply, delegate votes to themselves, queue a governance action calling emergencyExit, wait the 2-day delay, then execute to drain the pool.",
+      "affectedCode": [
+        "src/selfie/SelfiePool.sol:50-69",
+        "src/selfie/SelfiePool.sol:71-76",
+        "src/selfie/SimpleGovernance.sol:23-51",
+        "src/selfie/SimpleGovernance.sol:100-103"
+      ],
+      "assets": [
+        "DVT in SelfiePool"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/selfie/SelfiePool.sol:50-69",
+            "finding": "flashLoan transfers tokens to receiver, calls onFlashLoan callback, then pulls tokens back. Zero fee. No restriction on what receiver does during callback"
+          },
+          {
+            "action": "Read",
+            "target": "src/selfie/SimpleGovernance.sol:100-103",
+            "finding": "_hasEnoughVotes checks if balance = votingToken.getVotes(who) > totalSupply / 2"
+          },
+          {
+            "action": "Read",
+            "target": "src/selfie/SimpleGovernance.sol:23-51",
+            "finding": "queueAction allows anyone with enough votes to queue an action on any target except governance itself"
+          },
+          {
+            "action": "Read",
+            "target": "src/selfie/SelfiePool.sol:71-76",
+            "finding": "emergencyExit is onlyGovernance, transfers all tokens to receiver"
+          },
+          {
+            "action": "Read",
+            "target": "src/selfie/SimpleGovernance.sol:53-64",
+            "finding": "executeAction calls target.functionCallWithValue after 2 day delay"
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker takes flash loan of >50% token supply from SelfiePool\n2. During callback, delegate votes to self and call governance.queueAction(selfiePool, 0, abi.encodeCall(SelfiePool.emergencyExit, (attacker)))\n3. Repay flash loan\n4. Wait 2 days\n5. Call governance.executeAction(actionId) to drain pool",
+      "suggestedProperties": [
+        "check_snapshot_based_voting",
+        "check_emergency_exit_requires_multisig"
+      ],
+      "priority": 3
+    },
+    {
+      "id": "T-004",
+      "category": "oracle-manipulation",
+      "title": "PuppetPool: spot price oracle from Uniswap V1 pair is trivially manipulable",
+      "description": "PuppetPool calculates the required ETH collateral based on the Uniswap V1 pair's spot reserves (uniswapPair.balance / token.balanceOf(uniswapPair)). An attacker can dump tokens into the pair to crash the token price, then borrow the pool's entire token supply for minimal ETH collateral.",
+      "affectedCode": [
+        "src/puppet/PuppetPool.sol:59-62",
+        "src/puppet/PuppetPool.sol:55-57",
+        "src/puppet/PuppetPool.sol:30-53"
+      ],
+      "assets": [
+        "DVT in PuppetPool"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/puppet/PuppetPool.sol:59-62",
+            "finding": "_computeOraclePrice returns uniswapPair.balance * 1e18 / token.balanceOf(uniswapPair) - a spot price from pool reserves"
+          },
+          {
+            "action": "Read",
+            "target": "src/puppet/PuppetPool.sol:55-57",
+            "finding": "calculateDepositRequired = amount * oraclePrice * DEPOSIT_FACTOR / 1e18; if oraclePrice is near 0, deposit required is near 0"
+          },
+          {
+            "action": "Read",
+            "target": "src/puppet/PuppetPool.sol:30-53",
+            "finding": "borrow() is external payable, no restriction on who can call; only checks msg.value >= depositRequired"
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker sells large amount of DVT into Uniswap V1 pair, crashing token price\n2. _computeOraclePrice returns near-zero since token balance in pair is now huge vs ETH\n3. Attacker calls borrow(totalPoolBalance, attacker) with minimal ETH\n4. Attacker drains all DVT from the pool",
+      "suggestedProperties": [
+        "check_oracle_not_spot_price",
+        "check_borrow_collateral_ratio"
+      ],
+      "priority": 4
+    },
+    {
+      "id": "T-005",
+      "category": "oracle-manipulation",
+      "title": "PuppetV2Pool: spot price oracle from Uniswap V2 reserves is manipulable",
+      "description": "PuppetV2Pool uses UniswapV2Library.getReserves and UniswapV2Library.quote to calculate collateral requirements. These are based on instantaneous reserve ratios that can be manipulated by swapping large amounts through the pair.",
+      "affectedCode": [
+        "src/puppet-v2/PuppetV2Pool.sol:56-61",
+        "src/puppet-v2/PuppetV2Pool.sol:50-53",
+        "src/puppet-v2/PuppetV2Pool.sol:35-48"
+      ],
+      "assets": [
+        "DVT in PuppetV2Pool"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/puppet-v2/PuppetV2Pool.sol:56-61",
+            "finding": "_getOracleQuote calls UniswapV2Library.getReserves and UniswapV2Library.quote - pure spot price from reserves"
+          },
+          {
+            "action": "Read",
+            "target": "src/puppet-v2/PuppetV2Pool.sol:50-53",
+            "finding": "calculateDepositOfWETHRequired = _getOracleQuote(tokenAmount) * 3 / 1 ether"
+          },
+          {
+            "action": "Read",
+            "target": "src/puppet-v2/PuppetV2Pool.sol:35-48",
+            "finding": "borrow() takes WETH via transferFrom, records deposit, sends tokens. No access control beyond having enough WETH"
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker swaps large amount of DVT for WETH in the Uniswap V2 pair, crashing DVT price\n2. Spot reserves now show DVT as nearly worthless\n3. Attacker calls borrow(totalPoolBalance) with minimal WETH deposit\n4. Pool is drained",
+      "suggestedProperties": [
+        "check_twap_oracle_used",
+        "check_collateral_floor"
+      ],
+      "priority": 5
+    },
+    {
+      "id": "T-007",
+      "category": "logic-error",
+      "title": "ClimberTimelock: execute() runs calls before verifying operation was scheduled, enabling arbitrary execution",
+      "description": "ClimberTimelock.execute() first runs all the target calls via functionCallWithValue, then checks if the operation is in ReadyForExecution state. An attacker can include a call to schedule the same operation (with delay=0) as part of the execution batch. The calls run first, creating the schedule, then the post-execution check passes.",
+      "affectedCode": [
+        "src/climber/ClimberTimelock.sol:72-99",
+        "src/climber/ClimberTimelock.sol:101-111",
+        "src/climber/ClimberTimelock.sol:41-67"
+      ],
+      "assets": [
+        "DVT in ClimberVault"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/climber/ClimberTimelock.sol:88-98",
+            "finding": "Lines 90-92: calls are executed FIRST in a loop. Lines 94-96: THEN it checks getOperationState(id) == ReadyForExecution. This is execute-before-check."
+          },
+          {
+            "action": "Read",
+            "target": "src/climber/ClimberTimelock.sol:101-111",
+            "finding": "updateDelay(uint64 newDelay) requires msg.sender == address(this), sets delay to newDelay. Can be called as one of the batch targets."
+          },
+          {
+            "action": "Read",
+            "target": "src/climber/ClimberTimelock.sol:41-67",
+            "finding": "schedule() requires PROPOSER_ROLE, sets operations[id].readyAtTimestamp = block.timestamp + delay. If delay is 0, it's immediately ReadyForExecution."
+          },
+          {
+            "action": "Read",
+            "target": "src/climber/ClimberVault.sol:83",
+            "finding": "_authorizeUpgrade is onlyOwner - owner is the timelock, so timelock can upgrade the vault implementation"
+          },
+          {
+            "action": "Read",
+            "target": "src/climber/ClimberVault.sol:62-64",
+            "finding": "sweepFunds(token) transfers all tokens to _sweeper. If attacker becomes sweeper via upgrade, they drain everything."
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker crafts a batch of calls: [updateDelay(0), grantRole(PROPOSER_ROLE, attackerContract), attackerContract.scheduleBatch()]\n2. Calls execute() with these targets\n3. First call sets delay to 0\n4. Second call grants PROPOSER_ROLE to attacker's contract\n5. Third call makes attacker contract schedule the same operation (now with delay=0, so immediately ready)\n6. Post-execution check passes because operation is now ReadyForExecution\n7. Attacker can now upgrade ClimberVault to malicious implementation and drain funds",
+      "suggestedProperties": [
+        "check_schedule_before_execute",
+        "check_delay_nonzero"
+      ],
+      "priority": 6
+    },
+    {
+      "id": "T-008",
+      "category": "access-control",
+      "title": "AuthorizedExecutor: hardcoded calldata offset for selector extraction enables ABI smuggling to bypass permissions",
+      "description": "AuthorizedExecutor.execute() reads the function selector at a hardcoded calldata offset (4 + 32*3 = 100) to check permissions. However, the actual actionData parameter is a dynamic bytes type whose offset is encoded in the calldata. An attacker can craft calldata where the selector at position 100 differs from the actual selector in actionData, bypassing the permission check.",
+      "affectedCode": [
+        "src/abi-smuggling/AuthorizedExecutor.sol:46-61",
+        "src/abi-smuggling/SelfAuthorizedVault.sol:47-49"
+      ],
+      "assets": [
+        "DVT in SelfAuthorizedVault"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/abi-smuggling/AuthorizedExecutor.sol:46-61",
+            "finding": "Line 49: calldataOffset = 4 + 32 * 3 = 100 bytes. Line 50-52: selector is loaded from calldataload(100). But actionData is a dynamic bytes parameter whose actual data location is determined by the ABI-encoded offset at position 4+32*2=68."
+          },
+          {
+            "action": "Read",
+            "target": "src/abi-smuggling/AuthorizedExecutor.sol:54",
+            "finding": "Permission check uses the selector extracted from hardcoded position, not the actual actionData content"
+          },
+          {
+            "action": "Read",
+            "target": "src/abi-smuggling/AuthorizedExecutor.sol:60",
+            "finding": "target.functionCall(actionData) uses the ACTUAL actionData bytes, which can contain a different selector"
+          },
+          {
+            "action": "Read",
+            "target": "src/abi-smuggling/SelfAuthorizedVault.sol:47-49",
+            "finding": "sweepFunds(receiver, token) is onlyThis - callable if execute() forwards it. The attacker can smuggle sweepFunds selector while the permission check sees an authorized selector like withdraw"
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker has permission for withdraw() selector but not sweepFunds()\n2. Attacker crafts malicious calldata where byte offset 100 contains withdraw selector, but the actual actionData bytes encode sweepFunds\n3. Permission check passes (sees withdraw selector)\n4. target.functionCall(actionData) executes sweepFunds\n5. All vault tokens are swept to attacker",
+      "suggestedProperties": [
+        "check_selector_matches_actionData",
+        "check_no_calldata_offset_manipulation"
+      ],
+      "priority": 7
+    },
+    {
+      "id": "T-009",
+      "category": "logic-error",
+      "title": "FreeRiderNFTMarketplace: msg.value reused across multiple NFT purchases in buyMany, and payment sent to buyer instead of seller",
+      "description": "The _buyOne function checks msg.value >= priceToPay for each individual purchase in a loop, but msg.value is the same for every iteration. Additionally, after safeTransferFrom changes ownership to buyer, ownerOf(tokenId) returns buyer, so the payment goes to the buyer instead of the original seller.",
+      "affectedCode": [
+        "src/free-rider/FreeRiderNFTMarketplace.sol:83-89",
+        "src/free-rider/FreeRiderNFTMarketplace.sol:91-111"
+      ],
+      "assets": [
+        "ETH in FreeRiderNFTMarketplace",
+        "NFTs in FreeRiderNFTMarketplace"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/free-rider/FreeRiderNFTMarketplace.sol:83-89",
+            "finding": "buyMany loops through tokenIds calling _buyOne for each. msg.value stays constant across all iterations."
+          },
+          {
+            "action": "Read",
+            "target": "src/free-rider/FreeRiderNFTMarketplace.sol:97-98",
+            "finding": "if (msg.value < priceToPay) revert InsufficientPayment() -- checks msg.value, not remaining ETH. Same msg.value passes the check for every NFT."
+          },
+          {
+            "action": "Read",
+            "target": "src/free-rider/FreeRiderNFTMarketplace.sol:105",
+            "finding": "_token.safeTransferFrom(_token.ownerOf(tokenId), msg.sender, tokenId) -- transfers NFT from seller to buyer"
+          },
+          {
+            "action": "Read",
+            "target": "src/free-rider/FreeRiderNFTMarketplace.sol:108",
+            "finding": "payable(_token.ownerOf(tokenId)).sendValue(priceToPay) -- reads ownerOf AFTER transfer, so owner is now msg.sender (buyer). Payment goes to buyer, not seller."
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker gets a flash loan for the price of 1 NFT\n2. Calls buyMany([0,1,2,3,4,5]) with msg.value = price of 1 NFT\n3. msg.value check passes for each NFT (same msg.value reused)\n4. Each purchase pays the buyer (attacker) instead of the seller because ownerOf is checked after transfer\n5. Attacker receives all 6 NFTs AND gets paid back the price for each\n6. Attacker repays flash loan, keeps NFTs and profit",
+      "suggestedProperties": [
+        "check_msg_value_not_reused",
+        "check_payment_goes_to_seller"
+      ],
+      "priority": 8
+    },
+    {
+      "id": "T-010",
+      "category": "cross-contract",
+      "title": "NaiveReceiverPool: multicall + trusted forwarder _msgSender allows draining FlashLoanReceiver via forced flash loans",
+      "description": "NaiveReceiverPool uses _msgSender() which extracts sender from the last 20 bytes of calldata when called by trustedForwarder. The Multicall contract uses delegatecall, preserving msg.sender. An attacker can use the BasicForwarder to call NaiveReceiverPool.multicall with 10 flashLoan calls targeting the FlashLoanReceiver, draining its 10 ETH through fees (1 ETH per loan). Furthermore, the multicall+forwarder combination allows appending a victim's address to manipulate _msgSender for withdraw calls.",
+      "affectedCode": [
+        "src/naive-receiver/NaiveReceiverPool.sol:86-92",
+        "src/naive-receiver/NaiveReceiverPool.sol:43-64",
+        "src/naive-receiver/NaiveReceiverPool.sol:66-73",
+        "src/naive-receiver/Multicall.sol:9-15"
+      ],
+      "assets": [
+        "WETH in NaiveReceiverPool"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/naive-receiver/NaiveReceiverPool.sol:43-64",
+            "finding": "flashLoan has no access control beyond msg.sender being checked against trustedForwarder. Anyone can call it with any receiver. FIXED_FEE = 1 ETH charged per loan."
+          },
+          {
+            "action": "Read",
+            "target": "src/naive-receiver/NaiveReceiverPool.sol:86-92",
+            "finding": "_msgSender() returns last 20 bytes of msg.data when msg.sender == trustedForwarder && msg.data.length >= 20. This allows sender spoofing."
+          },
+          {
+            "action": "Read",
+            "target": "src/naive-receiver/Multicall.sol:9-15",
+            "finding": "multicall uses Address.functionDelegateCall(address(this), data[i]) - delegatecall preserves msg.sender context"
+          },
+          {
+            "action": "Read",
+            "target": "src/naive-receiver/NaiveReceiverPool.sol:66-73",
+            "finding": "withdraw uses _msgSender() to determine who is withdrawing. If _msgSender returns spoofed address, attacker can withdraw victim's funds."
+          },
+          {
+            "action": "Read",
+            "target": "src/naive-receiver/BasicForwarder.sol:55-74",
+            "finding": "execute appends request.from to payload. When forwarder calls pool.multicall, msg.sender = trustedForwarder, enabling _msgSender spoofing."
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker calls flashLoan 10 times targeting FlashLoanReceiver, each charging 1 ETH fee, draining receiver's 10 ETH to feeReceiver deposits\n2. Attacker uses BasicForwarder to call multicall on NaiveReceiverPool with withdraw call + appended feeReceiver address as _msgSender\n3. This allows draining the feeReceiver's accumulated deposits to attacker-controlled address\n4. Alternatively, batch all 10 flashLoan calls + withdraw in one multicall via forwarder",
+      "suggestedProperties": [
+        "check_flashloan_requires_receiver_approval",
+        "check_msgSender_not_spoofable_via_multicall"
+      ],
+      "priority": 9
+    },
+    {
+      "id": "T-012",
+      "category": "access-control",
+      "title": "TokenBridge: inverted authorization check allows any non-otherBridge sender to execute withdrawals",
+      "description": "TokenBridge.executeTokenWithdrawal checks `l1Forwarder.getSender() == otherBridge` and reverts if true. The logic is inverted: it should revert when getSender() is NOT otherBridge. As written, legitimate withdrawals from the other bridge are rejected, while any other l2Sender (that gets their message forwarded) can trigger withdrawals.",
+      "affectedCode": [
+        "src/withdrawal/TokenBridge.sol:23-27"
+      ],
+      "assets": [
+        "DVT in TokenBridge"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/withdrawal/TokenBridge.sol:23-27",
+            "finding": "Line 24: if (msg.sender != address(l1Forwarder) || l1Forwarder.getSender() == otherBridge) revert Unauthorized(). The || means it reverts if EITHER condition is true. When getSender() == otherBridge (the legitimate caller), it reverts."
+          },
+          {
+            "action": "Read",
+            "target": "src/withdrawal/L1Forwarder.sol:37-71",
+            "finding": "forwardMessage sets context.l2Sender before calling target. getSender() returns context.l2Sender. Any l2Sender that is NOT otherBridge bypasses the check."
+          },
+          {
+            "action": "Read",
+            "target": "src/withdrawal/L1Gateway.sol:34-70",
+            "finding": "finalizeWithdrawal calls target with message. If target is l1Forwarder and message calls forwardMessage with arbitrary l2Sender != otherBridge, the bridge can be drained."
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker submits a fraudulent merkle proof (or exploits forwarder) to call forwardMessage with l2Sender = any address != otherBridge\n2. forwardMessage calls TokenBridge.executeTokenWithdrawal\n3. msg.sender == l1Forwarder (true), getSender() != otherBridge (so ==otherBridge is false)\n4. The OR condition is false, so no revert\n5. Tokens are transferred to attacker's receiver address",
+      "suggestedProperties": [
+        "check_only_otherBridge_can_withdraw",
+        "check_authorization_logic_correctness"
+      ],
+      "priority": 10
+    },
+    {
+      "id": "T-014",
+      "category": "access-control",
+      "title": "WalletRegistry: Safe wallet setup initializer allows module/delegate backdoor during creation",
+      "description": "WalletRegistry.proxyCreated validates singleton, threshold, owner count, and fallback manager. However, Safe.setup accepts optional parameters for delegatecall during setup (the 'to' and 'data' parameters). An attacker can set these to execute arbitrary code (e.g., token.approve(attacker, max)) during wallet creation, before the registry transfers payment tokens to the wallet.",
+      "affectedCode": [
+        "src/backdoor/WalletRegistry.sol:67-122"
+      ],
+      "assets": [
+        "DVT in WalletRegistry"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/backdoor/WalletRegistry.sol:84-87",
+            "finding": "Only checks that initializer starts with Safe.setup selector. Does not inspect setup parameters."
+          },
+          {
+            "action": "Read",
+            "target": "src/backdoor/WalletRegistry.sol:89-98",
+            "finding": "Validates threshold=1, owners.length=1, owner is beneficiary. Does NOT validate the 'to' and 'data' delegatecall parameters of Safe.setup."
+          },
+          {
+            "action": "Read",
+            "target": "src/backdoor/WalletRegistry.sol:109-112",
+            "finding": "Checks fallbackManager == address(0). But Safe.setup's delegatecall to 'to' with 'data' executes before fallback manager would be set, and can approve tokens."
+          },
+          {
+            "action": "Read",
+            "target": "src/backdoor/WalletRegistry.sol:120-121",
+            "finding": "SafeTransferLib.safeTransfer sends PAYMENT_AMOUNT (10 DVT) to the newly created wallet. If attacker has approval, they can transferFrom these tokens."
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker deploys a helper contract with a function that calls token.approve(attacker, max)\n2. For each beneficiary, attacker calls SafeProxyFactory.createProxyWithCallback with: singleton=correct, initializer=Safe.setup(owner=[beneficiary], threshold=1, to=helperContract, data=approve_calldata, ...)\n3. During setup, the Safe delegatecalls to helper, approving attacker for DVT\n4. WalletRegistry.proxyCreated validates and sends 10 DVT to wallet\n5. Attacker calls token.transferFrom(wallet, attacker, 10 DVT) to steal the payment",
+      "suggestedProperties": [
+        "check_no_delegatecall_in_setup",
+        "check_wallet_balance_retained"
+      ],
+      "priority": 11
+    },
+    {
+      "id": "T-011",
+      "category": "denial-of-service",
+      "title": "UnstoppableVault: direct token transfer breaks flash loan invariant, causing permanent DoS",
+      "description": "UnstoppableVault.flashLoan checks that convertToShares(totalSupply) == balanceBefore (totalAssets). If anyone donates tokens directly to the vault (not via deposit), totalAssets increases but totalSupply stays the same, breaking this invariant and permanently disabling flash loans.",
+      "affectedCode": [
+        "src/unstoppable/UnstoppableVault.sol:78-104",
+        "src/unstoppable/UnstoppableVault.sol:84-85"
+      ],
+      "assets": [
+        "DVT in UnstoppableVault"
+      ],
+      "severity": "High",
+      "confidence": "high",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/unstoppable/UnstoppableVault.sol:84-85",
+            "finding": "Line 84: balanceBefore = totalAssets() which returns asset.balanceOf(address(this)). Line 85: if (convertToShares(totalSupply) != balanceBefore) revert InvalidBalance()"
+          },
+          {
+            "action": "Read",
+            "target": "src/unstoppable/UnstoppableVault.sol:71-73",
+            "finding": "totalAssets() returns asset.balanceOf(address(this)) - includes any directly transferred tokens"
+          },
+          {
+            "action": "Read",
+            "target": "src/unstoppable/UnstoppableVault.sol:109",
+            "finding": "beforeWithdraw has nonReentrant but no other hook. afterDeposit has nonReentrant and whenNotPaused. Neither adjusts for donation."
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker transfers 1 wei of DVT directly to the vault (not via deposit)\n2. totalAssets() now returns more than convertToShares(totalSupply)\n3. All subsequent flashLoan calls revert with InvalidBalance\n4. The vault's flash loan service is permanently broken",
+      "suggestedProperties": [
+        "check_flashloan_invariant_resilient_to_donation",
+        "check_totalAssets_equals_tracked_deposits"
+      ],
+      "priority": 12
+    },
+    {
+      "id": "T-013",
+      "category": "logic-error",
+      "title": "TheRewarderDistributor: claim ordering bug allows claiming same reward multiple times across different token groupings",
+      "description": "The claimRewards function processes claims in order and only calls _setClaimed when the token changes or on the last claim. An attacker can reorder claims to manipulate when _setClaimed is invoked, potentially transferring tokens for a claim before its bitmap is set, or grouping claims to bypass the already-claimed check.",
+      "affectedCode": [
+        "src/the-rewarder/TheRewarderDistributor.sol:81-118",
+        "src/the-rewarder/TheRewarderDistributor.sol:120-129"
+      ],
+      "assets": [
+        "DVT in TheRewarderDistributor"
+      ],
+      "severity": "High",
+      "confidence": "high",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/the-rewarder/TheRewarderDistributor.sol:87-117",
+            "finding": "Loop processes claims. Line 93: checks if token changed from previous claim. Line 95: calls _setClaimed only on token change. Line 107-108: calls _setClaimed on last iteration."
+          },
+          {
+            "action": "Read",
+            "target": "src/the-rewarder/TheRewarderDistributor.sol:116",
+            "finding": "inputTokens[inputClaim.tokenIndex].transfer(msg.sender, inputClaim.amount) - transfers happen EVERY iteration, regardless of whether _setClaimed has been called yet for this batch"
+          },
+          {
+            "action": "Read",
+            "target": "src/the-rewarder/TheRewarderDistributor.sol:90-91",
+            "finding": "wordPosition = batchNumber / 256, bitPosition = batchNumber % 256. When claims span different words, only the LAST wordPosition is used in _setClaimed, leaving earlier words unset."
+          },
+          {
+            "action": "Read",
+            "target": "src/the-rewarder/TheRewarderDistributor.sol:120-129",
+            "finding": "_setClaimed checks if (currentWord & newBits) != 0 for a single wordPosition. Claims across multiple word positions within the same token group only check/set the last wordPosition."
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker has valid merkle proofs for claims in different batch numbers\n2. Attacker orders claims so same-token claims in different word positions are grouped together\n3. _setClaimed only records bits for the last wordPosition encountered in the group\n4. Attacker can re-submit claims for earlier wordPositions since their bits were never set\n5. Attacker drains reward tokens beyond their legitimate allocation",
+      "suggestedProperties": [
+        "check_each_claim_individually_marked",
+        "check_no_double_claim"
+      ],
+      "priority": 13
+    },
+    {
+      "id": "T-006",
+      "category": "oracle-manipulation",
+      "title": "PuppetV3Pool: TWAP oracle over 10 minutes is still manipulable with sufficient capital",
+      "description": "PuppetV3Pool uses a 10-minute TWAP from Uniswap V3, which is an improvement over spot price but still manipulable by an attacker who can hold a position for the TWAP window duration.",
+      "affectedCode": [
+        "src/puppet-v3/PuppetV3Pool.sol:61-69",
+        "src/puppet-v3/PuppetV3Pool.sol:56-59",
+        "src/puppet-v3/PuppetV3Pool.sol:16"
+      ],
+      "assets": [
+        "DVT in PuppetV3Pool"
+      ],
+      "severity": "High",
+      "confidence": "medium",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/puppet-v3/PuppetV3Pool.sol:16",
+            "finding": "TWAP_PERIOD = 10 minutes - a relatively short window"
+          },
+          {
+            "action": "Read",
+            "target": "src/puppet-v3/PuppetV3Pool.sol:61-69",
+            "finding": "_getOracleQuote calls OracleLibrary.consult with 10 min window, then getQuoteAtTick"
+          },
+          {
+            "action": "Read",
+            "target": "src/puppet-v3/PuppetV3Pool.sol:56-59",
+            "finding": "calculateDepositOfWETHRequired = quote * DEPOSIT_FACTOR(3); if TWAP is manipulated down, deposit is minimal"
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker dumps massive DVT into Uniswap V3 pool, moving the tick price\n2. Attacker waits 10+ minutes for TWAP to fully reflect the manipulated price\n3. Attacker calls borrow() with minimal WETH to drain pool\n4. Attacker swaps back to recover DVT position",
+      "suggestedProperties": [
+        "check_twap_period_sufficient",
+        "check_liquidity_depth_requirement"
+      ],
+      "priority": 14
+    },
+    {
+      "id": "T-015",
+      "category": "access-control",
+      "title": "WalletDeployer: AuthorizerUpgradeable implementation not initialized, enabling SELFDESTRUCT/upgrade attacks",
+      "description": "AuthorizerUpgradeable's constructor sets needsInit=0 on the implementation, but if the implementation contract itself can be destroyed or if the proxy's upgrader role is compromised, the authorization can be bypassed. Additionally, the WalletDeployer.can() function uses low-level assembly staticcall that returns false (y=0) on failure rather than reverting, so if mom has no code (destroyed), can() returns false, but the drop() check is `!can()` which then also returns false, skipping the revert.\n\nRelated: TransparentProxy: wrong function signature in _fallback check allows upgrader to bypass upgrade restriction — TransparentProxy._fallback checks msg.sig against bytes4(keccak256('upgradeToAndCall(address, bytes)')). This string has a space after the comma, producing a different selector than the actual upgradeToAndCall(address,bytes) function. This means the check never matches, and the upgrader's calls fall through or revert unexpectedly.",
+      "affectedCode": [
+        "src/wallet-mining/WalletDeployer.sol:48-61",
+        "src/wallet-mining/WalletDeployer.sol:63-75",
+        "src/wallet-mining/AuthorizerUpgradeable.sol:5-31",
+        "src/wallet-mining/TransparentProxy.sol:28-35"
+      ],
+      "assets": [
+        "DVT in WalletDeployer"
+      ],
+      "severity": "High",
+      "confidence": "medium",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/wallet-mining/WalletDeployer.sol:63-75",
+            "finding": "can() uses assembly: loads mom from storage slot 0, checks extcodesize(m), if 0 then stop() (returns 0/false). Then staticcall to mom.can(u,a). If staticcall fails, stop() returns 0."
+          },
+          {
+            "action": "Read",
+            "target": "src/wallet-mining/WalletDeployer.sol:48-51",
+            "finding": "drop() checks: if (mom != address(0) && !can(msg.sender, aim)) return false. If can() returns false, !false = true, so it returns false (unauthorized). But if mom is destroyed (extcodesize=0), can() executes stop() which returns empty data, interpreted as false/0."
+          },
+          {
+            "action": "Read",
+            "target": "src/wallet-mining/AuthorizerUpgradeable.sol:15-21",
+            "finding": "init() can only be called when needsInit != 0. Implementation constructor sets needsInit=0. But the implementation contract at its own address is a standalone contract that could potentially be selfdestruct'd via upgrade path."
+          },
+          {
+            "action": "Read",
+            "target": "src/wallet-mining/TransparentProxy.sol:28-35",
+            "finding": "Proxy's _fallback checks isUpgrader(msg.sender) and dispatches upgradeToAndCall. Note line 30: bytes4(keccak256('upgradeToAndCall(address, bytes)')) -- this is the wrong function signature (has a space), producing wrong selector. This means legitimate upgrades may fail, but the upgrader slot itself could be exploitable."
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker finds a way to destroy the AuthorizerUpgradeable implementation behind the proxy (e.g., via the upgrade mechanism if they can gain upgrader role)\n2. Once implementation is destroyed, mom points to codeless address\n3. can() returns false via stop(), and since mom != address(0), drop() returns false\n4. However, if attacker can selfdestruct the proxy itself or set mom=0 by other means, authorization is bypassed\n5. Attacker can then deploy wallets and claim DVT rewards",
+      "suggestedProperties": [
+        "check_authorizer_cannot_be_destroyed",
+        "check_can_function_reverts_on_failure",
+        "check_upgrade_selector_correct",
+        "check_upgrader_can_upgrade"
+      ],
+      "priority": 15
+    },
+    {
+      "id": "T-017",
+      "category": "oracle-manipulation",
+      "title": "CurvyPuppetLending: LP token price depends on Curve pool virtual price, manipulable via pool imbalance",
+      "description": "CurvyPuppetLending calculates the borrow asset (LP token) price as oracle.getPrice(coins(0)).value * curvePool.get_virtual_price(). The virtual price of a Curve pool can be manipulated via large single-sided deposits/withdrawals or exploiting reentrancy in older Curve pools.",
+      "affectedCode": [
+        "src/curvy-puppet/CurvyPuppetLending.sol:133-135",
+        "src/curvy-puppet/CurvyPuppetLending.sol:61-83",
+        "src/curvy-puppet/CurvyPuppetLending.sol:97-109"
+      ],
+      "assets": [
+        "Tokens in CurvyPuppetLending"
+      ],
+      "severity": "High",
+      "confidence": "medium",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/curvy-puppet/CurvyPuppetLending.sol:133-135",
+            "finding": "_getLPTokenPrice() returns oracle.getPrice(curvePool.coins(0)).value.mulWadDown(curvePool.get_virtual_price()). Combines external oracle price with Curve pool virtual price."
+          },
+          {
+            "action": "Read",
+            "target": "src/curvy-puppet/CurvyPuppetLending.sol:111-114",
+            "finding": "getBorrowValue = amount.mulWadUp(_getLPTokenPrice()). Used in health checks."
+          },
+          {
+            "action": "Read",
+            "target": "src/curvy-puppet/CurvyPuppetLending.sol:97-109",
+            "finding": "liquidate() checks collateralValue < borrowValue * 1.75. If LP token price is manipulated down, positions become liquidatable."
+          },
+          {
+            "action": "Read",
+            "target": "src/curvy-puppet/CurvyPuppetLending.sol:61-83",
+            "finding": "borrow() checks maxBorrowValue = collateralValue * 100 / 175. If LP token price is manipulated up, attacker can borrow more than collateral supports."
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker manipulates Curve pool's virtual price (e.g., via read-only reentrancy in older ETH/stETH pools during withdraw_admin_fees, or large imbalanced deposit)\n2. This changes _getLPTokenPrice() calculation\n3. If price goes up: attacker borrows excessive LP tokens with insufficient collateral\n4. If price goes down: attacker liquidates healthy positions and steals their collateral",
+      "suggestedProperties": [
+        "check_virtual_price_not_manipulable",
+        "check_oracle_reentrancy_guard"
+      ],
+      "priority": 16
+    },
+    {
+      "id": "T-016",
+      "category": "arithmetic",
+      "title": "ShardsNFTMarketplace: inconsistent rounding between fill payment and cancel refund leads to value extraction",
+      "description": "In fill(), the buyer pays want.mulDivDown(price_in_DVT, totalShards) (rounds down). In cancel(), the buyer gets back purchase.shards.mulDivUp(purchase.rate, 1e6) which uses a completely different calculation (mulDivUp on rate). The cancel refund formula doesn't match the fill payment formula, potentially refunding more than was paid.",
+      "affectedCode": [
+        "src/shards/ShardsNFTMarketplace.sol:116-139",
+        "src/shards/ShardsNFTMarketplace.sol:144-164"
+      ],
+      "assets": [
+        "DVT in ShardsNFTMarketplace"
+      ],
+      "severity": "Medium",
+      "confidence": "medium",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/shards/ShardsNFTMarketplace.sol:135-137",
+            "finding": "fill() charges: want.mulDivDown(_toDVT(offer.price, _currentRate), offer.totalShards). _toDVT = value.mulDivDown(rate, 1e6)"
+          },
+          {
+            "action": "Read",
+            "target": "src/shards/ShardsNFTMarketplace.sol:163",
+            "finding": "cancel() refunds: purchase.shards.mulDivUp(purchase.rate, 1e6). This is shards * rate / 1e6 rounded UP"
+          },
+          {
+            "action": "Read",
+            "target": "src/shards/ShardsNFTMarketplace.sol:200-215",
+            "finding": "_closeOffer: seller payment uses purchase.shards.mulWadUp(purchase.rate) which is shards * rate / 1e18 -- yet another different formula"
+          },
+          {
+            "action": "Read",
+            "target": "src/shards/ShardsNFTMarketplace.sol:218-220",
+            "finding": "_toDVT uses mulDivDown with 1e6 denominator. The cancel refund calculation differs from the fill charge calculation."
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker opens a fill with carefully chosen shard amounts where rounding differences are maximized\n2. Cancels within the cancel window\n3. Receives a slightly higher refund than what was paid due to mulDivUp vs mulDivDown\n4. Repeats to extract value from the marketplace",
+      "suggestedProperties": [
+        "check_cancel_refund_leq_fill_payment",
+        "check_consistent_rounding"
+      ],
+      "priority": 17
+    },
+    {
+      "id": "T-018",
+      "category": "arithmetic",
+      "title": "UnstoppableVault (ERC4626): potential first-depositor inflation attack via share price manipulation",
+      "description": "UnstoppableVault inherits from solmate's ERC4626, which is susceptible to the first-depositor inflation attack. An attacker can be the first depositor with 1 wei, then donate a large amount of tokens to inflate the share price, causing subsequent depositors to receive 0 shares due to rounding.",
+      "affectedCode": [
+        "src/unstoppable/UnstoppableVault.sol:16",
+        "src/unstoppable/UnstoppableVault.sol:71-73"
+      ],
+      "assets": [
+        "DVT in UnstoppableVault"
+      ],
+      "severity": "Medium",
+      "confidence": "medium",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/unstoppable/UnstoppableVault.sol:16",
+            "finding": "UnstoppableVault inherits ERC4626 from solmate. Solmate's ERC4626 does not implement virtual share offset (no dead shares mitigation)."
+          },
+          {
+            "action": "Read",
+            "target": "src/unstoppable/UnstoppableVault.sol:71-73",
+            "finding": "totalAssets() returns asset.balanceOf(address(this)) - includes donations"
+          },
+          {
+            "action": "Read",
+            "target": "src/unstoppable/UnstoppableVault.sol:114",
+            "finding": "afterDeposit has nonReentrant and whenNotPaused guards but no inflation attack mitigation"
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker deposits 1 wei of DVT, receiving 1 share\n2. Attacker donates 1e18 DVT directly to vault\n3. Now 1 share = 1e18 + 1 DVT\n4. Victim deposits < 1e18 DVT, convertToShares rounds down to 0\n5. Victim loses their deposit",
+      "suggestedProperties": [
+        "check_nonzero_shares_on_deposit",
+        "check_virtual_share_offset"
+      ],
+      "priority": 18
+    },
+    {
+      "id": "T-019",
+      "category": "logic-error",
+      "title": "ShardsNFTMarketplace: cancel() timing condition is always false, making cancellation impossible",
+      "description": "The cancel function has a timing check that is logically inconsistent. It requires purchase.timestamp + CANCEL_PERIOD_LENGTH < block.timestamp (cancel period expired) OR block.timestamp > purchase.timestamp + TIME_BEFORE_CANCEL (waiting period over). Combined with the revert, the window where cancellation is allowed is empty or extremely narrow.",
+      "affectedCode": [
+        "src/shards/ShardsNFTMarketplace.sol:152-155"
+      ],
+      "assets": [
+        "DVT in ShardsNFTMarketplace"
+      ],
+      "severity": "Medium",
+      "confidence": "medium",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/shards/ShardsNFTMarketplace.sol:152-155",
+            "finding": "Reverts if: purchase.timestamp + CANCEL_PERIOD_LENGTH < block.timestamp || block.timestamp > purchase.timestamp + TIME_BEFORE_CANCEL. The second condition (block.timestamp > timestamp + 1 day) would be true after 1 day. But the cancel window should start AFTER TIME_BEFORE_CANCEL(1 day) and end at CANCEL_PERIOD_LENGTH(2 days)."
+          },
+          {
+            "action": "Read",
+            "target": "src/shards/ShardsNFTMarketplace.sol:23-26",
+            "finding": "TIME_BEFORE_CANCEL = 1 days, CANCEL_PERIOD_LENGTH = 2 days"
+          }
+        ]
+      },
+      "attackScenario": "1. Buyer fills an offer at timestamp T\n2. Before T+1 day: second condition (block.timestamp > T + 1 day) is false, first condition (T + 2 days < block.timestamp) is false => no revert, cancel works\n3. After T+1 day: second condition becomes true => revert, cancel impossible\n4. Buyer's funds are locked -- they can only cancel in the first day, contradicting the intent of waiting 1 day before allowing cancel",
+      "suggestedProperties": [
+        "check_cancel_window_matches_intent"
+      ],
+      "priority": 19
+    }
+  ],
+  "precomputed": {
+    "astAnalysisAvailable": true,
+    "blueprintAvailable": true,
+    "functionsAnalyzed": 193,
+    "stateVarsTracked": 131,
+    "invariantsInferred": 6,
+    "ceiViolationsDetected": 5,
+    "etherscanDataAvailable": false
+  },
+  "metadata": {
+    "sourcesQueried": [
+      "solc-ast",
+      "forge-inspect",
+      "solodit"
+    ],
+    "soloditFindings": 0
+  }
+}
