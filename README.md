@@ -205,7 +205,6 @@ Validated against production DeFi protocols with active bug bounty programs. All
 | Project | Threat Model | Analyze | Total Cost |
 |---------|-------------|---------|------------|
 | Project Alpha | 8 threats (2M, 6L) | 8/8 confirmed, 10 fuzz tests | ~$22 |
-| Project Beta | 10 threats (3M, 7L) | — | ~$5 |
 | Project Gamma | 14 threats (3M, 11L) | 19 Halmos proofs, 3 violations, 15 fuzz tests | ~$12 |
 | Project Delta | 17 threats (1H, 3M, 13L) | 11 Halmos proofs, 1 violation, 6 fuzz tests | ~$13 |
 
