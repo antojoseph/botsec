@@ -846,20 +846,27 @@ function generateQuestions(
 ): string[] {
   const questions: string[] = [];
 
-  // CEI violations get highest priority
+  // CEI violations — highest priority (only unguarded ones)
   for (const v of patterns.ceiViolations) {
     if (!v.hasReentrancyGuard) {
       questions.push(
         `CRITICAL: ${v.function} writes state (${v.stateWritesAfter.join(", ")}) after external call to ${v.externalCall}. No reentrancy guard detected. Can the external call re-enter and exploit the stale state?`
       );
-    } else {
+    } else if (v.reentrantPaths.length > 0) {
       questions.push(
         `${v.function} has a CEI violation but has a reentrancy guard. Is the guard applied to ALL reentrant paths? Check: ${v.reentrantPaths.join(", ")}`
       );
     }
   }
 
-  // Unguarded state mutators
+  // Inferred invariants — high value, previously unused
+  for (const inv of invariants) {
+    questions.push(
+      `Invariant [${inv.kind}]: ${inv.description}. Assertion: ${inv.assertion}. Threatened by: ${inv.threatenedBy.map(shortName).join(", ")}. Read the code to verify this holds and identify any violation path.`
+    );
+  }
+
+  // Unguarded state mutators (score >= 40)
   for (const func of patterns.privilegeSurface.unguardedStateMutators) {
     const summary = attackSurface.find((a) => a.function === func);
     if (summary && summary.score >= 40) {
@@ -903,7 +910,16 @@ function generateQuestions(
     );
   }
 
-  return questions;
+  // Deduplicate: group by first 50 chars (catches near-identical questions)
+  const seen = new Set<string>();
+  const deduped = questions.filter((q) => {
+    const key = q.slice(0, 50).toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  return deduped;
 }
 
 // ---------------------------------------------------------------------------

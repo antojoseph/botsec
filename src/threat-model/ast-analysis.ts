@@ -50,12 +50,17 @@ export function analyzeFromAST(projectDir: string): StructuralAnalysis | undefin
   const outDir = join(projectDir, "out");
   if (!existsSync(outDir)) return undefined;
 
-  // Read foundry.toml to find source directory
+  // Read foundry.toml to find source and test directories
   let srcDir = "src";
+  const excludeDirs = new Set(["test", "script", "lib"]);
   try {
     const toml = readFileSync(join(projectDir, "foundry.toml"), "utf-8");
-    const m = toml.match(/^\s*src\s*=\s*['"]([^'"]+)['"]/m);
-    if (m) srcDir = m[1];
+    const srcMatch = toml.match(/^\s*src\s*=\s*['"]([^'"]+)['"]/m);
+    if (srcMatch) srcDir = srcMatch[1];
+    const testMatch = toml.match(/^\s*test\s*=\s*['"]([^'"]+)['"]/m);
+    if (testMatch) excludeDirs.add(testMatch[1]);
+    const scriptMatch = toml.match(/^\s*script\s*=\s*['"]([^'"]+)['"]/m);
+    if (scriptMatch) excludeDirs.add(scriptMatch[1]);
   } catch { /* default */ }
 
   // Load ASTs from build-info (contains all source ASTs)
@@ -81,8 +86,9 @@ export function analyzeFromAST(projectDir: string): StructuralAnalysis | undefin
       const ast = sourceData.ast;
       if (!ast) continue;
 
-      // Only process source contracts (under srcDir, not lib/test/script)
-      const isSource = sourcePath.startsWith(`${srcDir}/`);
+      // Only process source contracts (under srcDir, not lib/test/script/mocks)
+      const isSource = sourcePath.startsWith(`${srcDir}/`) &&
+        ![...excludeDirs].some((d) => sourcePath.startsWith(`${d}/`));
 
       // Build global ID map from ALL ASTs (need cross-file references)
       walkAST(ast, (node) => {
