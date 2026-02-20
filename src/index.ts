@@ -48,6 +48,7 @@ program
     "10000"
   )
   .option("--max-turns <n>", "Max agent turns (default: 500)", "500")
+  .option("--max-budget <usd>", "Max budget in USD (default: 100)", "100")
   .option("-o, --output <dir>", "Output directory", "forge-proof-output")
   .option(
     "--threat-model <file>",
@@ -99,6 +100,7 @@ program
         loopBound: parseInt(opts.loop),
         solverTimeout: parseInt(opts.solverTimeout),
         maxTurns: parseInt(opts.maxTurns),
+        maxBudgetUsd: parseFloat(opts.maxBudget),
         outputDir: opts.output,
         threatModelPath: opts.threatModel,
         verifyOnly: !!opts.verifyOnly,
@@ -162,9 +164,9 @@ program
     "--solodit-key <key>",
     "Solodit API key (or set SOLODIT_API_KEY env var)"
   )
-  .option("--cost-control", "Truncate code map to reduce token usage (~$2 vs ~$17)")
   .option("-o, --output <dir>", "Output directory", "forge-proof-output")
   .option("--max-turns <n>", "Max agent turns (default: 200)", "200")
+  .option("--max-budget <usd>", "Max budget in USD (default: 50)", "50")
   .action(async (projectPath, opts) => {
     console.log(BANNER);
     console.log("  Threat Model Generation\n");
@@ -193,9 +195,9 @@ program
           opts.etherscanKey || process.env.ETHERSCAN_API_KEY,
         solodit: !!opts.solodit,
         soloditKey: opts.soloditKey || process.env.SOLODIT_API_KEY,
-        costControl: !!opts.costControl,
         outputDir: opts.output,
         maxTurns: parseInt(opts.maxTurns),
+        maxBudgetUsd: parseFloat(opts.maxBudget),
       });
     } catch (err: any) {
       console.error(`\n  Fatal error: ${err.message || err}`);

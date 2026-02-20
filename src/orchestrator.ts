@@ -25,6 +25,7 @@ export interface AnalyzeOptions {
   loopBound?: number;
   solverTimeout?: number;
   maxTurns?: number;
+  maxBudgetUsd?: number;
   outputDir?: string;
   threatModelPath?: string;
   verifyOnly?: boolean;
@@ -112,8 +113,8 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
       settingSources: ["user", "project"],
       permissionMode: "bypassPermissions",
       maxTurns: opts.maxTurns || 500,
-      maxBudgetUsd: 100,
-      maxThinkingTokens: 16000,
+      maxBudgetUsd: opts.maxBudgetUsd || 100,
+      thinking: { type: "adaptive" },
       cwd: projectDir,
       agents,
     },
@@ -139,8 +140,14 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
           `\n  Completed: ${turns} turns, $${cost.toFixed(2)}, ${(duration / 1000).toFixed(1)}s`
         );
       }
-      if (message.subtype === "error_max_budget_usd") {
-        console.error("  Budget limit ($100) reached.");
+      if (message.subtype === "error_max_turns") {
+        console.error(`  Turn limit (${opts.maxTurns || 500}) reached. Results may be incomplete.`);
+      } else if (message.subtype === "error_max_budget_usd") {
+        console.error(`  Budget limit ($${opts.maxBudgetUsd || 100}) reached. Results may be incomplete.`);
+      } else if (message.subtype === "error_max_structured_output_retries") {
+        console.error("  Structured output retries exceeded. Results may be incomplete.");
+      } else if (message.subtype !== "success") {
+        console.error(`  Agent error: ${(message as any).error || message.subtype}`);
       }
       break;
     }

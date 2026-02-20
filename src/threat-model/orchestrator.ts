@@ -33,10 +33,9 @@ export interface ThreatModelOptions {
   /** Enable Solodit historical vulnerability enrichment */
   solodit?: boolean;
   soloditKey?: string;
-  /** Truncate code map to reduce token usage */
-  costControl?: boolean;
   outputDir?: string;
   maxTurns?: number;
+  maxBudgetUsd?: number;
 }
 
 export async function generateThreatModel(
@@ -137,8 +136,8 @@ export async function generateThreatModel(
       settingSources: ["user", "project"],
       permissionMode: "bypassPermissions",
       maxTurns: opts.maxTurns || 200,
-      maxBudgetUsd: 50,
-      maxThinkingTokens: 16000,
+      maxBudgetUsd: opts.maxBudgetUsd || 50,
+      thinking: { type: "adaptive" },
       cwd: precomputed.projectDir,
       agents,
       outputFormat: {
@@ -217,18 +216,25 @@ export async function generateThreatModel(
 
     // Capture the final structured result
     if (message?.type === "result") {
+      costUsd = (message as any).total_cost_usd || 0;
+      durationMs = (message as any).duration_ms || 0;
+      numTurns = (message as any).num_turns || 0;
+
       if (message.subtype === "success") {
         // Prefer structured_output (SDK-validated JSON) over free-form text
         rawModel = (message as any).structured_output || parseAgentOutput((message as any).result || "");
-        costUsd = (message as any).total_cost_usd || 0;
-        durationMs = (message as any).duration_ms || 0;
-        numTurns = (message as any).num_turns || 0;
+      } else if (message.subtype === "error_max_turns") {
+        console.error(`\n  Turn limit (${opts.maxTurns || 200}) reached. Recovering partial results...`);
+        rawModel = (message as any).structured_output || parseAgentOutput((message as any).result || "");
       } else if (message.subtype === "error_max_budget_usd") {
-        console.error("\n  Budget limit ($50) reached. Partial results may be available.");
+        console.error(`\n  Budget limit ($${opts.maxBudgetUsd || 50}) reached. Recovering partial results...`);
+        rawModel = (message as any).structured_output || parseAgentOutput((message as any).result || "");
+      } else if (message.subtype === "error_max_structured_output_retries") {
+        console.error("\n  Structured output retries exceeded. Recovering partial results...");
         rawModel = parseAgentOutput((message as any).result || "");
       } else {
         console.error(`\n  Agent error: ${(message as any).error || message.subtype}`);
-        rawModel = { contractType: "other", actors: [], assets: [], trustBoundaries: [], threats: [] };
+        rawModel = parseAgentOutput((message as any).result || "");
       }
     }
   }

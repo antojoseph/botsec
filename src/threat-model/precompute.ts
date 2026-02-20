@@ -63,7 +63,7 @@ export async function precomputeAnalysis(
     }
     execSync("forge build --build-info --force > /dev/null 2>&1", {
       cwd: projectDir,
-      timeout: 300_000,
+      timeout: 600_000,
       maxBuffer: 50 * 1024 * 1024,
     });
     const biCount = existsSync(biDir) ? readdirSync(biDir).length : 0;
@@ -88,7 +88,7 @@ export async function precomputeAnalysis(
       }
       execSync(
         `forge build --build-info --force --skip ${skipDirs} > /dev/null 2>&1`,
-        { cwd: projectDir, timeout: 300_000, maxBuffer: 50 * 1024 * 1024 }
+        { cwd: projectDir, timeout: 600_000, maxBuffer: 50 * 1024 * 1024 }
       );
       const biCount = existsSync(biDir) ? readdirSync(biDir).length : 0;
       console.log(`  Build complete (src only). ${biCount} build-info file(s).`);
