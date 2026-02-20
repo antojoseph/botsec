@@ -12,6 +12,8 @@ import { Command } from "commander";
 import { analyze } from "./orchestrator.js";
 import { generateThreatModel } from "./threat-model/orchestrator.js";
 import { assertDependencies, checkDependencies } from "./scaffold/dependencies.js";
+import { allProviders } from "./threat-model/providers/registry.js";
+import type { Provider } from "./threat-model/providers/types.js";
 
 const BANNER = `
   ___                      ___                 __
@@ -141,7 +143,9 @@ program
     console.log("  All dependencies satisfied.\n");
   });
 
-program
+// ─── Threat-model command with auto-registered provider flags ──────────────
+
+const tmCmd = program
   .command("threat-model")
   .description(
     "Generate a structured threat model for a Foundry project using agentic code exploration"
@@ -159,50 +163,122 @@ program
     "--etherscan-key <key>",
     "Etherscan API key (or set ETHERSCAN_API_KEY env var)"
   )
-  .option("--solodit", "Enable Solodit historical vulnerability enrichment")
-  .option(
-    "--solodit-key <key>",
-    "Solodit API key (or set SOLODIT_API_KEY env var)"
-  )
   .option("-o, --output <dir>", "Output directory", "forge-proof-output")
   .option("--max-turns <n>", "Max agent turns (default: 200)", "200")
-  .option("--max-budget <usd>", "Max budget in USD (default: 50)", "50")
-  .action(async (projectPath, opts) => {
-    console.log(BANNER);
-    console.log("  Threat Model Generation\n");
+  .option("--max-budget <usd>", "Max budget in USD (default: 50)", "50");
 
-    // Check API key
-    if (!process.env.ANTHROPIC_API_KEY) {
-      console.error(
-        "  Error: ANTHROPIC_API_KEY not set.\n" +
-          "  Set it with: export ANTHROPIC_API_KEY=sk-ant-...\n"
-      );
-      process.exit(1);
+// Auto-register provider flags from the registry.
+// - Default-on providers get --no-{flag} to disable
+// - Opt-in providers get --{flag} to enable
+// - _-prefixed flags are programmatically activated (e.g., Etherscan via --address)
+for (const provider of allProviders()) {
+  if (provider.flag.startsWith("_")) continue;
+  if (provider.defaultEnabled) {
+    tmCmd.option(`--no-${provider.flag}`, `Disable ${provider.name}`);
+  } else {
+    tmCmd.option(`--${provider.flag}`, provider.flagDescription);
+    if (provider.extraFlags) {
+      for (const extra of provider.extraFlags) {
+        tmCmd.option(extra.flag, extra.description, extra.defaultValue);
+      }
     }
+  }
+}
 
-    console.log(`  Project: ${projectPath}`);
-    if (opts.address) {
-      console.log(`  Address: ${opts.address} (chain ${opts.chain})`);
+tmCmd.action(async (projectPath, opts) => {
+  console.log(BANNER);
+  console.log("  Threat Model Generation\n");
+
+  // Check API key
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.error(
+      "  Error: ANTHROPIC_API_KEY not set.\n" +
+        "  Set it with: export ANTHROPIC_API_KEY=sk-ant-...\n"
+    );
+    process.exit(1);
+  }
+
+  console.log(`  Project: ${projectPath}`);
+  if (opts.address) {
+    console.log(`  Address: ${opts.address} (chain ${opts.chain})`);
+  }
+  console.log(`  Output:  ${opts.output}\n`);
+
+  // Determine which providers are enabled:
+  // - Default-on: enabled unless --no-{flag} is passed
+  // - Opt-in: enabled only when --{flag} is passed
+  // - _-prefixed: activated programmatically below
+  const enabledProviders: Provider[] = [];
+  const providerFlagValues = new Map<string, Record<string, string | boolean>>();
+
+  for (const provider of allProviders()) {
+    if (provider.flag.startsWith("_")) continue;
+
+    if (provider.defaultEnabled) {
+      // Default-on: include unless --no-{flag} passed
+      const noFlagKey = camelCase(`no-${provider.flag}`);
+      if (!opts[noFlagKey]) {
+        enabledProviders.push(provider);
+      }
+    } else {
+      // Opt-in: include only if --{flag} passed
+      const flagKey = camelCase(provider.flag);
+      if (opts[flagKey]) {
+        enabledProviders.push(provider);
+        const values: Record<string, string | boolean> = {};
+        if (provider.extraFlags) {
+          for (const extra of provider.extraFlags) {
+            const extraName = extractFlagName(extra.flag);
+            const extraKey = camelCase(extraName);
+            if (opts[extraKey] !== undefined) {
+              values[extraName] = opts[extraKey];
+            }
+          }
+        }
+        providerFlagValues.set(provider.id, values);
+      }
     }
-    console.log(`  Output:  ${opts.output}\n`);
+  }
 
-    try {
-      await generateThreatModel({
-        contractPath: projectPath,
+  // Auto-activate Etherscan provider when --address is provided
+  if (opts.address) {
+    const etherscan = allProviders().find((p) => p.id === "etherscan");
+    if (etherscan && !enabledProviders.includes(etherscan)) {
+      enabledProviders.push(etherscan);
+      providerFlagValues.set("etherscan", {
         address: opts.address,
-        chainId: opts.chain,
-        etherscanApiKey:
-          opts.etherscanKey || process.env.ETHERSCAN_API_KEY,
-        solodit: !!opts.solodit,
-        soloditKey: opts.soloditKey || process.env.SOLODIT_API_KEY,
-        outputDir: opts.output,
-        maxTurns: parseInt(opts.maxTurns),
-        maxBudgetUsd: parseFloat(opts.maxBudget),
+        chain: opts.chain || "1",
+        "etherscan-key": opts.etherscanKey || process.env.ETHERSCAN_API_KEY || "",
       });
-    } catch (err: any) {
-      console.error(`\n  Fatal error: ${err.message || err}`);
-      process.exit(1);
     }
-  });
+  }
+
+  try {
+    await generateThreatModel({
+      contractPath: projectPath,
+      outputDir: opts.output,
+      maxTurns: parseInt(opts.maxTurns),
+      maxBudgetUsd: parseFloat(opts.maxBudget),
+      enabledProviders,
+      providerFlagValues,
+    });
+  } catch (err: any) {
+    console.error(`\n  Fatal error: ${err.message || err}`);
+    process.exit(1);
+  }
+});
+
+// ─── Helpers for CLI flag name conversion ─────────────────────────────────
+
+/** "solodit-key" → "soloditKey" */
+function camelCase(s: string): string {
+  return s.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+}
+
+/** "--solodit-key <key>" → "solodit-key" */
+function extractFlagName(flag: string): string {
+  const match = flag.match(/^--([^\s<]+)/);
+  return match ? match[1] : flag;
+}
 
 program.parse();

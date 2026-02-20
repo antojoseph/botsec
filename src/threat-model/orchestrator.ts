@@ -9,12 +9,11 @@
  */
 
 import { query } from "@anthropic-ai/claude-agent-sdk";
-import { writeFileSync, mkdirSync, statSync } from "fs";
+import { writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
 
 import { threatModelerAgent } from "../agents/threat-modeler.js";
 import { precomputeAnalysis } from "./precompute.js";
-import { searchSolodit } from "./solodit.js";
 import type {
   ThreatModel,
   Threat,
@@ -22,20 +21,27 @@ import type {
   ContractType,
   PrecomputedAnalysis,
 } from "./types.js";
+import type {
+  Provider,
+  PrecomputeResult,
+} from "./providers/types.js";
+import {
+  precomputeProviders,
+  enrichmentProviders,
+  synthesisFilterProviders,
+  outputFormatProviders,
+} from "./providers/registry.js";
 
 export interface ThreatModelOptions {
   /** Path to a Foundry project (must contain foundry.toml) */
   contractPath: string;
-  /** On-chain contract address (optional, enables Etherscan v2) */
-  address?: string;
-  chainId?: string;
-  etherscanApiKey?: string;
-  /** Enable Solodit historical vulnerability enrichment */
-  solodit?: boolean;
-  soloditKey?: string;
   outputDir?: string;
   maxTurns?: number;
   maxBudgetUsd?: number;
+  /** Active providers (filtered by CLI flags) */
+  enabledProviders?: Provider[];
+  /** Per-provider CLI flag values */
+  providerFlagValues?: Map<string, Record<string, string | boolean>>;
 }
 
 export async function generateThreatModel(
@@ -46,16 +52,32 @@ export async function generateThreatModel(
 
   // Phase 0: Pre-computation
   console.log("\n  Phase 0: Pre-computing analysis data...");
-  const precomputed = await precomputeAnalysis(opts.contractPath, {
-    address: opts.address,
-    chainId: opts.chainId ? parseInt(opts.chainId) : undefined,
-    etherscanApiKey: opts.etherscanApiKey,
-  });
+  const precomputed = await precomputeAnalysis(opts.contractPath);
 
-  // Write structural data to disk for file-based agent access
   const forgeProofDir = join(precomputed.projectDir, ".forge-proof");
   mkdirSync(forgeProofDir, { recursive: true });
 
+  // Run precompute providers (AST, inspect, blueprint, etherscan, slither, etc.)
+  // Providers populate precomputed via result.data (merged after each run).
+  const active = opts.enabledProviders || [];
+  const flagValues = opts.providerFlagValues || new Map();
+  const precomputeResults: PrecomputeResult[] = [];
+
+  for (const provider of precomputeProviders(active)) {
+    const result = await provider.run({
+      projectDir: precomputed.projectDir,
+      forgeProofDir,
+      precomputed,
+      flagValues: flagValues.get(provider.id) || {},
+    });
+    // Merge structured data into precomputed (e.g., structural, abi, blueprint)
+    if (result.data) {
+      Object.assign(precomputed, result.data);
+    }
+    precomputeResults.push(result);
+  }
+
+  // Write structural data to disk for file-based agent access
   let blueprintPath: string | undefined;
   let codemapPath: string | undefined;
 
@@ -65,20 +87,17 @@ export async function generateThreatModel(
     console.log(`  Blueprint written to: ${blueprintPath}`);
   }
   if (precomputed.structural) {
-    // Split code map into per-contract files for faster Grep access
     const codemapDir = join(forgeProofDir, "codemap");
     mkdirSync(codemapDir, { recursive: true });
     codemapPath = codemapDir;
 
     const s = precomputed.structural;
 
-    // Write global data (small, always useful)
     writeFileSync(join(codemapDir, "_inheritance.json"), JSON.stringify(s.inheritance, null, 2), "utf-8");
     writeFileSync(join(codemapDir, "_callGraph.json"), JSON.stringify(s.callGraph, null, 2), "utf-8");
     writeFileSync(join(codemapDir, "_stateVarMap.json"), JSON.stringify(s.stateVarMap, null, 2), "utf-8");
     writeFileSync(join(codemapDir, "_dataDependency.json"), JSON.stringify(s.dataDependency, null, 2), "utf-8");
 
-    // Write per-contract files (function summaries, auth, guards, operation order, storage)
     const contracts = new Set<string>();
     for (const key of Object.keys(s.functionSummary)) {
       const contract = key.split(".")[0];
@@ -117,7 +136,17 @@ export async function generateThreatModel(
   console.log("\n  Phase 1: Agentic code exploration...");
   console.log("─".repeat(60));
 
-  const agentDef = threatModelerAgent(precomputed, { blueprintPath, codemapPath });
+  // Collect extra data sections from precompute providers for the agent prompt
+  const extraDataSections = precomputeResults
+    .filter((r) => r.agentPromptSection)
+    .map((r) => r.agentPromptSection)
+    .join("\n\n");
+
+  const agentDef = threatModelerAgent(precomputed, {
+    blueprintPath,
+    codemapPath,
+    extraDataSections: extraDataSections || undefined,
+  });
   const agents = { "threat-modeler": agentDef };
 
   const orchestratorPrompt = buildOrchestratorPrompt(precomputed);
@@ -250,88 +279,31 @@ export async function generateThreatModel(
   // Phase 2: Synthesis
   console.log("\n  Phase 2: Synthesis & enrichment...");
 
-  // Extract unique threat categories for Solodit search
+  // Extract unique threat categories for enrichment providers
   const categories = [
     ...new Set(rawModel.threats.map((t: Threat) => t.category)),
   ] as ThreatCategory[];
 
-  // Query Solodit for historical findings (only when --solodit is passed)
-  let soloditCount = 0;
-  if (opts.solodit) {
-    console.log("  Querying Solodit for historical findings...");
-    try {
-      // Use the blueprint's LLM-classified type (a clean enum value like "vault")
-      // instead of the agent's free-form contractType string which breaks search queries
-      const classifiedType = (precomputed.blueprint?.classification.type || "other") as ContractType;
-      const soloditResults = await searchSolodit(
-        classifiedType,
-        categories,
-        opts.soloditKey
-      );
+  // Run enrichment providers (Solodit, Code4rena, etc.)
+  const enrichmentSources: string[] = [];
+  let totalEnrichmentFindings = 0;
 
-      // Attach findings to matching threats
-      for (const threat of rawModel.threats) {
-        const findings = soloditResults.get(threat.category);
-        if (findings && findings.length > 0) {
-          threat.historicalEvidence = {
-            source: "solodit",
-            references: findings.map((f) => ({
-              title: f.title,
-              url: f.url,
-              similarity: `Matches threat category: ${threat.category}`,
-            })),
-          };
-          soloditCount += findings.length;
-        }
-      }
-      console.log(`  Solodit: ${soloditCount} relevant findings attached.`);
-    } catch (e) {
-      console.log("  Solodit: query failed, continuing without enrichment.");
-    }
+  for (const provider of enrichmentProviders(active)) {
+    const result = await provider.enrich({
+      threats: rawModel.threats,
+      contractType: (precomputed.blueprint?.classification.type || "other") as ContractType,
+      categories,
+      precomputed,
+      flagValues: flagValues.get(provider.id) || {},
+    });
+    enrichmentSources.push(result.sourceKey);
+    totalEnrichmentFindings += result.findingsAttached;
   }
 
-  // Anti-slop filter: drop threats with empty traces
-  const beforeCount = rawModel.threats.length;
-  rawModel.threats = rawModel.threats.filter(
-    (t: Threat) => t.trace && t.trace.steps && t.trace.steps.length > 0
-  );
-  const droppedCount = beforeCount - rawModel.threats.length;
-  if (droppedCount > 0) {
-    console.log(
-      `  Anti-slop filter: dropped ${droppedCount} threat(s) with no code trace.`
-    );
+  // Run synthesis filter providers (anti-slop, self-contradiction, dedup, ranking, custom)
+  for (const filter of synthesisFilterProviders(active)) {
+    rawModel.threats = filter.apply(rawModel.threats, precomputed);
   }
-
-  // Self-contradiction filter: downgrade threats that are PRIMARILY exonerating
-  // Only triggers if the description is short AND contains exonerating language,
-  // or if multiple exonerating phrases appear. A longer analysis that mentions
-  // mitigations alongside real risks should NOT be downgraded.
-  const EXONERATING = [
-    /properly handled/i, /actually safe/i, /not exploitable/i,
-    /correctly implemented/i, /^not a vulnerability/i, /false positive/i,
-  ];
-  let downgraded = 0;
-  for (const t of rawModel.threats) {
-    const text = `${t.description} ${t.attackScenario || ""}`;
-    const matches = EXONERATING.filter((re) => re.test(text)).length;
-    // Only downgrade if: multiple exonerating phrases, or description is short (<200 chars) with one
-    if (matches >= 2 || (matches >= 1 && t.description.length < 200)) {
-      t.confidence = "low";
-      if (t.severity === "Critical") t.severity = "High";
-      else if (t.severity === "High") t.severity = "Medium";
-      else if (t.severity === "Medium") t.severity = "Low";
-      downgraded++;
-    }
-  }
-  if (downgraded > 0) {
-    console.log(`  Severity filter: downgraded ${downgraded} self-contradicting threat(s).`);
-  }
-
-  // Deduplication: merge threats with >50% affectedCode overlap
-  rawModel.threats = deduplicateThreats(rawModel.threats);
-
-  // Rank threats by severity × confidence × on-chain activity
-  rankThreats(rawModel.threats, precomputed);
 
   // Build final ThreatModel
   const threatModel: ThreatModel = {
@@ -366,9 +338,10 @@ export async function generateThreatModel(
         "solc-ast",
         "forge-inspect",
         ...(precomputed.onChain ? ["etherscan-v2"] : []),
-        "solodit",
+        ...enrichmentSources,
+        ...precomputeResults.map((r) => r.sourceKey),
       ],
-      soloditFindings: soloditCount,
+      soloditFindings: totalEnrichmentFindings,
     },
   };
 
@@ -379,9 +352,19 @@ export async function generateThreatModel(
 
   // Write blueprint for inspection
   if (precomputed.blueprint) {
-    const blueprintPath = join(runDir, "blueprint.json");
-    writeFileSync(blueprintPath, JSON.stringify(precomputed.blueprint, null, 2), "utf-8");
-    console.log(`  Blueprint: ${blueprintPath}`);
+    const bpOutPath = join(runDir, "blueprint.json");
+    writeFileSync(bpOutPath, JSON.stringify(precomputed.blueprint, null, 2), "utf-8");
+    console.log(`  Blueprint: ${bpOutPath}`);
+  }
+
+  // Run output format providers (SARIF, HTML, etc.)
+  for (const provider of outputFormatProviders(active)) {
+    const outPath = provider.write({
+      threatModel,
+      runDir,
+      flagValues: flagValues.get(provider.id) || {},
+    });
+    console.log(`  ${provider.name} output: ${outPath}`);
   }
 
   // Print summary
@@ -461,95 +444,6 @@ function parseAgentOutput(output: string): any {
   };
 }
 
-// ---------------------------------------------------------------------------
-// Threat ranking
-// ---------------------------------------------------------------------------
-
-const SEVERITY_WEIGHTS: Record<string, number> = {
-  Critical: 4,
-  High: 3,
-  Medium: 2,
-  Low: 1,
-};
-
-const CONFIDENCE_WEIGHTS: Record<string, number> = {
-  high: 3,
-  medium: 2,
-  low: 1,
-};
-
-function deduplicateThreats(threats: Threat[]): Threat[] {
-  const merged = new Set<number>();
-  for (let i = 0; i < threats.length; i++) {
-    if (merged.has(i)) continue;
-    for (let j = i + 1; j < threats.length; j++) {
-      if (merged.has(j)) continue;
-      const setA = new Set(threats[i].affectedCode);
-      const setB = new Set(threats[j].affectedCode);
-      const intersection = [...setA].filter((x) => setB.has(x)).length;
-      const smaller = Math.min(setA.size, setB.size);
-      if (smaller > 0 && intersection / smaller > 0.5) {
-        // Merge j into i
-        threats[i].description += `\n\nRelated: ${threats[j].title} — ${threats[j].description}`;
-        // Keep the higher severity
-        const sevOrder = ["Critical", "High", "Medium", "Low"];
-        if (sevOrder.indexOf(threats[j].severity) < sevOrder.indexOf(threats[i].severity)) {
-          threats[i].severity = threats[j].severity;
-        }
-        // Merge suggested properties
-        for (const prop of threats[j].suggestedProperties) {
-          if (!threats[i].suggestedProperties.includes(prop)) {
-            threats[i].suggestedProperties.push(prop);
-          }
-        }
-        merged.add(j);
-      }
-    }
-  }
-  const result = threats.filter((_, i) => !merged.has(i));
-  if (merged.size > 0) {
-    console.log(`  Deduplication: merged ${merged.size} overlapping threat(s).`);
-  }
-  return result;
-}
-
-function rankThreats(threats: Threat[], pre: PrecomputedAnalysis): void {
-  for (const threat of threats) {
-    const sevWeight = SEVERITY_WEIGHTS[threat.severity] || 1;
-    const confWeight = CONFIDENCE_WEIGHTS[threat.confidence] || 1;
-
-    // On-chain activity boost: if Etherscan data shows high activity on affected functions
-    let onChainBoost = 1;
-    if (pre.onChain) {
-      for (const code of threat.affectedCode) {
-        // Extract function name from "file:function:line" format
-        const parts = code.split(":");
-        const funcName = parts[1] || "";
-        const freq =
-          Object.entries(pre.onChain.functionCallFrequency).find(([k]) =>
-            k.includes(funcName)
-          )?.[1] || 0;
-        if (freq > 100) onChainBoost = 2;
-        else if (freq > 10) onChainBoost = 1.5;
-      }
-    }
-
-    // Historical evidence boost
-    const histBoost = threat.historicalEvidence ? 1.3 : 1;
-
-    // Priority: lower is higher priority
-    const score = sevWeight * confWeight * onChainBoost * histBoost;
-    threat.priority = Math.round(100 / score);
-  }
-
-  // Sort by priority (ascending = highest priority first)
-  threats.sort((a, b) => a.priority - b.priority);
-
-  // Re-number priorities sequentially
-  for (let i = 0; i < threats.length; i++) {
-    threats[i].priority = i + 1;
-  }
-}
 
 // ---------------------------------------------------------------------------
 // Message handling (streaming output)

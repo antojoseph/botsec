@@ -118,9 +118,9 @@ export interface Threat {
   /** REQUIRED — the code trace that discovered this threat */
   trace: CodeTrace;
 
-  /** Enrichment from Solodit (added in synthesis phase) */
+  /** Enrichment from external sources (added in synthesis phase by providers) */
   historicalEvidence?: {
-    source: "solodit";
+    source: string;
     references: HistoricalReference[];
   };
   /** Etherscan v2 data supporting this threat */

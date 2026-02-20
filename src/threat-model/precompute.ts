@@ -8,15 +8,7 @@
 import { execSync } from "child_process";
 import { existsSync, readdirSync, readFileSync, statSync, rmSync } from "fs";
 import { join, resolve } from "path";
-import type {
-  PrecomputedAnalysis,
-  StructuralAnalysis,
-  ArchitecturalBlueprint,
-  OnChainProfile,
-  ValueFlow,
-} from "./types.js";
-import { analyzeFromAST } from "./ast-analysis.js";
-import { buildBlueprint } from "./architecture-analyzer.js";
+import type { PrecomputedAnalysis } from "./types.js";
 
 // ---------------------------------------------------------------------------
 // Main entry point
@@ -24,11 +16,6 @@ import { buildBlueprint } from "./architecture-analyzer.js";
 
 export async function precomputeAnalysis(
   projectDir: string,
-  opts?: {
-    address?: string;
-    chainId?: number;
-    etherscanApiKey?: string;
-  }
 ): Promise<PrecomputedAnalysis> {
   projectDir = resolve(projectDir);
   validateFoundryProject(projectDir);
@@ -97,109 +84,15 @@ export async function precomputeAnalysis(
     }
   }
 
-  // 2. Structural analysis from solc AST — MUST run immediately after build,
-  //    before any forge inspect calls which corrupt build-info files.
-  console.log("  Analyzing solc AST from build artifacts...");
-  const structural: StructuralAnalysis | undefined = analyzeFromAST(projectDir);
-  if (structural) {
-    console.log(
-      `  AST analysis: ${Object.keys(structural.functionSummary).length} functions, ` +
-        `${Object.keys(structural.callGraph).length} call graph entries, ` +
-        `${Object.keys(structural.stateVarMap).length} state variables, ` +
-        `${Object.keys(structural.inheritance).length} inheritance relations`
-    );
-  } else {
-    console.log("  Warning: AST analysis produced no results.");
-  }
-
-  // 1. forge inspect (always available)
-  console.log("  Running forge inspect...");
-  const contracts = listContracts(projectDir);
-  const abi: Record<string, any[]> = {};
-  const storageLayout: Record<string, any> = {};
-  const methodIds: Record<string, Record<string, string>> = {};
-
-  for (const name of contracts) {
-    try {
-      abi[name] = JSON.parse(
-        execSync(`forge inspect ${name} abi --json`, {
-          cwd: projectDir,
-          encoding: "utf-8",
-          stdio: ["pipe", "pipe", "pipe"],
-        })
-      );
-    } catch {
-      /* contract may not be inspectable */
-    }
-    try {
-      storageLayout[name] = JSON.parse(
-        execSync(`forge inspect ${name} storageLayout --json`, {
-          cwd: projectDir,
-          encoding: "utf-8",
-          stdio: ["pipe", "pipe", "pipe"],
-        })
-      );
-    } catch {
-      /* skip */
-    }
-    try {
-      methodIds[name] = JSON.parse(
-        execSync(`forge inspect ${name} methodIdentifiers --json`, {
-          cwd: projectDir,
-          encoding: "utf-8",
-          stdio: ["pipe", "pipe", "pipe"],
-        })
-      );
-    } catch {
-      /* skip */
-    }
-  }
-
-  console.log(`  Inspected ${contracts.length} contract(s): ${contracts.join(", ")}`);
-
-  // Structural analysis was computed in step 2 above (before forge inspect).
-
-  // 2b. Build architectural blueprint from structural analysis
-  let blueprint: ArchitecturalBlueprint | undefined;
-  if (structural) {
-    console.log("  Building architectural blueprint...");
-    blueprint = await buildBlueprint(structural, abi);
-    console.log(
-      `  Blueprint: classified as "${blueprint.classification.type}" (${blueprint.classification.confidence} confidence), ` +
-        `${blueprint.attackSurface.length} functions scored, ` +
-        `${blueprint.inferredInvariants.length} invariants inferred, ` +
-        `${blueprint.investigationQuestions.length} investigation questions`
-    );
-    if (blueprint.patternFindings.ceiViolations.length > 0) {
-      console.log(
-        `  CEI violations pre-detected: ${blueprint.patternFindings.ceiViolations.length}`
-      );
-    }
-    if (blueprint.patternFindings.valueFlowPaths.filter((p) => !p.checksActualReceived).length > 0) {
-      console.log(
-        `  Value flow paths without balance check: ${blueprint.patternFindings.valueFlowPaths.filter((p) => !p.checksActualReceived).length}`
-      );
-    }
-  }
-
-  // 3. Etherscan v2 (if address provided)
-  let onChain: OnChainProfile | undefined;
-  if (opts?.address && opts.etherscanApiKey) {
-    console.log(`  Fetching on-chain data for ${opts.address}...`);
-    onChain = await fetchOnChainProfile(
-      opts.address,
-      opts.chainId || 1,
-      opts.etherscanApiKey,
-      // Use first contract's ABI for decoding
-      Object.values(abi)[0] || []
-    );
-    console.log(
-      `  Etherscan v2: ${Object.keys(onChain.functionCallFrequency).length} functions, ` +
-        `${onChain.topCallers.length} unique callers`
-    );
-  }
-
-  return { projectDir, abi, storageLayout, methodIds, structural, blueprint, onChain };
+  // AST analysis, forge inspect, blueprint, and etherscan are now
+  // PrecomputeProviders that run after this function returns.
+  // They populate the PrecomputedAnalysis via the data field.
+  return {
+    projectDir,
+    abi: {},
+    storageLayout: {},
+    methodIds: {},
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -220,7 +113,7 @@ function validateFoundryProject(projectDir: string): void {
 // Contract discovery via forge build output
 // ---------------------------------------------------------------------------
 
-function listContracts(projectDir: string): string[] {
+export function listContracts(projectDir: string): string[] {
   // Prefer scanning the out/ directory so we can filter by source path.
   // Only include contracts whose .sol file is under src/ (not lib/, test/, script/).
   const fromOut = listContractsFromOut(projectDir);
@@ -319,161 +212,3 @@ function collectSolFiles(dir: string, result: Set<string>): void {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Etherscan v2 integration
-// ---------------------------------------------------------------------------
-
-// ---------------------------------------------------------------------------
-// Etherscan v2 integration
-// ---------------------------------------------------------------------------
-
-const ETHERSCAN_V2_BASE = "https://api.etherscan.io/v2/api";
-
-async function fetchOnChainProfile(
-  address: string,
-  chainId: number,
-  apiKey: string,
-  _abi: any[]
-): Promise<OnChainProfile> {
-  const profile: OnChainProfile = {
-    address,
-    chainId,
-    functionCallFrequency: {},
-    topCallers: [],
-    valueFlows: [],
-    failedTxPatterns: [],
-    adminActions: [],
-    parameterRanges: {},
-  };
-
-  // 1. Fetch normal transactions (last 500)
-  const txs = await etherscanGet(chainId, apiKey, {
-    module: "account",
-    action: "txlist",
-    address,
-    startblock: "0",
-    endblock: "99999999",
-    sort: "desc",
-    page: "1",
-    offset: "500",
-  });
-
-  if (!Array.isArray(txs)) return profile;
-
-  // 2. Function call frequency
-  const funcCounts: Record<string, number> = {};
-  const callerCounts: Record<string, number> = {};
-  const failedCounts: Record<string, number> = {};
-  const valueTxs: Array<{ tx: any; value: bigint }> = [];
-
-  for (const tx of txs) {
-    const funcName = tx.functionName || tx.methodId || "unknown";
-    funcCounts[funcName] = (funcCounts[funcName] || 0) + 1;
-    callerCounts[tx.from] = (callerCounts[tx.from] || 0) + 1;
-
-    if (tx.isError === "1") {
-      failedCounts[funcName] = (failedCounts[funcName] || 0) + 1;
-    }
-
-    const value = BigInt(tx.value || "0");
-    if (value > 0n) {
-      valueTxs.push({ tx, value });
-    }
-  }
-
-  profile.functionCallFrequency = funcCounts;
-
-  // 3. Top callers
-  const callerEntries = Object.entries(callerCounts)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 20);
-  profile.topCallers = callerEntries.map(([addr, count]) => ({
-    address: addr,
-    callCount: count,
-    isContract: false, // would need getcode check, skip for now
-  }));
-
-  // 4. Fetch internal txs for top value transactions
-  valueTxs.sort((a, b) => (b.value > a.value ? 1 : -1));
-  const topValueTxs = valueTxs.slice(0, 20);
-
-  for (const { tx, value } of topValueTxs) {
-    // Rate limit: 3 calls/sec on free tier
-    await sleep(350);
-
-    const internalTxs = await etherscanGet(chainId, apiKey, {
-      module: "account",
-      action: "txlistinternal",
-      txhash: tx.hash,
-    });
-
-    const flow: ValueFlow = {
-      txHash: tx.hash,
-      functionName: tx.functionName || tx.methodId || "unknown",
-      value: value.toString(),
-      internalTransfers: Array.isArray(internalTxs)
-        ? internalTxs.map((itx: any) => ({
-            from: itx.from,
-            to: itx.to,
-            value: itx.value,
-          }))
-        : [],
-    };
-    profile.valueFlows.push(flow);
-  }
-
-  // 5. Failed tx patterns
-  profile.failedTxPatterns = Object.entries(failedCounts)
-    .filter(([, count]) => count > 0)
-    .map(([funcName, count]) => ({ functionName: funcName, count }));
-
-  // 6. Parameter ranges from tx values (simplified — just ETH values per function)
-  const funcValues: Record<string, bigint[]> = {};
-  for (const { tx, value } of valueTxs) {
-    const funcName = tx.functionName || tx.methodId || "unknown";
-    if (!funcValues[funcName]) funcValues[funcName] = [];
-    funcValues[funcName].push(value);
-  }
-  for (const [funcName, values] of Object.entries(funcValues)) {
-    values.sort((a, b) => (a > b ? 1 : -1));
-    profile.parameterRanges[funcName] = {
-      min: values[0].toString(),
-      max: values[values.length - 1].toString(),
-      median: values[Math.floor(values.length / 2)].toString(),
-    };
-  }
-
-  return profile;
-}
-
-async function etherscanGet(
-  chainId: number,
-  apiKey: string,
-  params: Record<string, string>
-): Promise<any> {
-  const url = new URL(ETHERSCAN_V2_BASE);
-  url.searchParams.set("chainid", chainId.toString());
-  url.searchParams.set("apikey", apiKey);
-  for (const [k, v] of Object.entries(params)) {
-    url.searchParams.set(k, v);
-  }
-
-  try {
-    const response = execSync(`curl -s "${url.toString()}"`, {
-      encoding: "utf-8",
-      timeout: 30_000,
-      stdio: ["pipe", "pipe", "pipe"],
-    });
-    const json = JSON.parse(response);
-    if (json.status === "1" && json.result) {
-      return json.result;
-    }
-    return [];
-  } catch {
-    return [];
-  }
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}

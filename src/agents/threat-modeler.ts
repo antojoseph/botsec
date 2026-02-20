@@ -14,6 +14,8 @@ import type { PrecomputedAnalysis } from "../threat-model/types.js";
 export interface ThreatModelerOpts {
   blueprintPath?: string;
   codemapPath?: string;
+  /** Additional data sections injected by PrecomputeProviders */
+  extraDataSections?: string;
 }
 
 export function threatModelerAgent(
@@ -88,6 +90,7 @@ Produce a structured threat model as JSON. You must:
 5. After exhausting the pre-computed leads, apply the cross-referencing patterns to find anything missed
 
 ${dataSection}
+${opts?.extraDataSections ? `\n${opts.extraDataSections}` : ""}
 ${hasOnChain ? buildOnChainSection(pre) : "## No On-Chain Data\nNo on-chain address was provided. Analyze based on code alone."}
 
 ## How to Work
