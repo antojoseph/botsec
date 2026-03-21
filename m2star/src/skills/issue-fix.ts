@@ -5,6 +5,7 @@
  * fixes with explanations. Auto-chains to /issue-report.
  */
 
+import path from "path";
 import { SkillDefinition, SkillContext, SkillResult, ExperimentIssue } from "../types.js";
 import { runAgent } from "../agent.js";
 
@@ -20,7 +21,7 @@ export function issueFixSkill(agentConfig: Parameters<typeof runAgent>[0]["confi
 
       const result = await runAgent({
         prompt,
-        config: agentConfig,
+        config: ctx.agentConfig ?? agentConfig,
         memory: ctx.memory,
         onOutput: (text) => process.stdout.write(text),
         cwd: ctx.workdir,
@@ -151,5 +152,3 @@ function extractCodeBlocks(output: string): Record<string, string> {
   return blocks;
 }
 
-// Lazy import path to avoid top-level import issues with circular deps
-import path from "path";

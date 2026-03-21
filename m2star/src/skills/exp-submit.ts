@@ -24,7 +24,7 @@ export function expSubmitSkill(agentConfig: Parameters<typeof runAgent>[0]["conf
 
       const result = await runAgent({
         prompt,
-        config: agentConfig,
+        config: ctx.agentConfig ?? agentConfig,
         memory: ctx.memory,
         onOutput: (text) => process.stdout.write(text),
         cwd: ctx.workdir,

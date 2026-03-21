@@ -57,6 +57,9 @@ export async function runAgent(opts: AgentRunOptions): Promise<AgentRunResult> {
       maxTurns: config.maxTurns,
       permissionMode: "bypassPermissions",
       cwd: cwd ?? process.cwd(),
+      ...(config.mcpServers && Object.keys(config.mcpServers).length > 0
+        ? { mcpServers: config.mcpServers as Record<string, import("@anthropic-ai/claude-agent-sdk").McpServerConfig> }
+        : {}),
     },
   })) {
     const msg = message as Record<string, unknown>;

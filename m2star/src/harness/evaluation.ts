@@ -10,11 +10,16 @@ import path from "path";
 import { EvalMetric, EvalReport, SkillResult } from "../types.js";
 
 export class EvaluationInfra {
-  private evalsDir: string;
+  readonly evalsDir: string;
 
   constructor(outputDir: string) {
     this.evalsDir = path.join(outputDir, "evals");
     fs.mkdirSync(this.evalsDir, { recursive: true });
+  }
+
+  /** Load all persisted eval reports (or filter by skill name) */
+  getReports(skillName?: string): EvalReport[] {
+    return this.loadReports(skillName);
   }
 
   /** Measure latency, output length, success rate */

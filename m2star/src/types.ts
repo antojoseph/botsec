@@ -24,6 +24,8 @@ export interface SkillContext {
   chainDepth: number;
   /** Parent skill that triggered this one, if any */
   calledBy?: string;
+  /** Agent config for this run, including MCP servers scoped to the calling team */
+  agentConfig?: AgentConfig;
 }
 
 export interface SkillResult {
@@ -148,6 +150,8 @@ export interface AgentConfig {
   maxTurns: number;
   systemPrompt: string;
   tools: string[];
+  /** MCP servers to make available to the agent, keyed by server name */
+  mcpServers?: Record<string, unknown>;
 }
 
 export interface HarnessConfig {

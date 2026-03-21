@@ -83,6 +83,7 @@ export class RLExperimentWorkflow {
     const reports: string[] = [];
     let iteration = 0;
     let continueLoop = true;
+    let stoppedByHuman = false;
 
     console.log("\n═══════════════════════════════════════════════════════");
     console.log("  M2* RL Experiment Workflow");
@@ -177,6 +178,16 @@ export class RLExperimentWorkflow {
       }
 
       if (nextAction === "done" || nextAction === "stop") {
+        // Record this iteration's summary before breaking
+        this.iterationSummaries.push({
+          iteration,
+          timestamp: new Date().toISOString(),
+          metrics: {},
+          issues: newIssues.length,
+          deployRecommendation: submitResult.output.match(/Deploy recommendation:\s*(\w+)/i)?.[1] ?? "unknown",
+          passed: newIssues.filter((i) => i.severity === "high").length === 0,
+        });
+        if (nextAction === "stop") stoppedByHuman = true;
         continueLoop = false;
         break;
       }
@@ -267,9 +278,7 @@ export class RLExperimentWorkflow {
     );
 
     // Generate HTML dashboard
-    const evalReports = this.harness.eval["evalsDir"]
-      ? loadEvalReports(this.harness.eval["evalsDir"] as string)
-      : [];
+    const evalReports = this.harness.eval.getReports();
 
     const dashboardPath = path.join(outputDir, "dashboard.html");
     generateDashboard(
@@ -279,8 +288,11 @@ export class RLExperimentWorkflow {
 
     this.harness.eval.printSummary();
 
-    const finalStatus =
-      iteration >= maxIterations ? "max_iterations_reached" : "completed";
+    const finalStatus: WorkflowResult["finalStatus"] = stoppedByHuman
+      ? "stopped_by_human"
+      : iteration >= maxIterations
+      ? "max_iterations_reached"
+      : "completed";
 
     console.log(`\n✓ Workflow complete after ${iteration} iteration(s)`);
     console.log(`  Status: ${finalStatus}`);
@@ -326,8 +338,6 @@ export class RLExperimentWorkflow {
         const entry = entryPoints[0];
         log(`\n[Phase 2] Attempt ${attempt}/${MAX_RETRIES}: ${entry}`);
 
-        // Profile wrapper: prefix with time, capture GPU stats if available
-        const profilePrefix = gpuAvailable() ? "nvidia-smi dmon -s u -d 5 &" : "";
         const cmd = buildRunCommand(workdir, entry);
 
         const execResult = runCommand(cmd, workdir, 300_000);
@@ -587,17 +597,3 @@ async function humanCheckpoint(prompt: string, options: string[]): Promise<strin
   });
 }
 
-function loadEvalReports(evalsDir: string): ReturnType<typeof JSON.parse>[] {
-  if (!fs.existsSync(evalsDir)) return [];
-  return fs
-    .readdirSync(evalsDir)
-    .filter((f) => f.endsWith(".json"))
-    .map((f) => {
-      try {
-        return JSON.parse(fs.readFileSync(path.join(evalsDir, f), "utf-8"));
-      } catch {
-        return null;
-      }
-    })
-    .filter(Boolean);
-}

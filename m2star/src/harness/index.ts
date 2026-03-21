@@ -13,14 +13,13 @@ import { createMemoryStore } from "./memory.js";
 import { defaultGuardrails } from "./guardrails.js";
 import { EvaluationInfra } from "./evaluation.js";
 import { SkillRegistry } from "./skills.js";
-import { McpRegistry, registerCanonicalMcps } from "./mcps.js";
+import { McpRegistry, McpServerConfig, buildMcpRegistry, registerCanonicalMcps } from "./mcps.js";
 import { TeamRegistry, CANONICAL_TEAMS } from "./teams.js";
 import {
   loadRuntimeConfig,
   mergeWithRuntimeConfig,
   RuntimeConfig,
 } from "./config.js";
-import { buildMcpRegistry } from "./mcps.js";
 
 export { SkillRegistry }      from "./skills.js";
 export { createMemoryStore }  from "./memory.js";
@@ -48,17 +47,22 @@ export class AgentHarness {
     const runtimeCfg: RuntimeConfig = configDir ? loadRuntimeConfig(configDir) : {};
     const merged = mergeWithRuntimeConfig(config ?? {}, runtimeCfg);
 
+    // Build base config, then overlay merged (runtime + programmatic) on top.
+    // systemPrompt is always sourced from M2STAR_SYSTEM_PROMPT — never from
+    // the runtime JSON config, which doesn't define it.
     this.config = {
       guardrails: defaultGuardrails(),
       memoryDir: ".m2star/memory",
       outputDir: "m2star-output",
+      ...merged,
       agent: {
         model: "claude-opus-4-6",
         maxTurns: 20,
-        systemPrompt: M2STAR_SYSTEM_PROMPT,
         tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"],
+        ...(merged.agent ?? {}),
+        // Always restore system prompt — runtime config must not blank it out
+        systemPrompt: M2STAR_SYSTEM_PROMPT,
       },
-      ...merged,
     };
 
     this.skills = new SkillRegistry();
@@ -82,14 +86,22 @@ export class AgentHarness {
   async run(
     command: string,
     input: string,
-    onOutput?: (line: string) => void
+    onOutput?: (line: string) => void,
+    /** Optional: restrict MCP servers to a specific team's subset */
+    team?: string
   ): Promise<SkillResult> {
+    const mcpServers = team
+      ? this.mcps.forTeam(team)
+      : this.mcps.all();
+
     const ctx: SkillContext = {
       input,
       memory: this.memory,
       guardrails: this.config.guardrails,
       workdir: process.cwd(),
       chainDepth: 0,
+      // Inject MCPs into agent config for this run
+      agentConfig: { ...this.config.agent, mcpServers },
     };
 
     const start = Date.now();
