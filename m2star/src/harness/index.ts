@@ -1,8 +1,11 @@
 /**
- * Agent Harness — orchestrates Skills, Memory, Guardrails, and Evaluation.
+ * Agent Harness — orchestrates Skills, Memory, Guardrails, Evaluation,
+ * MCPs, and Teams.
  *
- * This is the central coordinator. The human configures the harness;
- * the M2* agent executes within its boundaries.
+ * Human "configure the harness" flows:
+ *   1. Write skills & guardrails → CLI: m2star config init
+ *   2. Edit .m2star/config.json  → JSON file picked up at startup
+ *   3. CLI flags override file config
  */
 
 import { HarnessConfig, SkillContext, SkillResult } from "../types.js";
@@ -10,19 +13,41 @@ import { createMemoryStore } from "./memory.js";
 import { defaultGuardrails } from "./guardrails.js";
 import { EvaluationInfra } from "./evaluation.js";
 import { SkillRegistry } from "./skills.js";
+import { McpRegistry, registerCanonicalMcps } from "./mcps.js";
+import { TeamRegistry, CANONICAL_TEAMS } from "./teams.js";
+import {
+  loadRuntimeConfig,
+  mergeWithRuntimeConfig,
+  RuntimeConfig,
+} from "./config.js";
+import { buildMcpRegistry } from "./mcps.js";
 
-export { SkillRegistry } from "./skills.js";
-export { createMemoryStore } from "./memory.js";
-export { defaultGuardrails } from "./guardrails.js";
-export { EvaluationInfra } from "./evaluation.js";
+export { SkillRegistry }      from "./skills.js";
+export { createMemoryStore }  from "./memory.js";
+export { defaultGuardrails }  from "./guardrails.js";
+export { EvaluationInfra }    from "./evaluation.js";
+export { McpRegistry }        from "./mcps.js";
+export { TeamRegistry }       from "./teams.js";
+export type { RuntimeConfig } from "./config.js";
+
+// Re-export builder helpers
+export { buildMcpRegistry, registerCanonicalMcps } from "./mcps.js";
+export { loadRuntimeConfig, saveRuntimeConfig, initConfig, mergeWithRuntimeConfig } from "./config.js";
+export type { McpRuntimeConfig } from "./config.js";
 
 export class AgentHarness {
   readonly config: HarnessConfig;
   readonly skills: SkillRegistry;
   readonly memory: ReturnType<typeof createMemoryStore>;
   readonly eval: EvaluationInfra;
+  readonly mcps: McpRegistry;
+  readonly teams: TeamRegistry;
 
-  constructor(config?: Partial<HarnessConfig>) {
+  constructor(config?: Partial<HarnessConfig>, configDir?: string) {
+    // Load runtime config from file, then merge with programmatic config
+    const runtimeCfg: RuntimeConfig = configDir ? loadRuntimeConfig(configDir) : {};
+    const merged = mergeWithRuntimeConfig(config ?? {}, runtimeCfg);
+
     this.config = {
       guardrails: defaultGuardrails(),
       memoryDir: ".m2star/memory",
@@ -33,11 +58,24 @@ export class AgentHarness {
         systemPrompt: M2STAR_SYSTEM_PROMPT,
         tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"],
       },
-      ...config,
+      ...merged,
     };
+
     this.skills = new SkillRegistry();
     this.memory = createMemoryStore(this.config.memoryDir);
     this.eval = new EvaluationInfra(this.config.outputDir);
+
+    // MCP registry: load from runtime config + register canonicals
+    this.mcps = runtimeCfg.mcps
+      ? buildMcpRegistry(runtimeCfg.mcps)
+      : new McpRegistry();
+    registerCanonicalMcps(this.mcps, process.cwd());
+
+    // Team registry: register all canonical teams
+    this.teams = new TeamRegistry(this.skills);
+    for (const team of CANONICAL_TEAMS) {
+      this.teams.registerTeam(team);
+    }
   }
 
   /** Execute a skill command with full harness context */
@@ -63,6 +101,16 @@ export class AgentHarness {
 
     return result;
   }
+
+  /** Get MCP configs for a specific team (for passing to SDK query options) */
+  mcpsForTeam(teamName: string): Record<string, unknown> {
+    return this.mcps.forTeam(teamName);
+  }
+
+  /** Get MCP configs for all teams (for general agent use) */
+  allMcps(): Record<string, unknown> {
+    return this.mcps.all();
+  }
 }
 
 const M2STAR_SYSTEM_PROMPT = `You are M2*, an AI agent that builds next-generation ML models through systematic experimentation.
@@ -72,6 +120,7 @@ const M2STAR_SYSTEM_PROMPT = `You are M2*, an AI agent that builds next-generati
 - Learn conventions from existing code and report formats
 - Self-review your own code and outputs for quality
 - Chain skills together: /exp-plan → /exp-submit → /issue-fix → /issue-report
+- Invoke debugging: /job-debug, /job-profile for job-level investigations
 - Generate structured reports with metrics, findings, and next steps
 - Build and update institutional memory so future iterations improve
 - Cowork with human researchers at review checkpoints
