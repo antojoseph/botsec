@@ -414,12 +414,29 @@ trust, so the agents are isolated from the target:
 
 ### Known limitations with non-Anthropic models
 
-Routing through a gateway works, but weaker models can mishandle subagent
-delegation — treating the synchronous Task tool as if it were asynchronous and
-ending the turn before the subagent's work is used. The orchestrator prompts
-state explicitly that Task is synchronous, which resolves it in practice, but
-this is the first thing to check if a run finishes suspiciously fast with an
-empty `.forge-proof/test/`.
+Routing through a gateway works, but weaker models mishandle subagent
+delegation: they treat the synchronous Task tool as if it were asynchronous,
+announce that the verifier "is now running", and end the turn before any
+verification happens.
+
+The orchestrator prompts state explicitly that Task is synchronous. **This
+reduces the failure rate but does not eliminate it** — it still reproduces on
+Haiku-class orchestrators. Because a silent false pass is the worst outcome for
+a security tool, `analyze` also verifies the artifacts directly: if no `.sol`
+files were written to `.forge-proof/test/`, it refuses to write a report and
+exits non-zero.
+
+Observed with `ANTHROPIC_DEFAULT_OPUS_MODEL` set to:
+
+| Model | Result |
+|---|---|
+| `anthropic/claude-sonnet-4.5` | Completes; 5 test files, 20 symbolic tests |
+| `anthropic/claude-haiku-4.5` | Reliably ends the turn early — caught by the guard |
+
+If you hit the guard, re-run, or point `ANTHROPIC_DEFAULT_OPUS_MODEL` at a more
+capable model for the orchestrator role. The subagents themselves do fine on
+cheaper models; it is specifically the delegating orchestrator that needs
+capability.
 
 ## License
 

@@ -17,7 +17,13 @@ import {
   HALMOS_ENV,
   FORGE_PROOF_TEST_DIR,
 } from "./scaffold/foundry-project.js";
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import {
+  readFileSync,
+  writeFileSync,
+  mkdirSync,
+  existsSync,
+  readdirSync,
+} from "node:fs";
 import { resolve, join } from "node:path";
 import type { ThreatModel, Threat } from "./threat-model/types.js";
 
@@ -169,6 +175,31 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
     }
   }
 
+  // Verification must leave evidence behind.
+  //
+  // The orchestrator model sometimes treats the (synchronous) Task tool as if it
+  // were asynchronous — it announces that the verifier "is now running", ends its
+  // turn, and we would otherwise write a confident-looking report containing no
+  // verification at all and exit 0. For a security tool that silent false
+  // success is the worst possible outcome, so check for the artifacts directly
+  // rather than trusting the narrative.
+  const testsWritten = countGeneratedTests(projectDir);
+  const verificationExpected = true; // every analyze mode ends in verification
+  if (verificationExpected && testsWritten === 0) {
+    const mode = opts.verifyOnly ? "--verify-only" : "analyze";
+    throw new Error(
+      `Verification produced no tests.\n` +
+        `  No .sol files were written to ${join(projectDir, FORGE_PROOF_TEST_DIR)}, so nothing was\n` +
+        `  actually verified and no report will be written.\n\n` +
+        `  This usually means the orchestrator ended its turn believing the\n` +
+        `  formal-verifier was still running in the background. The Task tool is\n` +
+        `  synchronous; weaker models routed through an LLM gateway get this wrong.\n\n` +
+        `  Try: re-run ${mode}, or point ANTHROPIC_DEFAULT_OPUS_MODEL at a more\n` +
+        `  capable model for the orchestrator.`
+    );
+  }
+  console.log(`\n  Verification wrote ${testsWritten} test file(s) to ${FORGE_PROOF_TEST_DIR}/`);
+
   // Write report to timestamped run directory
   if (finalReport.trim()) {
     const baseOutputDir = opts.outputDir || "forge-proof-output";
@@ -191,6 +222,16 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
 
     console.log(`\n  Report: ${mdPath}`);
     console.log(`  JSON:   ${jsonPath}`);
+  }
+}
+
+/** Count generated Halmos test files, the observable evidence that verification ran. */
+function countGeneratedTests(projectDir: string): number {
+  const dir = join(projectDir, FORGE_PROOF_TEST_DIR);
+  try {
+    return readdirSync(dir).filter((f) => f.endsWith(".sol")).length;
+  } catch {
+    return 0;
   }
 }
 

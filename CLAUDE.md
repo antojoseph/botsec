@@ -95,4 +95,5 @@ forge-proof check
 - Generated tests live in `.forge-proof/test/`, which is outside Foundry's default source paths. `HALMOS_ENV` (`src/scaffold/foundry-project.ts`) exports `FOUNDRY_TEST=.forge-proof/test` so forge and halmos see them, and `FOUNDRY_DYNAMIC_TEST_LINKING=false` because Foundry >= 1.3 otherwise rewrites `new Contract()` into a `vm.deployCode(string)` cheatcode that Halmos cannot execute (setUp() then fails on every test)
 - Halmos selects tests by contract/function name: `--match-contract`, `--match-test`, `--function`. There is **no** `--match-path`, and `forge build --extra-output-files none` is not valid
 - The scaffold does **not** pin `solc_version` — pinning makes any newer-pragma contract un-analyzable
+- `analyze` asserts that verification left artifacts behind: if `.forge-proof/test/` contains no `.sol` files after the run, it throws instead of writing a report. Orchestrator models routed through a gateway sometimes end their turn believing the synchronous Task tool is asynchronous, and a security tool must not report success for a run that verified nothing
 - Output defaults to `forge-proof-output/` directory
