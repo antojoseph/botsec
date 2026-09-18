@@ -85,7 +85,7 @@ Formally verifies threats using Halmos symbolic execution.
 
 1. **Explorer Agent** (Opus) — Validates known threats from the threat model, identifies additional ones
 2. **On-Chain Agent** (Sonnet) — Fetches Etherscan v2 transaction data for concrete test values *(optional)*
-3. **Verifier Agent** (Opus, with halmos skill preloaded) — Discovers existing tests before writing new ones. Writes `check_` Halmos tests, compiles, runs the SMT solver, interprets counterexamples. Diagnoses timeouts: if nonlinear 256-bit math (unsolvable), falls back to Foundry fuzz immediately. If solvable, tries input narrowing first.
+3. **Verifier Agent** (Opus) — Discovers existing tests before writing new ones. Writes `check_` Halmos tests, compiles, runs the SMT solver, interprets counterexamples. Diagnoses timeouts: if nonlinear 256-bit math (unsolvable), falls back to Foundry fuzz immediately. If solvable, tries input narrowing first.
 
 Use `--verify-only` to restart just the verification phase without re-running exploration.
 
@@ -183,6 +183,18 @@ forge-proof threat-model <project-path>
   --solodit-key <key>       Solodit API key
   -o, --output <dir>        Output directory [default: forge-proof-output]
   --max-turns <n>           Max agent turns [default: 200]
+  --max-budget <usd>        Max spend in USD before stopping [default: 50]
+  --allow-npm-install       Run `npm install` in the target (executes its
+                            lifecycle scripts — trusted targets only)
+
+  Provider toggles (all on by default, generated from the provider registry):
+  --no-ast                  Disable solc AST structural analysis
+  --no-inspect              Disable forge inspect (ABI, storage layout)
+  --no-blueprint            Disable architectural blueprint
+  --no-anti-slop            Disable the trace-required quality gate
+  --no-self-contradiction   Disable the self-contradiction downgrade
+  --no-dedup                Disable threat deduplication
+  --no-ranking              Disable threat ranking
 
 forge-proof analyze <path>
   --threat-model <file>     Threat model JSON from Stage 1
@@ -193,10 +205,15 @@ forge-proof analyze <path>
   --loop <n>                Halmos loop bound [default: 3]
   --solver-timeout <ms>     SMT solver timeout [default: 10000]
   --max-turns <n>           Max agent turns [default: 500]
+  --max-budget <usd>        Max spend in USD before stopping [default: 100]
   -o, --output <dir>        Output directory [default: forge-proof-output]
 
-forge-proof check           Verify dependencies
+forge-proof check           Verify dependencies and resolve the Claude credential
 ```
+
+Adding a provider to `src/threat-model/providers/registry.ts` generates its CLI
+flag automatically from the provider's `ProviderMeta` — default-on providers get
+`--no-<flag>`, opt-in providers get `--<flag>`.
 
 ## Output Structure
 
@@ -245,7 +262,7 @@ threat-model <project>                    analyze <project> --threat-model <file
   |   Write .forge-proof/blueprint.json     |   [skipped with --verify-only]
   |                                         |
   +-- Agentic Exploration                   +-- Phase 2: Formal Verification
-  |   Threat Modeler (Opus, 1M context)     |   Verifier (Opus, halmos skill preloaded)
+  |   Threat Modeler (Opus)                 |   Verifier (Opus)
   |   Reads per-contract files on-demand    |   Discovers existing tests first
   |   Untrusted-actor focus only            |   check_ tests -> halmos
   |   Anti-slop trace requirement           |   Diagnoses timeouts (solvable vs not)
@@ -320,7 +337,7 @@ src/
     explorer.ts                     Deep code analysis (read-only)
     onchain.ts                      Etherscan transaction analysis
     threat-modeler.ts               Threat modeling (file-based context)
-    verifier.ts                     Halmos tests + fuzz fallback (halmos skill preloaded)
+    verifier.ts                     Halmos tests + fuzz fallback
   threat-model/
     orchestrator.ts                 Threat model pipeline coordinator
     precompute.ts                   AST + forge inspect + Etherscan v2
