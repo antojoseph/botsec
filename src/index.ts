@@ -69,6 +69,20 @@ program
     "--verify-only",
     "Skip exploration, go straight to verification (requires --threat-model)"
   )
+  .option(
+    "--no-audit-spec",
+    "Skip the independent Halmos re-run that flags vacuous properties"
+  )
+  .option(
+    "--mutation-test",
+    "Inject bugs into the contract and measure how many the generated spec " +
+      "catches. Costs no model tokens (forge + halmos only)."
+  )
+  .option(
+    "--max-mutants <n>",
+    "Mutants to run with --mutation-test (default: 10)",
+    "10"
+  )
   .action(async (contractPath, opts) => {
     console.log(BANNER);
     console.log("  AI-Powered Formal Verification for Smart Contracts\n");
@@ -118,6 +132,10 @@ program
         outputDir: opts.output,
         threatModelPath: opts.threatModel,
         verifyOnly: !!opts.verifyOnly,
+        // commander maps --no-audit-spec to opts.auditSpec === false
+        auditSpec: opts.auditSpec !== false,
+        mutationTest: !!opts.mutationTest,
+        maxMutants: parseInt(opts.maxMutants),
       });
     } catch (err: any) {
       console.error(`\n  Fatal error: ${err.message || err}`);

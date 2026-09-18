@@ -26,6 +26,12 @@ import {
 } from "node:fs";
 import { resolve, join } from "node:path";
 import type { ThreatModel, Threat } from "./threat-model/types.js";
+import { runHalmos, summarize, type HalmosRun } from "./verification/halmos-json.js";
+import {
+  runMutationTesting,
+  formatMutationReport,
+  type MutationReport,
+} from "./mutation/runner.js";
 
 export interface AnalyzeOptions {
   contractPath: string;
@@ -39,6 +45,11 @@ export interface AnalyzeOptions {
   outputDir?: string;
   threatModelPath?: string;
   verifyOnly?: boolean;
+  /** Re-run the generated suite through Halmos JSON and classify vacuity. */
+  auditSpec?: boolean;
+  /** Run mutation testing to score how much the spec actually proves. */
+  mutationTest?: boolean;
+  maxMutants?: number;
 }
 
 export async function analyze(opts: AnalyzeOptions): Promise<void> {
@@ -200,6 +211,57 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
   }
   console.log(`\n  Verification wrote ${testsWritten} test file(s) to ${FORGE_PROOF_TEST_DIR}/`);
 
+  // ── Phase 4: independent audit of the spec the agent produced ────────────
+  //
+  // Everything above this point is the agent's own account of its work. The
+  // steps below re-derive the results from Halmos directly and then attack the
+  // spec, so the final report rests on measurement rather than narration.
+  let specAudit = "";
+  const halmosEnv = { ...HALMOS_ENV };
+
+  if (opts.auditSpec !== false) {
+    try {
+      console.log("\n  Auditing spec (re-running Halmos for structured results)...");
+      const run = runHalmos({
+        projectDir,
+        env: halmosEnv,
+        loopBound: opts.loopBound,
+        solverTimeoutMs: opts.solverTimeout,
+      });
+      console.log(`  ${summarize(run)}`);
+      specAudit += formatVacuityReport(run);
+
+      if (run.vacuous > 0) {
+        console.warn(
+          `  WARNING: ${run.vacuous} propert(ies) proved nothing — see the ` +
+            `VACUOUS section of the report.`
+        );
+      }
+
+      if (opts.mutationTest) {
+        console.log("\n  Mutation testing (no model tokens — forge + halmos only)...");
+        const mreport: MutationReport = runMutationTesting({
+          projectDir,
+          env: halmosEnv,
+          loopBound: opts.loopBound,
+          solverTimeoutMs: opts.solverTimeout,
+          maxMutants: opts.maxMutants,
+          onProgress: (m) => console.log(m),
+        });
+        if (mreport.score !== undefined) {
+          console.log(`\n  Mutation score: ${Math.round(mreport.score * 100)}% ` +
+            `(${mreport.killed} killed / ${mreport.survived} survived)`);
+        }
+        specAudit += "\n" + formatMutationReport(mreport);
+      }
+    } catch (err: any) {
+      // A spec audit failure must not discard the verification work above it.
+      console.warn(`  Spec audit skipped: ${err.message?.split("\n")[0] ?? err}`);
+    }
+  }
+
+  if (specAudit) finalReport = finalReport.trimEnd() + "\n\n---\n\n" + specAudit;
+
   // Write report to timestamped run directory
   if (finalReport.trim()) {
     const baseOutputDir = opts.outputDir || "forge-proof-output";
@@ -223,6 +285,59 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
     console.log(`\n  Report: ${mdPath}`);
     console.log(`  JSON:   ${jsonPath}`);
   }
+}
+
+/**
+ * Render the Halmos-derived verdicts, separating real proofs from vacuous ones.
+ * A vacuous PASS is indistinguishable from a genuine one in the agent's prose,
+ * which is exactly why this is derived from the JSON instead.
+ */
+function formatVacuityReport(run: HalmosRun): string {
+  const lines = [
+    "## SPEC AUDIT (independently re-derived from Halmos)",
+    "",
+    `${run.verified} verified, ${run.violated} violated, ${run.vacuous} vacuous, ` +
+      `${run.errored} errored.`,
+    "",
+  ];
+
+  const vacuous = run.outcomes.filter((o) => o.verdict === "vacuous");
+  if (vacuous.length > 0) {
+    lines.push(
+      "### VACUOUS — reported no violation but proved nothing",
+      "",
+      "These did not fail, but no reachable path ever evaluated the assertion.",
+      "They must not be read as verification:",
+      ""
+    );
+    for (const o of vacuous) {
+      lines.push(`- \`${o.name}\` — ${o.vacuityReason}`);
+    }
+    lines.push("");
+  }
+
+  const violated = run.outcomes.filter((o) => o.verdict === "violated");
+  if (violated.length > 0) {
+    lines.push("### VIOLATED — counterexample found", "");
+    for (const o of violated) {
+      const ce = o.counterexamples
+        .map((c) => `${c.variable}=${c.value}`)
+        .join(", ");
+      lines.push(`- \`${o.name}\`${ce ? ` — ${ce}` : ""}`);
+    }
+    lines.push("");
+  }
+
+  const verified = run.outcomes.filter((o) => o.verdict === "verified");
+  if (verified.length > 0) {
+    lines.push("### VERIFIED — holds on all reachable paths (within bounds)", "");
+    for (const o of verified) {
+      lines.push(`- \`${o.name}\` (paths: ${o.totalPaths}, ${o.seconds.toFixed(2)}s)`);
+    }
+    lines.push("");
+  }
+
+  return lines.join("\n");
 }
 
 /** Count generated Halmos test files, the observable evidence that verification ran. */

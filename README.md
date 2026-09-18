@@ -206,6 +206,11 @@ forge-proof analyze <path>
   --solver-timeout <ms>     SMT solver timeout [default: 10000]
   --max-turns <n>           Max agent turns [default: 500]
   --max-budget <usd>        Max spend in USD before stopping [default: 100]
+  --no-audit-spec           Skip the independent Halmos re-run that flags
+                            vacuous properties (on by default)
+  --mutation-test           Inject bugs and score how many the spec catches
+                            (no model tokens — forge + halmos only)
+  --max-mutants <n>         Mutants to run with --mutation-test [default: 10]
   -o, --output <dir>        Output directory [default: forge-proof-output]
 
 forge-proof check           Verify dependencies and resolve the Claude credential
@@ -371,6 +376,8 @@ src/
 - Report persistence (MD + JSON)
 - Existing test discovery before writing new ones
 - Provider toggles (`--no-ast`, `--no-dedup`, ...) wired to the registry
+- Vacuity classification of every Halmos result (structured, via `--json-output`)
+- Mutation testing to score how much the generated spec actually proves
 - Works against any Anthropic-compatible endpoint (Anthropic API, OpenRouter,
   Bedrock, Vertex) — see [Model providers](#model-providers)
 
@@ -388,6 +395,50 @@ exported for every forge/halmos invocation and are both mandatory:
 
 Halmos selects tests by contract and function name — `--match-contract` / `-mc`,
 `--match-test` / `-mt`, `--function`. There is no `--match-path` flag.
+
+### Spec strength — is a `[PASS]` worth anything?
+
+A Halmos `[PASS]` only means no counterexample was found *for the property as
+written*. A property that asserts nothing, or whose assumptions are
+contradictory, passes in a way that is byte-identical to a real proof. For an
+audit tool that is the most dangerous possible output, so every run independently
+audits the spec the agent produced.
+
+**Vacuity classification** (on by default) re-runs Halmos with `--json-output`
+and separates real proofs from empty ones:
+
+```
+10 verified, 2 violated, 10 vacuous, 0 errored
+WARNING: 10 propert(ies) proved nothing — see the VACUOUS section of the report.
+```
+
+A property whose every path reverted never reached its assertion. It is reported
+under `VACUOUS`, never under `VERIFIED`.
+
+**Mutation testing** (`--mutation-test`) answers the harder question: are the
+properties that *do* hold actually constraining anything? It injects bugs derived
+from the solc AST — removing a `require`, shifting a comparison boundary,
+inverting an arithmetic operator, dropping a state write — rebuilds, and re-runs
+the verified properties.
+
+```
+Mutation score: 44% — 4 killed, 5 survived
+
+SURVIVED  M005  require(balances[msg.sender] >= amount)   <- the overdraw guard
+SURVIVED  M006  >= -> >   (off-by-one on that same guard)
+SURVIVED  M007  require(success, "Transfer failed")
+```
+
+A surviving mutant is a reproducible demonstration that the spec does not detect
+that bug. In the run above, the vault's entire overdraw guard could be deleted
+and all ten "verified" properties still passed — the spec constrained bookkeeping
+but not guards. No confidence score a model assigns to its own work can tell you
+that.
+
+Mutation testing spends no model tokens; it is forge and halmos only. Each
+mutant costs one rebuild plus one Halmos run, so `--max-mutants` bounds the
+wall-clock cost. Mutants are chosen round-robin across operators so a small
+budget still yields a representative score.
 
 ### Security model
 

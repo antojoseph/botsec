@@ -45,11 +45,18 @@ Three-phase agent pipeline coordinated by the orchestrator via `@anthropic-ai/cl
 
 **Phase 3 — Report Generation** (inline in `src/orchestrator.ts`): the SDK's final `result` string is written as Markdown + JSON to a timestamped run directory.
 
+**Phase 4 — Spec Audit** (inline in `src/orchestrator.ts`, after the agent finishes): everything up to Phase 3 is the agent's own account of its work. Phase 4 re-derives the results independently and then attacks the spec:
+- **Vacuity classification** (on by default, `--no-audit-spec` to skip) — re-runs Halmos with `--json-output`. A property whose paths all reverted never evaluated its assertion; reporting it as "verified" is a false assurance, so it is classified `vacuous` instead.
+- **Mutation testing** (`--mutation-test`) — injects bugs into the contract and re-runs the verified properties. A surviving mutant is a bug the spec does not detect. Costs no model tokens; it is forge + halmos only.
+
 ### Key Supporting Modules
 
 - `src/orchestrator.ts` — Builds agent definitions, system prompts, manages temp Foundry project lifecycle, streams agent output
 - `src/scaffold/foundry-project.ts` — Creates temp Foundry project (`forge init`), installs halmos-cheatcodes, copies targets, configures remappings
 - `src/scaffold/dependencies.ts` — Checks forge/halmos/cast availability at startup
+- `src/verification/halmos-json.ts` — Runs Halmos with `--json-output` and classifies each result as `verified` / `violated` / `vacuous` / `error`. Structured ingestion, not stdout scraping
+- `src/mutation/operators.ts` — Enumerates mutations from the solc AST (require-removal, comparison-boundary, arithmetic-swap, state-write-removal)
+- `src/mutation/runner.ts` — Applies mutants, rebuilds, re-runs the suite, scores the spec
 - `src/threat-model/providers/` — Pluggable pipeline: precompute / enrichment / synthesis-filter / output providers, registered in `providers/registry.ts`. CLI flags are generated from each provider's `ProviderMeta`.
 
 ### Threat Model Pipeline
@@ -95,5 +102,13 @@ forge-proof check
 - Generated tests live in `.forge-proof/test/`, which is outside Foundry's default source paths. `HALMOS_ENV` (`src/scaffold/foundry-project.ts`) exports `FOUNDRY_TEST=.forge-proof/test` so forge and halmos see them, and `FOUNDRY_DYNAMIC_TEST_LINKING=false` because Foundry >= 1.3 otherwise rewrites `new Contract()` into a `vm.deployCode(string)` cheatcode that Halmos cannot execute (setUp() then fails on every test)
 - Halmos selects tests by contract/function name: `--match-contract`, `--match-test`, `--function`. There is **no** `--match-path`, and `forge build --extra-output-files none` is not valid
 - The scaffold does **not** pin `solc_version` — pinning makes any newer-pragma contract un-analyzable
+
+### Halmos / Foundry gotchas (all verified empirically, do not "simplify" these)
+
+- **`forge build --ast` vs `--build-info` populate different files.** Halmos reads an `ast` field from each artifact JSON (`out/<File>.sol/<Contract>.json`) and needs `--ast`; without it it skips every contract with `KeyError: 'ast'`, reports "No tests", and writes no JSON — which looks like a mutant killing every property rather than a broken build. Mutation *enumeration* instead needs `output.sources[*].ast` in `out/build-info/*.json`, which comes from `--build-info`. Adding `--ast` to a `--build-info` run yields build-info with **no** AST at all
+- **solc `src` offsets are BYTE offsets.** A single em-dash in a comment desynchronises JS string indices from them, so all mutation source handling uses `Buffer`, never `string`
+- **solc statement ranges exclude the trailing semicolon.** Replacing a statement without extending over it leaves a stray `;`, which Solidity rejects. Replacement text is `{}` (an empty block), never `true;` — that is not valid Solidity
+- **Halmos JSON counterexamples exceed `Number.MAX_SAFE_INTEGER`.** `JSON.parse` silently corrupts uint256 values into floats, so numeric `value` fields are quoted before parsing
+- **Halmos exit codes:** `0` no counterexample, `1` counterexample, `2` CLI error, `4` every path reverted (vacuous). Exit `4` and a clean pass are indistinguishable without reading the JSON
 - `analyze` asserts that verification left artifacts behind: if `.forge-proof/test/` contains no `.sol` files after the run, it throws instead of writing a report. Orchestrator models routed through a gateway sometimes end their turn believing the synchronous Task tool is asynchronous, and a security tool must not report success for a run that verified nothing
 - Output defaults to `forge-proof-output/` directory
