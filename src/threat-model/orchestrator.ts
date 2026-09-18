@@ -42,6 +42,11 @@ export interface ThreatModelOptions {
   enabledProviders?: Provider[];
   /** Per-provider CLI flag values */
   providerFlagValues?: Map<string, Record<string, string | boolean>>;
+  /**
+   * Allow `npm install` to run inside the audit target. Off by default: it
+   * executes the target's lifecycle scripts.
+   */
+  allowNpmInstall?: boolean;
 }
 
 export async function generateThreatModel(
@@ -52,7 +57,7 @@ export async function generateThreatModel(
 
   // Phase 0: Pre-computation
   console.log("\n  Phase 0: Pre-computing analysis data...");
-  const precomputed = await precomputeAnalysis(opts.contractPath);
+  const precomputed = await precomputeAnalysis(opts.contractPath, opts.allowNpmInstall === true);
 
   const forgeProofDir = join(precomputed.projectDir, ".forge-proof");
   mkdirSync(forgeProofDir, { recursive: true });
@@ -160,9 +165,9 @@ export async function generateThreatModel(
     prompt: orchestratorPrompt,
     options: {
       model: "opus",
-      betas: ["context-1m-2025-08-07"],
-      allowedTools: ["Read", "Grep", "Glob", "Bash", "Task", "Skill"],
-      settingSources: ["user", "project"],
+      allowedTools: ["Read", "Grep", "Glob", "Bash", "Task"],
+      // See src/orchestrator.ts — the cwd is the untrusted audit target.
+      settingSources: [],
       permissionMode: "bypassPermissions",
       maxTurns: opts.maxTurns || 200,
       maxBudgetUsd: opts.maxBudgetUsd || 50,
@@ -268,9 +273,18 @@ export async function generateThreatModel(
     }
   }
 
-  if (!rawModel) {
-    rawModel = { contractType: "other", actors: [], assets: [], trustBoundaries: [], threats: [] };
+  // A partial-recovery parse can return an object without a threats array;
+  // everything downstream assumes it is iterable.
+  if (!rawModel || typeof rawModel !== "object") {
+    rawModel = {};
   }
+  rawModel.contractType ??= "other";
+  rawModel.actors = Array.isArray(rawModel.actors) ? rawModel.actors : [];
+  rawModel.assets = Array.isArray(rawModel.assets) ? rawModel.assets : [];
+  rawModel.trustBoundaries = Array.isArray(rawModel.trustBoundaries)
+    ? rawModel.trustBoundaries
+    : [];
+  rawModel.threats = Array.isArray(rawModel.threats) ? rawModel.threats : [];
 
   if (costUsd > 0) {
     console.log(`\n  Agent completed: ${numTurns} turns, $${costUsd.toFixed(2)}, ${(durationMs / 1000).toFixed(1)}s`);
@@ -334,13 +348,15 @@ export async function generateThreatModel(
       etherscanDataAvailable: !!precomputed.onChain,
     },
     metadata: {
+      // Providers report their own sourceKey; deduplicate so the list reflects
+      // what actually ran rather than repeating hardcoded entries.
       sourcesQueried: [
-        "solc-ast",
-        "forge-inspect",
-        ...(precomputed.onChain ? ["etherscan-v2"] : []),
-        ...enrichmentSources,
-        ...precomputeResults.map((r) => r.sourceKey),
-      ],
+        ...new Set([
+          ...precomputeResults.map((r) => r.sourceKey),
+          ...(precomputed.onChain ? ["etherscan-v2"] : []),
+          ...enrichmentSources,
+        ]),
+      ].filter(Boolean),
       soloditFindings: totalEnrichmentFindings,
     },
   };
@@ -391,7 +407,14 @@ Your job is to delegate to the **threat-modeler** agent, which will deeply explo
 
 3. Do NOT modify the JSON. Do NOT add commentary. Just output the raw JSON the agent produced.
 
-Important: The threat-modeler agent has all the context it needs (AST structural data, Etherscan data, analysis patterns). Just delegate and return the result.`;
+Important: The threat-modeler agent has all the context it needs (AST structural data, Etherscan data, analysis patterns). Just delegate and return the result.
+
+The Task tool is SYNCHRONOUS: it does not return until the agent has completely
+finished, and what it returns IS the agent's full output. Nothing runs in the
+background and there is nothing to wait for or poll. Never say the agent "is
+running" or that you will "wait for it" — by then it has already finished and
+you are holding its result. Never end your turn straight after a Task call;
+pass the returned JSON to the StructuredOutput tool.`;
 }
 
 // ---------------------------------------------------------------------------
@@ -478,8 +501,26 @@ function handleMessage(message: any): void {
     }
   }
 
-  if (message.type === "result" && message.subtype === "error") {
-    console.error(`\n  Error: ${message.error || "Unknown error"}`);
+  // Tool results arrive as `user` messages with tool_result content blocks;
+  // there is no top-level "tool_result" message type.
+  if (message.type === "user" && Array.isArray(message.message?.content)) {
+    for (const block of message.message.content) {
+      if (block.type === "tool_result" && block.is_error) {
+        const text =
+          typeof block.content === "string"
+            ? block.content
+            : JSON.stringify(block.content);
+        console.error(`  [ERROR] ${text.slice(0, 300)}`);
+      }
+    }
+  }
+
+  // Real failure subtypes are error_during_execution / error_max_turns /
+  // error_max_budget_usd / error_max_structured_output_retries — never "error".
+  if (message.type === "result" && message.subtype !== "success") {
+    console.error(
+      `\n  ${message.subtype}: ${message.error || "see output above"}`
+    );
   }
 }
 

@@ -27,6 +27,7 @@ export function onchainAgent(opts: OnchainOpts): AgentDefinition {
     prompt: buildOnchainPrompt(etherscanBase, apiKey, address),
     tools: ["Bash", "Read"],
     model: "sonnet",
+    omitClaudeMd: true,
   };
 }
 

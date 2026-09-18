@@ -31,6 +31,7 @@ export function threatModelerAgent(
     prompt: buildThreatModelerPrompt(precomputed, opts),
     tools: ["Read", "Grep", "Glob", "Bash"],
     model: "opus",
+    omitClaudeMd: true,
   };
 }
 

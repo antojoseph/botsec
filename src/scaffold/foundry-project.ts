@@ -4,12 +4,34 @@ import {
   copyFileSync,
   mkdirSync,
   existsSync,
+  readFileSync,
   writeFileSync,
   readdirSync,
+  rmSync,
   statSync,
 } from "fs";
 import { join, basename } from "path";
 import { tmpdir } from "os";
+
+/** Directory, relative to the project root, where generated Halmos tests live. */
+export const FORGE_PROOF_TEST_DIR = ".forge-proof/test";
+
+/**
+ * Environment every forge/halmos invocation needs.
+ *
+ * - FOUNDRY_TEST: forge only compiles files under src/test/script. Generated
+ *   tests live in .forge-proof/test/ so they never touch the user's own test
+ *   suite, which means the test path has to be pointed at them explicitly or
+ *   neither forge nor halmos ever sees the files.
+ * - FOUNDRY_DYNAMIC_TEST_LINKING: Foundry >= 1.3 defaults this to true, which
+ *   rewrites `new Contract()` inside tests into a `vm.deployCode(string)`
+ *   cheatcode. Halmos cannot execute that cheatcode, so setUp() fails with
+ *   "No successful path found in setUp()" and every symbolic test errors out.
+ */
+export const HALMOS_ENV: Record<string, string> = {
+  FOUNDRY_TEST: FORGE_PROOF_TEST_DIR,
+  FOUNDRY_DYNAMIC_TEST_LINKING: "false",
+};
 
 /**
  * Create a temporary Foundry project with the target contract(s) copied in,
@@ -22,31 +44,35 @@ export async function scaffoldFoundryProject(
 
   console.log(`  Scaffolding Foundry project in ${projectDir}`);
 
-  // Initialize Foundry project
-  execSync("forge init --no-commit .", {
+  // Initialize Foundry project. `--no-commit` is a hidden deprecated alias in
+  // current Foundry; not committing is now the default, so pass nothing.
+  execSync("forge init .", {
     cwd: projectDir,
     stdio: "pipe",
   });
 
-  // Remove the default Counter.sol and Counter.t.sol
-  const defaultSrc = join(projectDir, "src", "Counter.sol");
-  const defaultTest = join(projectDir, "test", "Counter.t.sol");
-  const defaultScript = join(projectDir, "script", "Counter.s.sol");
-  for (const f of [defaultSrc, defaultTest, defaultScript]) {
-    if (existsSync(f)) {
-      execSync(`rm ${f}`);
-    }
+  // Remove the default Counter.sol and Counter.t.sol.
+  // Use rmSync rather than shelling out to `rm` — no quoting hazards.
+  for (const f of [
+    join(projectDir, "src", "Counter.sol"),
+    join(projectDir, "test", "Counter.t.sol"),
+    join(projectDir, "script", "Counter.s.sol"),
+  ]) {
+    rmSync(f, { force: true });
   }
 
-  // Install halmos-cheatcodes
+  // Install halmos-cheatcodes. Without this every generated test fails to
+  // compile, so a failure here must be loud.
   try {
-    execSync("forge install a16z/halmos-cheatcodes --no-commit", {
+    execSync("forge install a16z/halmos-cheatcodes", {
       cwd: projectDir,
       stdio: "pipe",
     });
-  } catch {
-    console.warn(
-      "  Warning: Could not install halmos-cheatcodes. Tests may need manual setup."
+  } catch (e: any) {
+    throw new Error(
+      "Could not install halmos-cheatcodes — every symbolic test would fail to " +
+        "compile without it. Check network access to github.com.\n" +
+        (e?.stderr?.toString?.().trim() || e?.message || "")
     );
   }
 
@@ -71,12 +97,26 @@ export async function scaffoldFoundryProject(
   ].join("\n") + "\n";
   writeFileSync(join(projectDir, "remappings.txt"), remappings);
 
-  // Update foundry.toml to support Halmos
+  // Create the directory generated Halmos tests go into, so the configured
+  // test path always exists even before the verifier writes anything.
+  mkdirSync(join(projectDir, FORGE_PROOF_TEST_DIR), { recursive: true });
+
+  // Update foundry.toml to support Halmos.
+  //
+  // Deliberately NOT pinning solc_version: a hardcoded pin makes every contract
+  // with a newer pragma un-analyzable ("No compiler version exists that matches
+  // the version requirement"). Foundry resolves the right compiler from the
+  // pragma on its own.
   const foundryToml = `[profile.default]
 src = "src"
 out = "out"
 libs = ["lib"]
-solc_version = "0.8.28"
+test = "${FORGE_PROOF_TEST_DIR}"
+
+# Halmos cannot execute the vm.deployCode(string) cheatcode that Foundry's
+# dynamic test linking rewrites \`new Contract()\` into. Leaving this on makes
+# every symbolic test fail in setUp().
+dynamic_test_linking = false
 
 # Allow FFI for advanced tests
 ffi = false
@@ -88,15 +128,41 @@ runs = 256
 
   // Verify it compiles
   try {
-    execSync("forge build", { cwd: projectDir, stdio: "pipe" });
+    execSync("forge build", { cwd: projectDir, stdio: "pipe", env: { ...process.env, ...HALMOS_ENV } });
     console.log("  Foundry project compiles successfully.");
   } catch (e: any) {
+    const detail = (e?.stderr?.toString?.() || e?.stdout?.toString?.() || "").trim();
     console.warn(
       "  Warning: Initial forge build failed. Agents will fix compilation issues."
     );
+    if (detail) {
+      console.warn(detail.split("\n").slice(0, 12).map((l: string) => "    " + l).join("\n"));
+    }
   }
 
   return projectDir;
+}
+
+/**
+ * Detect the highest Solidity pragma across the copied sources.
+ * Informational only — Foundry resolves the compiler itself; this just lets the
+ * caller report what it is dealing with.
+ */
+export function detectPragma(srcDir: string): string | undefined {
+  const versions: string[] = [];
+  const walk = (dir: string): void => {
+    if (!existsSync(dir)) return;
+    for (const entry of readdirSync(dir)) {
+      const p = join(dir, entry);
+      if (statSync(p).isDirectory()) walk(p);
+      else if (entry.endsWith(".sol")) {
+        const m = readFileSync(p, "utf-8").match(/pragma\s+solidity\s+([^;]+);/);
+        if (m) versions.push(m[1].trim());
+      }
+    }
+  };
+  walk(srcDir);
+  return versions.length ? [...new Set(versions)].join(", ") : undefined;
 }
 
 /**

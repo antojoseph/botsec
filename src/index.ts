@@ -8,10 +8,19 @@
  *   forge-proof analyze ./src --address 0x1234... --chain 1 --etherscan-key <key>
  */
 
+import { createRequire } from "node:module";
 import { Command } from "commander";
+
+// Single source of truth for the version — keeps --version from drifting.
+const { version: PKG_VERSION } = createRequire(import.meta.url)("../package.json");
 import { analyze } from "./orchestrator.js";
 import { generateThreatModel } from "./threat-model/orchestrator.js";
-import { assertDependencies, checkDependencies } from "./scaffold/dependencies.js";
+import {
+  assertDependencies,
+  checkDependencies,
+  checkCredentials,
+  CREDENTIAL_HELP,
+} from "./scaffold/dependencies.js";
 import { allProviders } from "./threat-model/providers/registry.js";
 import type { Provider } from "./threat-model/providers/types.js";
 
@@ -29,9 +38,9 @@ const program = new Command();
 program
   .name("forge-proof")
   .description(
-    "AI-powered formal verification for smart contracts using Claude Opus + Halmos"
+    "AI-powered formal verification for smart contracts using the Claude Agent SDK + Halmos"
   )
-  .version("0.1.0");
+  .version(PKG_VERSION);
 
 program
   .command("analyze")
@@ -64,13 +73,16 @@ program
     console.log(BANNER);
     console.log("  AI-Powered Formal Verification for Smart Contracts\n");
 
-    // Check API key
-    if (!process.env.ANTHROPIC_API_KEY) {
-      console.error(
-        "  Error: ANTHROPIC_API_KEY not set.\n" +
-          "  Set it with: export ANTHROPIC_API_KEY=sk-ant-...\n"
+    // Report how the SDK will authenticate. A missing env credential is not
+    // fatal — the SDK can still use an `ant auth login` profile.
+    const creds = checkCredentials();
+    console.log(`  Auth:    ${creds.source}`);
+    if (!creds.ok) {
+      console.warn(
+        "  Warning: no credential found in the environment. Continuing —\n" +
+          "  the Agent SDK may still authenticate from a stored profile.\n" +
+          CREDENTIAL_HELP + "\n"
       );
-      process.exit(1);
     }
 
     // Check dependencies
@@ -123,9 +135,11 @@ program
     console.log(`    forge  (Foundry):  ${deps.forge ? "installed" : "MISSING"}`);
     console.log(`    halmos (Halmos):   ${deps.halmos ? "installed" : "MISSING"}`);
     console.log(`    cast   (Foundry):  ${deps.cast ? "installed" : "MISSING"}`);
-    console.log(
-      `    ANTHROPIC_API_KEY: ${process.env.ANTHROPIC_API_KEY ? "set" : "NOT SET"}\n`
-    );
+    const creds = checkCredentials();
+    console.log(`    Claude credential: ${creds.source}\n`);
+    if (!creds.ok) {
+      console.log(CREDENTIAL_HELP + "\n");
+    }
 
     if (!deps.forge || !deps.halmos) {
       console.log("  Install missing tools:");
@@ -135,7 +149,9 @@ program
         );
       }
       if (!deps.halmos) {
-        console.log("    halmos: pip install halmos");
+        console.log(
+          "    halmos: uv tool install --python 3.12 halmos   (needs Python >= 3.11)"
+        );
       }
       process.exit(1);
     }
@@ -165,7 +181,12 @@ const tmCmd = program
   )
   .option("-o, --output <dir>", "Output directory", "forge-proof-output")
   .option("--max-turns <n>", "Max agent turns (default: 200)", "200")
-  .option("--max-budget <usd>", "Max budget in USD (default: 50)", "50");
+  .option("--max-budget <usd>", "Max budget in USD (default: 50)", "50")
+  .option(
+    "--allow-npm-install",
+    "Permit `npm install` inside the target project. This runs the target's " +
+      "lifecycle scripts — only use it on code you trust."
+  );
 
 // Auto-register provider flags from the registry.
 // - Default-on providers get --no-{flag} to disable
@@ -189,13 +210,14 @@ tmCmd.action(async (projectPath, opts) => {
   console.log(BANNER);
   console.log("  Threat Model Generation\n");
 
-  // Check API key
-  if (!process.env.ANTHROPIC_API_KEY) {
-    console.error(
-      "  Error: ANTHROPIC_API_KEY not set.\n" +
-        "  Set it with: export ANTHROPIC_API_KEY=sk-ant-...\n"
+  const creds = checkCredentials();
+  console.log(`  Auth:    ${creds.source}`);
+  if (!creds.ok) {
+    console.warn(
+      "  Warning: no credential found in the environment. Continuing —\n" +
+        "  the Agent SDK may still authenticate from a stored profile.\n" +
+        CREDENTIAL_HELP + "\n"
     );
-    process.exit(1);
   }
 
   console.log(`  Project: ${projectPath}`);
@@ -215,9 +237,14 @@ tmCmd.action(async (projectPath, opts) => {
     if (provider.flag.startsWith("_")) continue;
 
     if (provider.defaultEnabled) {
-      // Default-on: include unless --no-{flag} passed
-      const noFlagKey = camelCase(`no-${provider.flag}`);
-      if (!opts[noFlagKey]) {
+      // Default-on: include unless --no-{flag} passed.
+      //
+      // Commander models `--no-ast` as the NEGATION of an `ast` option: it sets
+      // opts.ast = false and leaves it undefined/true otherwise. There is no
+      // `opts.noAst`. Reading the negated name silently enabled every
+      // default-on provider regardless of the flag.
+      const flagKey = camelCase(provider.flag);
+      if (opts[flagKey] !== false) {
         enabledProviders.push(provider);
       }
     } else {
@@ -261,6 +288,7 @@ tmCmd.action(async (projectPath, opts) => {
       maxBudgetUsd: parseFloat(opts.maxBudget),
       enabledProviders,
       providerFlagValues,
+      allowNpmInstall: !!opts.allowNpmInstall,
     });
   } catch (err: any) {
     console.error(`\n  Fatal error: ${err.message || err}`);

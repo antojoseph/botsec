@@ -12,7 +12,11 @@ import { query } from "@anthropic-ai/claude-agent-sdk";
 import { explorerAgent } from "./agents/explorer.js";
 import { onchainAgent, type OnchainOpts } from "./agents/onchain.js";
 import { verifierAgent } from "./agents/verifier.js";
-import { scaffoldFoundryProject } from "./scaffold/foundry-project.js";
+import {
+  scaffoldFoundryProject,
+  HALMOS_ENV,
+  FORGE_PROOF_TEST_DIR,
+} from "./scaffold/foundry-project.js";
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { resolve, join } from "node:path";
 import type { ThreatModel, Threat } from "./threat-model/types.js";
@@ -44,6 +48,11 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
     console.log("\n  Setting up Foundry project...");
     projectDir = await scaffoldFoundryProject(opts.contractPath);
   }
+  // The verifier writes into .forge-proof/test/, which FOUNDRY_TEST points at.
+  // Foundry errors on a non-existent test path, so make sure it is there even
+  // when we are using the user's own project untouched.
+  mkdirSync(join(projectDir, FORGE_PROOF_TEST_DIR), { recursive: true });
+
   console.log(`  Working directory: ${projectDir}\n`);
 
   // 2. Load threat model if provided
@@ -93,13 +102,16 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
   console.log("  Starting analysis with Claude Agent SDK");
   console.log("─".repeat(60) + "\n");
 
+  // Accumulate assistant text as a fallback, but prefer the SDK's own final
+  // `result` string. Concatenating every assistant turn produced a file that
+  // was the entire transcript rather than the report.
+  let transcript = "";
   let finalReport = "";
 
   for await (const message of query({
     prompt,
     options: {
       model: "opus",
-      betas: ["context-1m-2025-08-07"],
       allowedTools: [
         "Read",
         "Grep",
@@ -108,30 +120,34 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
         "Write",
         "Edit",
         "Task",
-        "Skill",
       ],
-      settingSources: ["user", "project"],
+      // The cwd is the AUDIT TARGET — untrusted by definition. Loading its
+      // .claude/settings.json or CLAUDE.md would let a hostile repo issue
+      // instructions to an agent running with permissions bypassed.
+      settingSources: [],
       permissionMode: "bypassPermissions",
       maxTurns: opts.maxTurns || 500,
       maxBudgetUsd: opts.maxBudgetUsd || 100,
       thinking: { type: "adaptive" },
       cwd: projectDir,
+      env: { ...process.env, ...HALMOS_ENV },
       agents,
     },
   })) {
     handleMessage(message);
 
-    // Capture assistant text for the report
+    // Capture assistant text as a fallback transcript
     if (message?.type === "assistant" && message.message?.content) {
       for (const block of message.message.content) {
         if (block.type === "text" && block.text) {
-          finalReport += block.text + "\n";
+          transcript += block.text + "\n";
         }
       }
     }
 
     // Log cost/duration on completion and break to stop the loop
     if (message?.type === "result") {
+      finalReport = ((message as any).result || "").trim() || transcript;
       const cost = (message as any).total_cost_usd || 0;
       const turns = (message as any).num_turns;
       const duration = (message as any).duration_ms;
@@ -244,7 +260,18 @@ For each threat:
 
 Write all test files to ${projectDir}/.forge-proof/test/ — do NOT modify the project's own test/ directory or foundry.toml.
 Check for existing test files in ${projectDir}/.forge-proof/test/ — if previous tests exist from an interrupted run, READ them first, fix any issues, and continue from where they left off rather than rewriting from scratch.
-When running forge build or halmos, use: forge build --extra-output-files none && halmos --match-path .forge-proof/test/
+When running forge build or halmos, use:
+  forge build
+  halmos --function check_ --loop ${loopBound} --solver-timeout-assertion ${solverTimeout}
+
+Halmos selects tests by CONTRACT and FUNCTION name, never by path: --match-contract (-mc),
+--match-test (-mt), --function. There is no --match-path flag, and
+\`forge build --extra-output-files none\` is not a valid command either.
+
+FOUNDRY_TEST=${FORGE_PROOF_TEST_DIR} and FOUNDRY_DYNAMIC_TEST_LINKING=false are already
+exported in your environment. Both are required: the first makes forge and halmos see
+tests outside the default paths, the second stops Foundry rewriting \`new Contract()\` into
+a cheatcode Halmos cannot execute.
 
 After verification, produce a FINAL REPORT:
 
@@ -258,7 +285,24 @@ After verification, produce a FINAL REPORT:
 
 **LIMITATIONS** — Loop bounds, properties not checked, timeouts encountered.
 
-IMPORTANT: After producing your FINAL REPORT, STOP. Do not summarize again, do not re-state findings, do not check on background tasks. Your job is done once the report is written.`;
+## How delegation works — read this carefully
+
+The Task tool is SYNCHRONOUS. When you delegate to an agent, the tool does not
+return until that agent has completely finished, and the value it returns is the
+agent's full final output. Nothing runs in the background, there are no
+completion notifications, and there is nothing to poll or wait for.
+
+Therefore:
+- NEVER say an agent "is running in the background" or that you will "wait for
+  it to complete". By the time you can write that sentence, it has already
+  finished and you are holding its result.
+- NEVER end your turn immediately after a Task call. The result is already in
+  hand — use it.
+- Your turn is not over until you have written the FINAL REPORT below, populated
+  with the actual verification results the agent returned.
+
+IMPORTANT: Once the FINAL REPORT is written, STOP. Do not summarize it again and
+do not re-state findings. Your job is done at that point.`;
 }
 
 function buildOrchestratorPrompt(
@@ -315,6 +359,8 @@ ${hasOnchain ? `2. SIMULTANEOUSLY use the **onchain-analyst** agent to analyze r
    - Use vm.assume() for input constraints
    - Run \`forge build\` first — fix any compilation errors iteratively
    - Run \`halmos --function check_ --loop ${loopBound} --solver-timeout-assertion ${solverTimeout}\`
+   - FOUNDRY_TEST=${FORGE_PROOF_TEST_DIR} and FOUNDRY_DYNAMIC_TEST_LINKING=false are already
+     exported and are both required for halmos to find and execute the tests
    - For each [FAIL]: determine if real vulnerability or bad spec
    - For real bugs: explain the attack with concrete counterexample values
    - For bad specs: refine the property and retry (max 3 iterations per property)
@@ -346,7 +392,24 @@ ${hasOnchain ? "- On-chain correlation: has this been exploited in production?" 
 
 Be thorough. The Halmos tests and their results are the most important output — they provide mathematical evidence, not opinions.
 
-IMPORTANT: After producing your FINAL REPORT, STOP. Do not summarize again, do not re-state findings, do not check on background tasks. Your job is done once the report is written.`;
+## How delegation works — read this carefully
+
+The Task tool is SYNCHRONOUS. When you delegate to an agent, the tool does not
+return until that agent has completely finished, and the value it returns is the
+agent's full final output. Nothing runs in the background, there are no
+completion notifications, and there is nothing to poll or wait for.
+
+Therefore:
+- NEVER say an agent "is running in the background" or that you will "wait for
+  it to complete". By the time you can write that sentence, it has already
+  finished and you are holding its result.
+- NEVER end your turn immediately after a Task call. The result is already in
+  hand — use it.
+- Your turn is not over until you have written the FINAL REPORT below, populated
+  with the actual verification results the agent returned.
+
+IMPORTANT: Once the FINAL REPORT is written, STOP. Do not summarize it again and
+do not re-state findings. Your job is done at that point.`;
 }
 
 /**
@@ -356,6 +419,17 @@ const startTime = Date.now();
 
 function elapsed(): string {
   return `${((Date.now() - startTime) / 1000).toFixed(0)}s`;
+}
+
+/** Tool result content is either a string or an array of content blocks. */
+function renderToolResult(content: unknown): string {
+  if (typeof content === "string") return content;
+  if (Array.isArray(content)) {
+    return content
+      .map((c: any) => (c?.type === "text" ? c.text : JSON.stringify(c)))
+      .join("\n");
+  }
+  return content == null ? "" : JSON.stringify(content);
 }
 
 function handleMessage(message: any): void {
@@ -383,15 +457,21 @@ function handleMessage(message: any): void {
     }
   }
 
-  // Tool results — track sub-agent costs
-  if (message.type === "tool_result") {
-    const content = message.content;
-    if (typeof content === "string" && content.length > 500) {
-      console.log(`  [${elapsed()}] [result] (${content.length} chars)`);
-    }
-    if (message.is_error) {
-      const errText = typeof content === "string" ? content.slice(0, 300) : JSON.stringify(content).slice(0, 300);
-      console.error(`  [${elapsed()}] [ERROR] ${errText}`);
+  // Tool results. The SDK has no top-level "tool_result" message type — results
+  // arrive as `user` messages carrying tool_result content blocks. Matching on
+  // message.type === "tool_result" silently discarded every tool error.
+  if (message.type === "user" && message.message?.content) {
+    const blocks = Array.isArray(message.message.content)
+      ? message.message.content
+      : [];
+    for (const block of blocks) {
+      if (block.type !== "tool_result") continue;
+      const text = renderToolResult(block.content);
+      if (block.is_error) {
+        console.error(`  [${elapsed()}] [ERROR] ${text.slice(0, 300)}`);
+      } else if (text.length > 500) {
+        console.log(`  [${elapsed()}] [result] (${text.length} chars)`);
+      }
     }
   }
 
@@ -404,8 +484,12 @@ function handleMessage(message: any): void {
       if (message.result) {
         console.log(message.result);
       }
-    } else if (message.subtype === "error") {
-      console.error(`\n  [${elapsed()}] Error: ${message.error || "Unknown error"}`);
+    } else {
+      // Real failure subtypes: error_during_execution, error_max_turns,
+      // error_max_budget_usd, error_max_structured_output_retries.
+      console.error(
+        `\n  [${elapsed()}] ${message.subtype}: ${message.error || "see output above"}`
+      );
     }
   }
 }

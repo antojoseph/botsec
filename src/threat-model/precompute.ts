@@ -16,6 +16,7 @@ import type { PrecomputedAnalysis } from "./types.js";
 
 export async function precomputeAnalysis(
   projectDir: string,
+  allowNpmInstall = false,
 ): Promise<PrecomputedAnalysis> {
   projectDir = resolve(projectDir);
   validateFoundryProject(projectDir);
@@ -33,25 +34,41 @@ export async function precomputeAnalysis(
       rmSync(outDir, { recursive: true, force: true });
       console.log("  Cleared stale build artifacts.");
     }
-    // Install dependencies if package.json exists but node_modules doesn't
-    if (
+    // Install npm dependencies — OPT-IN ONLY.
+    //
+    // `npm install` executes the target's lifecycle scripts (preinstall/
+    // postinstall), which is arbitrary code execution. The whole point of this
+    // tool is to be pointed at code you do not trust, so this cannot be the
+    // default. Callers opt in with --allow-npm-install.
+    const needsNpm =
       existsSync(join(projectDir, "package.json")) &&
-      !existsSync(join(projectDir, "node_modules"))
-    ) {
-      console.log("  Installing npm dependencies...");
+      !existsSync(join(projectDir, "node_modules"));
+
+    if (needsNpm && allowNpmInstall) {
+      console.log("  Installing npm dependencies (--allow-npm-install)...");
       try {
-        execSync("npm install --silent 2>/dev/null", {
+        execSync("npm install --silent --ignore-scripts", {
           cwd: projectDir,
           timeout: 120_000,
+          stdio: "pipe",
         });
       } catch {
         // Non-fatal — forge may still work with lib/ deps
       }
+    } else if (needsNpm) {
+      console.warn(
+        "  Note: target has package.json but no node_modules. Skipping npm install\n" +
+          "        (it would run the target's lifecycle scripts). Pass --allow-npm-install\n" +
+          "        if you trust this target and the build needs npm dependencies."
+      );
     }
-    execSync("forge build --build-info --force > /dev/null 2>&1", {
+    // Capture stderr rather than discarding it — when this fails, the compiler
+    // diagnostics are the only useful thing we have.
+    execSync("forge build --build-info --force", {
       cwd: projectDir,
       timeout: 600_000,
       maxBuffer: 50 * 1024 * 1024,
+      stdio: "pipe",
     });
     const biCount = existsSync(biDir) ? readdirSync(biDir).length : 0;
     console.log(`  Build complete. ${biCount} build-info file(s).`);
@@ -74,13 +91,14 @@ export async function precomputeAnalysis(
         rmSync(biDir, { recursive: true, force: true });
       }
       execSync(
-        `forge build --build-info --force --skip ${skipDirs} > /dev/null 2>&1`,
-        { cwd: projectDir, timeout: 600_000, maxBuffer: 50 * 1024 * 1024 }
+        `forge build --build-info --force --skip ${skipDirs}`,
+        { cwd: projectDir, timeout: 600_000, maxBuffer: 50 * 1024 * 1024, stdio: "pipe" }
       );
       const biCount = existsSync(biDir) ? readdirSync(biDir).length : 0;
       console.log(`  Build complete (src only). ${biCount} build-info file(s).`);
     } catch (e2: any) {
-      console.warn(`  Warning: forge build failed: ${e2.message?.slice(0, 100)}`);
+      console.warn(`  Warning: forge build failed. Compiler output:`);
+      console.warn(indent(buildDiagnostics(e2)));
     }
   }
 
@@ -93,6 +111,27 @@ export async function precomputeAnalysis(
     storageLayout: {},
     methodIds: {},
   };
+}
+
+// ---------------------------------------------------------------------------
+// Build diagnostics
+// ---------------------------------------------------------------------------
+
+/**
+ * execSync attaches captured output to the thrown error as stdout/stderr
+ * buffers. `err.message` alone is just "Command failed", which is useless for
+ * diagnosing a Solidity compile error.
+ */
+function buildDiagnostics(err: any, maxChars = 2000): string {
+  const parts = [err?.stderr?.toString?.() ?? "", err?.stdout?.toString?.() ?? ""]
+    .map((s: string) => s.trim())
+    .filter(Boolean);
+  const text = parts.join("\n") || err?.message || "(no output captured)";
+  return text.length > maxChars ? text.slice(0, maxChars) + "\n  ...(truncated)" : text;
+}
+
+function indent(text: string, pad = "    "): string {
+  return text.split("\n").map((l) => pad + l).join("\n");
 }
 
 // ---------------------------------------------------------------------------

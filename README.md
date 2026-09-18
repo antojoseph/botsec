@@ -72,7 +72,7 @@ Two-stage pipeline: **threat model** identifies what to look for, **analyze** pr
 
 Generates a ranked threat model for a Foundry project.
 
-1. **Pre-computation** — Builds the project, walks the solc AST to extract call graphs, state variable maps, inheritance, CEI ordering, auth checks, guards, and data dependencies. Auto-installs npm dependencies if needed. Filters out test/script contracts. Writes per-contract structural data to `.forge-proof/codemap/` and blueprint to `.forge-proof/blueprint.json`.
+1. **Pre-computation** — Builds the project, walks the solc AST to extract call graphs, state variable maps, inheritance, CEI ordering, auth checks, guards, and data dependencies. Installs npm dependencies only when `--allow-npm-install` is passed (it runs the target's lifecycle scripts). Filters out test/script contracts. Writes per-contract structural data to `.forge-proof/codemap/` and blueprint to `.forge-proof/blueprint.json`.
 2. **LLM classification** — Haiku classifies the contract type (vault, lending, dex, staking, etc.) to inform invariant inference and investigation questions.
 3. **Agentic exploration** — Opus agent reads the blueprint and per-contract code map files on-demand (file-based context — no prompt size limits). Focuses exclusively on untrusted-actor attack paths. Every threat requires a TRACE with exact file:line locations.
 4. **Synthesis** — Anti-slop filter drops traceless threats, self-contradiction filter downgrades primarily-exonerating threats, deduplication merges overlapping findings, threats ranked by severity x confidence.
@@ -97,12 +97,56 @@ Output: timestamped directory with `forge-proof-report.md` + `forge-proof-report
 |------|----------|---------|
 | **Node.js** (20+) | Yes | [nodejs.org](https://nodejs.org) |
 | **Foundry** (forge, cast) | Yes | `curl -L https://foundry.paradigm.xyz \| bash && foundryup` |
-| **Halmos** | Yes | `pip install halmos` or `uv tool install --python 3.12 halmos` |
-| **Anthropic API Key** | Yes | `export ANTHROPIC_API_KEY=sk-ant-...` |
+| **Halmos** | Yes | `uv tool install --python 3.12 halmos` (needs Python >= 3.11) |
+| **Claude credential** | Yes | `export ANTHROPIC_API_KEY=sk-ant-...` (see below for alternatives) |
 
 ```bash
-forge-proof check   # Verify dependencies
+forge-proof check   # Verify dependencies and credential
 ```
+
+### Model providers
+
+The credential is resolved from any of the following, so you are not limited to
+a first-party Anthropic key:
+
+| Provider | Configuration |
+|----------|---------------|
+| Anthropic API | `ANTHROPIC_API_KEY=sk-ant-...` |
+| LLM gateway (OpenRouter, LiteLLM, ...) | `ANTHROPIC_BASE_URL` + `ANTHROPIC_AUTH_TOKEN` |
+| Amazon Bedrock | `CLAUDE_CODE_USE_BEDROCK=1` |
+| Google Vertex AI | `CLAUDE_CODE_USE_VERTEX=1` |
+| Stored profile | `ant auth login` |
+
+#### OpenRouter
+
+OpenRouter exposes an Anthropic-Messages-compatible endpoint, so no proxy and no
+code change are needed:
+
+```bash
+export ANTHROPIC_BASE_URL="https://openrouter.ai/api"
+export ANTHROPIC_AUTH_TOKEN="$OPENROUTER_API_KEY"
+export ANTHROPIC_API_KEY=""            # must be explicitly empty
+
+# Map the three agent tiers onto whichever models you want
+export ANTHROPIC_DEFAULT_OPUS_MODEL="anthropic/claude-sonnet-4.5"
+export ANTHROPIC_DEFAULT_SONNET_MODEL="anthropic/claude-haiku-4.5"
+export ANTHROPIC_DEFAULT_HAIKU_MODEL="anthropic/claude-haiku-4.5"
+export CLAUDE_CODE_SUBAGENT_MODEL="anthropic/claude-haiku-4.5"
+
+# The blueprint classifier calls the Messages API directly and needs the
+# gateway's namespaced model id
+export FORGE_PROOF_CLASSIFIER_MODEL="anthropic/claude-haiku-4.5"
+```
+
+Agents are declared with model *aliases* (`opus`/`sonnet`/`haiku`) rather than
+pinned model ids specifically so this remapping works without touching code.
+
+Caveats: OpenRouter only guarantees Claude Code compatibility on the Anthropic
+first-party provider, and prompt caching and the 1M context window are
+first-party only. Structured output (`outputFormat: json_schema`, used by
+`threat-model`) and multi-turn subagent delegation are the parts most likely to
+degrade on non-Claude models — the pipeline falls back to text JSON extraction
+when structured output is unavailable.
 
 ## Quick Start
 
@@ -230,9 +274,13 @@ threat-model <project>                    analyze <project> --threat-model <file
 
 **Anti-slop trace requirement** — Every threat must include a TRACE with exact code locations. Threats without traces are dropped. Self-contradicting threats (primarily exonerating language) are downgraded — but only if the description is short or contains multiple exonerating phrases, so real threats mentioning mitigations aren't penalized.
 
-**Halmos timeout diagnosis** — Instead of a hard timeout, the verifier diagnoses WHY halmos timed out using its preloaded halmos skill knowledge. Nonlinear 256-bit math (mulDivDown, etc.) is recognized as unsolvable and falls back to fuzz immediately. Simpler constraints are retried with narrowed input types.
+**Halmos timeout diagnosis** — Instead of a hard timeout, the verifier diagnoses WHY halmos timed out. Nonlinear 256-bit math (mulDivDown, etc.) is recognized as unsolvable and falls back to fuzz immediately. Simpler constraints are retried with narrowed input types.
 
-**Halmos skill preloaded** — The verifier agent has `skills: ["halmos"]` which auto-loads the halmos skill (10 verification strategies, solver limitations, vault patterns) into its context without needing a tool call.
+**Self-contained agent prompts** — Halmos rules, the test template, and the known
+environment pitfalls live directly in the verifier's system prompt
+(`src/agents/verifier.ts`) rather than in an external skill. The tool has no
+dependency on what is installed in the operator's `~/.claude`, so a fresh clone
+behaves identically to a configured one.
 
 **Timestamped outputs** — Each run creates a unique directory (`threat-model-<timestamp>/`, `analyze-<timestamp>/`). Previous runs are never overwritten, enabling comparison across development iterations.
 
@@ -280,14 +328,15 @@ src/
     architecture-analyzer.ts        Blueprint: LLM classification, attack surface, invariants
     types.ts                        Shared type definitions
     solodit.ts                      Historical vulnerability search (opt-in via --solodit)
+    providers/
+      registry.ts                   Single source of truth for all providers
+      types.ts                      Provider interfaces (5 pipeline phases)
+      precompute/                   ast, inspect, blueprint, etherscan
+      enrichment/                   solodit
+      filters/                      anti-slop, self-contradiction, dedup, ranking
   scaffold/
-    foundry-project.ts              Temp Foundry project creation
-    dependencies.ts                 forge/halmos/cast validation
-  parsers/
-    halmos-output.ts                Halmos result parser
-    etherscan.ts                    Etherscan API types
-  report/
-    generator.ts                    Markdown + JSON report generation
+    foundry-project.ts              Temp Foundry project creation + HALMOS_ENV
+    dependencies.ts                 forge/halmos/cast + credential resolution
 ```
 
 ## Current Status
@@ -301,22 +350,59 @@ src/
 - Test/script contract filtering from AST analysis
 - Anti-slop, self-contradiction, and deduplication filters
 - Halmos timeout diagnosis + Foundry fuzz fallback
-- Halmos skill preloaded into verifier agent
 - Timestamped output directories
 - Report persistence (MD + JSON)
 - Existing test discovery before writing new ones
+- Provider toggles (`--no-ast`, `--no-dedup`, ...) wired to the registry
+- Works against any Anthropic-compatible endpoint (Anthropic API, OpenRouter,
+  Bedrock, Vertex) — see [Model providers](#model-providers)
+
+### Verification environment
+
+Generated Halmos tests live in `.forge-proof/test/`, outside Foundry's default
+source paths, so the project's own `test/` directory is never touched. Two
+environment variables (`HALMOS_ENV` in `src/scaffold/foundry-project.ts`) are
+exported for every forge/halmos invocation and are both mandatory:
+
+| Variable | Why |
+|---|---|
+| `FOUNDRY_TEST=.forge-proof/test` | Without it, `forge build` never compiles the generated tests and halmos finds nothing to run |
+| `FOUNDRY_DYNAMIC_TEST_LINKING=false` | Foundry >= 1.3 otherwise rewrites `new Contract()` into a `vm.deployCode(string)` cheatcode that Halmos cannot execute, failing `setUp()` on every test |
+
+Halmos selects tests by contract and function name — `--match-contract` / `-mc`,
+`--match-test` / `-mt`, `--function`. There is no `--match-path` flag.
+
+### Security model
+
+`analyze` and `threat-model` are designed to be pointed at code you do not
+trust, so the agents are isolated from the target:
+
+- `settingSources: []` and `omitClaudeMd: true` — the target's `CLAUDE.md` and
+  `.claude/settings.json` are never loaded as instructions, even though agents
+  run with `permissionMode: "bypassPermissions"`
+- `npm install` inside the target is opt-in (`--allow-npm-install`) and runs
+  with `--ignore-scripts`, because lifecycle scripts are arbitrary code execution
 
 ### TODO
 
 - [ ] AST support for non-Foundry projects (Hardhat, multi-compiler like Project Delta)
-- [ ] Temp directory cleanup (`/tmp/forge-proof-*` accumulates)
-- [ ] Auto-detect solc pragma version
+- [ ] Temp directory cleanup (`$TMPDIR/forge-proof-*` accumulates; kept for now so
+      `--verify-only` can resume an interrupted run)
 - [ ] Merge existing remappings from target project
 - [ ] Per-phase cost tracking (Explorer vs Verifier breakdown)
-- [ ] Unit tests for parsers and AST analysis
+- [ ] Unit tests for AST analysis
 - [ ] Integration tests on benchmark contracts
 - [ ] Resume interrupted analysis (checkpoint intermediate state)
 - [ ] Diff reports across timestamped runs
+
+### Known limitations with non-Anthropic models
+
+Routing through a gateway works, but weaker models can mishandle subagent
+delegation — treating the synchronous Task tool as if it were asynchronous and
+ending the turn before the subagent's work is used. The orchestrator prompts
+state explicitly that Task is synchronous, which resolves it in practice, but
+this is the first thing to check if a run finishes suspiciously fast with an
+empty `.forge-proof/test/`.
 
 ## License
 

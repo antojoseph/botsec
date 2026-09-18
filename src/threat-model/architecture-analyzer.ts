@@ -8,9 +8,11 @@
  * 2. WHERE should the agent look first? (attack surface scoring)
  * 3. WHAT should be true? (invariant inference)
  *
- * All analysis is deterministic — no LLM calls. The goal is to give the agent
- * a "briefing packet" so it spends its turns confirming/deepening findings
- * rather than rediscovering structure.
+ * Attack-surface scoring and invariant inference are deterministic, derived
+ * purely from the AST. Contract classification is the one LLM call, and it
+ * degrades to type "other" if no credential is available. The goal is to give
+ * the agent a "briefing packet" so it spends its turns confirming/deepening
+ * findings rather than rediscovering structure.
  */
 
 import Anthropic from "@anthropic-ai/sdk";
@@ -102,14 +104,23 @@ Respond with ONLY a JSON object: {"type": "<type>", "confidence": "high"|"medium
 Important: DecoderAndSanitizer contracts are just whitelisting helpers — ignore them for classification. Focus on the core contract architecture.`;
 
   try {
+    // Deliberately a cheap model — this is a one-shot classification, not
+    // analysis. Override with FORGE_PROOF_CLASSIFIER_MODEL when running through
+    // an LLM gateway that namespaces model ids (e.g. OpenRouter expects
+    // "anthropic/claude-haiku-4.5").
     const client = new Anthropic();
     const response = await client.messages.create({
-      model: "claude-haiku-4-5-20251001",
+      model: process.env.FORGE_PROOF_CLASSIFIER_MODEL || "claude-haiku-4-5",
       max_tokens: 256,
       messages: [{ role: "user", content: prompt }],
     });
 
-    const text = response.content[0].type === "text" ? response.content[0].text : "";
+    // Find the text block rather than assuming it is first — a thinking block
+    // can precede it.
+    const text = response.content
+      .filter((b): b is Anthropic.TextBlock => b.type === "text")
+      .map((b) => b.text)
+      .join("");
     const json = JSON.parse(text.replace(/```json?\n?|\n?```/g, "").trim());
     const type = VALID_TYPES.includes(json.type) ? json.type : "other";
 

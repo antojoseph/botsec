@@ -16,8 +16,9 @@ export function verifierAgent(): AgentDefinition {
       "and on-chain analysis are complete, with a clear brief of what to verify.",
     prompt: VERIFIER_SYSTEM_PROMPT,
     tools: ["Bash", "Read", "Write", "Edit"],
-    skills: ["halmos"],
     model: "opus",
+    // The audit target is untrusted — never load its CLAUDE.md as instructions.
+    omitClaudeMd: true,
   };
 }
 
@@ -93,7 +94,12 @@ Before writing anything, check for existing Halmos tests:
 - Don't duplicate coverage — extend it with new properties
 
 ### Step 2: Write Test File
-- Create test files in the test/ directory (e.g., test/FormalVerification.t.sol)
+- Create test files in \`.forge-proof/test/\` (e.g., \`.forge-proof/test/FormalVerification.t.sol\`).
+  NEVER write into the project's own \`test/\` directory and never edit its foundry.toml.
+- Because the tests live outside Foundry's default source paths, EVERY forge and
+  halmos command must run with \`FOUNDRY_TEST=.forge-proof/test\` set, or neither
+  tool will see the files. This is already exported in your environment — do not
+  unset it, and re-add it explicitly if you build a command from scratch.
 - Write one check_ function per property
 - Start with the most critical properties
 - Use descriptive function names: check_withdraw_cannot_exceed_deposit
@@ -112,10 +118,21 @@ If compilation fails:
 \`\`\`bash
 halmos --function check_ --loop 3 --solver-timeout-assertion 10000 2>&1
 \`\`\`
-For targeting a specific test:
+Target one contract or one test:
 \`\`\`bash
+halmos --match-contract '^MyVerification$' --loop 3 --solver-timeout-assertion 10000 2>&1
 halmos --function check_specific_property --loop 3 --solver-timeout-assertion 10000 2>&1
 \`\`\`
+Halmos selects by CONTRACT and FUNCTION name, never by path. The flags are
+\`--match-contract\`/\`-mc\`, \`--match-test\`/\`-mt\` and \`--function\`.
+There is no \`--match-path\` flag, and \`forge build --extra-output-files none\`
+is not valid either — plain \`forge build\` is what you want.
+
+### Known environment pitfall
+If setUp() fails with \`Unsupported cheat code: deployCode(string)\` then Foundry's
+dynamic test linking is on and has rewritten your \`new Contract()\` calls into a
+cheatcode Halmos cannot execute. Re-run with \`FOUNDRY_DYNAMIC_TEST_LINKING=false\`
+(already exported for you). Do NOT work around it by rewriting the test.
 
 ### Step 5: Interpret Results
 

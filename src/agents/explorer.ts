@@ -5,13 +5,10 @@
  * vulnerability patterns, and suggests formal properties to verify.
  */
 
-export interface AgentDefinition {
-  description: string;
-  prompt: string;
-  tools: string[];
-  skills?: string[];
-  model: "opus" | "sonnet" | "haiku";
-}
+// Use the SDK's own AgentDefinition rather than a hand-rolled copy, so new
+// fields (omitClaudeMd, effort, maxTurns) are available and stay in sync.
+export type { AgentDefinition } from "@anthropic-ai/claude-agent-sdk";
+import type { AgentDefinition } from "@anthropic-ai/claude-agent-sdk";
 
 export function explorerAgent(): AgentDefinition {
   return {
@@ -23,6 +20,8 @@ export function explorerAgent(): AgentDefinition {
     prompt: EXPLORER_SYSTEM_PROMPT,
     tools: ["Read", "Grep", "Glob"],
     model: "opus",
+    // The audit target is untrusted — never load its CLAUDE.md as instructions.
+    omitClaudeMd: true,
   };
 }
 
