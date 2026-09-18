@@ -112,6 +112,31 @@ function build(projectDir: string, env: Record<string, string>): void {
 }
 
 /**
+ * Discard stale artifacts, then rebuild.
+ *
+ * `forge build --force` recompiles but leaves artifacts behind for contracts
+ * that no longer exist in source. Halmos reads artifacts, not sources, so a
+ * renamed or rewritten test contract leaves a phantom suite that still runs and
+ * silently inflates the baseline with properties the project no longer has.
+ * Observed directly: a 4-property spec reported an 8-property baseline.
+ */
+export function cleanBuild(projectDir: string, env: Record<string, string>): void {
+  execFileSync("forge", ["clean"], {
+    cwd: projectDir,
+    env: { ...process.env, ...env },
+    stdio: "pipe",
+    timeout: 120_000,
+  });
+  execFileSync("forge", ["build", "--ast"], {
+    cwd: projectDir,
+    env: { ...process.env, ...env },
+    stdio: "pipe",
+    timeout: 600_000,
+    maxBuffer: 64 * 1024 * 1024,
+  });
+}
+
+/**
  * Produce build-info containing solc ASTs, which mutation enumeration needs.
  *
  * `--build-info` alone is correct here. Counterintuitively, adding `--ast`
@@ -159,7 +184,14 @@ export function runMutationTesting(opts: MutationRunOptions): MutationReport {
   const maxMutants = opts.maxMutants ?? 10;
 
   // --- Baseline -----------------------------------------------------------
+  // Start from a truthful artifact set; stale artifacts would put properties
+  // into the baseline that no longer exist in any source file.
   log("  Establishing baseline (pristine contract)...");
+  try {
+    cleanBuild(projectDir, env);
+  } catch {
+    log("  Warning: clean rebuild failed; baseline may include stale artifacts.");
+  }
   const baseline = runHalmos({
     projectDir,
     env,

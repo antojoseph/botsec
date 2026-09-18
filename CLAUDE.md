@@ -111,5 +111,6 @@ forge-proof check
 - **solc statement ranges exclude the trailing semicolon.** Replacing a statement without extending over it leaves a stray `;`, which Solidity rejects. Replacement text is `{}` (an empty block), never `true;` — that is not valid Solidity
 - **Halmos JSON counterexamples exceed `Number.MAX_SAFE_INTEGER`.** `JSON.parse` silently corrupts uint256 values into floats, so numeric `value` fields are quoted before parsing
 - **Halmos exit codes:** `0` no counterexample, `1` counterexample, `2` CLI error, `4` every path reverted (vacuous). Exit `4` and a clean pass are indistinguishable without reading the JSON
+- **`forge build --force` does not remove stale artifacts.** Halmos reads artifacts, not sources, so a renamed or rewritten test contract leaves a phantom suite that still runs. Observed: a 4-property spec reporting an 8-property baseline. The spec audit and the mutation baseline both `forge clean` first
 - `analyze` asserts that verification left artifacts behind: if `.forge-proof/test/` contains no `.sol` files after the run, it throws instead of writing a report. Orchestrator models routed through a gateway sometimes end their turn believing the synchronous Task tool is asynchronous, and a security tool must not report success for a run that verified nothing
 - Output defaults to `forge-proof-output/` directory

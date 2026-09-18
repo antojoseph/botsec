@@ -30,6 +30,7 @@ import { runHalmos, summarize, type HalmosRun } from "./verification/halmos-json
 import {
   runMutationTesting,
   formatMutationReport,
+  cleanBuild,
   type MutationReport,
 } from "./mutation/runner.js";
 
@@ -222,6 +223,9 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
   if (opts.auditSpec !== false) {
     try {
       console.log("\n  Auditing spec (re-running Halmos for structured results)...");
+      // Drop stale artifacts first: halmos reads artifacts, not sources, so a
+      // test contract that was renamed mid-run would otherwise still be counted.
+      cleanBuild(projectDir, halmosEnv);
       const run = runHalmos({
         projectDir,
         env: halmosEnv,
