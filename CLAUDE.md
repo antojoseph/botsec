@@ -48,6 +48,7 @@ Three-phase agent pipeline coordinated by the orchestrator via `@anthropic-ai/cl
 **Phase 4 — Spec Audit** (inline in `src/orchestrator.ts`, after the agent finishes): everything up to Phase 3 is the agent's own account of its work. Phase 4 re-derives the results independently and then attacks the spec:
 - **Vacuity classification** (on by default, `--no-audit-spec` to skip) — re-runs Halmos with `--json-output`. A property whose paths all reverted never evaluated its assertion; reporting it as "verified" is a false assurance, so it is classified `vacuous` instead.
 - **Mutation testing** (`--mutation-test`) — injects bugs into the contract and re-runs the verified properties. A surviving mutant is a bug the spec does not detect. Costs no model tokens; it is forge + halmos only.
+  - A mutant is **killed only when a property becomes `violated`**. A property that merely stops being `verified` may have gone `vacuous` because the mutation broke its `setUp` — it detected nothing. Mutants where nothing was violated but properties stopped executing are `inconclusive` and excluded from the score.
 
 ### Key Supporting Modules
 

@@ -40,13 +40,25 @@ export interface MutationRunOptions {
   onProgress?: (msg: string) => void;
 }
 
-export type MutantStatus = "killed" | "survived" | "build-failed" | "skipped";
+export type MutantStatus =
+  | "killed"
+  | "survived"
+  | "inconclusive"
+  | "build-failed"
+  | "skipped";
 
 export interface MutantResult {
   mutation: Mutation;
   status: MutantStatus;
-  /** Properties that caught this mutant. */
+  /** Properties that genuinely caught this mutant (verified -> violated). */
   killedBy: string[];
+  /**
+   * Properties that stopped working under this mutant (verified -> vacuous or
+   * error). These did NOT detect anything — the mutation broke their setup —
+   * so counting them as detections would inflate the score with exactly the
+   * false confidence this module exists to eliminate.
+   */
+  invalidated: string[];
   seconds: number;
 }
 
@@ -56,6 +68,8 @@ export interface MutationReport {
   results: MutantResult[];
   killed: number;
   survived: number;
+  /** Mutants where no property was violated but some stopped executing. */
+  inconclusive: number;
   buildFailed: number;
   /** killed / (killed + survived); undefined when nothing ran. */
   score?: number;
@@ -68,6 +82,11 @@ function holdingProperties(run: HalmosRun): Set<string> {
   return new Set(
     run.outcomes.filter((o) => o.verdict === "verified").map((o) => o.name)
   );
+}
+
+/** Verdict per property name, for classifying how a mutant affected each one. */
+function verdictMap(run: HalmosRun): Map<string, string> {
+  return new Map(run.outcomes.map((o) => [o.name, o.verdict]));
 }
 
 /**
@@ -155,6 +174,7 @@ export function runMutationTesting(opts: MutationRunOptions): MutationReport {
     results: [],
     killed: 0,
     survived: 0,
+    inconclusive: 0,
     buildFailed: 0,
     ineffectiveProperties: [],
   };
@@ -194,7 +214,8 @@ export function runMutationTesting(opts: MutationRunOptions): MutationReport {
     const pristine = readFileSync(absPath); // Buffer: solc offsets are byte offsets
     const started = Date.now();
     let status: MutantStatus = "skipped";
-    let killedBy: string[] = [];
+    const killedBy: string[] = [];
+    const invalidated: string[] = [];
 
     try {
       writeFileSync(absPath, applyMutation(pristine, mutation));
@@ -228,25 +249,48 @@ export function runMutationTesting(opts: MutationRunOptions): MutationReport {
         );
         continue;
       }
-      const stillHolding = holdingProperties(mutated);
+      const after = verdictMap(mutated);
 
-      // Killed when any property that held on the pristine contract stops holding.
-      killedBy = [...baselineHolding].filter((name) => !stillHolding.has(name));
+      // A property KILLS a mutant only by turning into a counterexample.
+      //
+      // "no longer verified" is not the same thing: a mutation can break a
+      // property's setUp so it goes vacuous, which means it stopped executing,
+      // not that it detected the bug. Treating that as a kill inflates the
+      // score with precisely the false confidence this module exists to catch.
+      for (const name of baselineHolding) {
+        const verdict = after.get(name);
+        if (verdict === "violated") killedBy.push(name);
+        else if (verdict !== "verified") invalidated.push(name);
+      }
+
+      const loc = `${mutation.operator} @ ${mutation.file}:${mutation.line}`;
+      const broke = invalidated.length
+        ? ` (${invalidated.length} propert(ies) stopped executing)`
+        : "";
 
       if (killedBy.length > 0) {
         status = "killed";
         report.killed++;
         for (const k of killedBy) killers.add(k);
         log(
-          `  [${i + 1}/${chosen.length}] ${mutation.id} KILLED by ${killedBy.length} propert(ies)` +
-            ` — ${mutation.operator} @ ${mutation.file}:${mutation.line}`
+          `  [${i + 1}/${chosen.length}] ${mutation.id} KILLED by ` +
+            `${killedBy.length} propert(ies) — ${loc}${broke}`
+        );
+      } else if (invalidated.length > 0) {
+        // Nothing detected it, but the spec no longer runs cleanly either, so
+        // this mutant measures nothing about the spec's strength.
+        status = "inconclusive";
+        report.inconclusive++;
+        log(
+          `  [${i + 1}/${chosen.length}] ${mutation.id} INCONCLUSIVE — ${loc}: ` +
+            `no property was violated, but ${invalidated.length} stopped executing`
         );
       } else {
         status = "survived";
         report.survived++;
         log(
-          `  [${i + 1}/${chosen.length}] ${mutation.id} SURVIVED` +
-            ` — ${mutation.operator} @ ${mutation.file}:${mutation.line}: ${mutation.description}`
+          `  [${i + 1}/${chosen.length}] ${mutation.id} SURVIVED — ${loc}: ` +
+            `${mutation.description}`
         );
       }
     } finally {
@@ -260,6 +304,7 @@ export function runMutationTesting(opts: MutationRunOptions): MutationReport {
       mutation,
       status,
       killedBy,
+      invalidated,
       seconds: (Date.now() - started) / 1000,
     });
   }
@@ -285,14 +330,21 @@ export function formatMutationReport(r: MutationReport): string {
   }
 
   const pct = r.score === undefined ? "n/a" : `${Math.round(r.score * 100)}%`;
+  const excluded = [
+    r.inconclusive ? `${r.inconclusive} inconclusive` : "",
+    r.buildFailed ? `${r.buildFailed} uncompilable` : "",
+  ].filter(Boolean);
+
   const lines = [
     "## SPEC STRENGTH (mutation testing)",
     "",
     `**Mutation score: ${pct}** — ${r.killed} killed, ${r.survived} survived` +
-      (r.buildFailed ? `, ${r.buildFailed} uncompilable (excluded)` : ""),
+      (excluded.length ? ` (${excluded.join(", ")}, excluded from the score)` : ""),
     "",
     "Injected bugs into the contract and re-ran the verified properties. A",
-    "surviving mutant is a bug the spec does not detect.",
+    "mutant counts as killed only when a property produced a counterexample —",
+    "a property that merely stopped executing detected nothing. A surviving",
+    "mutant is a bug the spec does not detect.",
     "",
   ];
 
@@ -312,9 +364,31 @@ export function formatMutationReport(r: MutationReport): string {
   if (killed.length > 0) {
     lines.push("### Killed — genuinely constrained", "");
     for (const k of killed) {
+      const note = k.invalidated.length
+        ? ` (${k.invalidated.length} other propert(ies) stopped executing and are not counted)`
+        : "";
       lines.push(
         `- **${k.mutation.id}** \`${k.mutation.file}:${k.mutation.line}\` ` +
-          `(${k.mutation.operator}) — caught by ${k.killedBy.join(", ")}`
+          `(${k.mutation.operator}) — caught by ${k.killedBy.join(", ")}${note}`
+      );
+    }
+    lines.push("");
+  }
+
+  const inconclusive = r.results.filter((x) => x.status === "inconclusive");
+  if (inconclusive.length > 0) {
+    lines.push(
+      "### Inconclusive — the mutant broke the harness",
+      "",
+      "No property produced a counterexample, but some stopped executing under",
+      "the mutation, so these measure nothing about spec strength and are",
+      "excluded from the score:",
+      ""
+    );
+    for (const x of inconclusive) {
+      lines.push(
+        `- **${x.mutation.id}** \`${x.mutation.file}:${x.mutation.line}\` ` +
+          `(${x.mutation.operator}) — ${x.invalidated.length} propert(ies) went vacuous`
       );
     }
     lines.push("");

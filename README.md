@@ -435,6 +435,13 @@ and all ten "verified" properties still passed — the spec constrained bookkeep
 but not guards. No confidence score a model assigns to its own work can tell you
 that.
 
+A mutant counts as **killed only when a property produces a counterexample**.
+"No longer verified" is not the same thing: a mutation can break a property's
+`setUp` so it goes vacuous, which means it stopped executing, not that it
+detected anything. Those are reported as **inconclusive** and excluded from the
+score — counting them as kills would inflate it with exactly the false
+confidence this feature exists to remove.
+
 Mutation testing spends no model tokens; it is forge and halmos only. Each
 mutant costs one rebuild plus one Halmos run, so `--max-mutants` bounds the
 wall-clock cost. Mutants are chosen round-robin across operators so a small
