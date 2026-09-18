@@ -232,8 +232,14 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
         loopBound: opts.loopBound,
         solverTimeoutMs: opts.solverTimeout,
       });
-      console.log(`  ${summarize(run)}`);
-      specAudit += formatVacuityReport(run);
+      if (run.outcomes.length === 0) {
+        console.log(
+          "  No check_ properties found — spec audit has nothing to classify."
+        );
+      } else {
+        console.log(`  ${summarize(run)}`);
+        specAudit += formatVacuityReport(run);
+      }
 
       if (run.vacuous > 0) {
         console.warn(

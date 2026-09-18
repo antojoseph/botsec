@@ -435,6 +435,20 @@ and all ten "verified" properties still passed — the spec constrained bookkeep
 but not guards. No confidence score a model assigns to its own work can tell you
 that.
 
+**Mutation operators**, all derived from the solc AST rather than pattern-matched
+on source text:
+
+| Operator | Injects |
+|---|---|
+| `require-removal` | Deletes a guard entirely |
+| `comparison-boundary` | Off-by-one: `>=` ↔ `>`, `<=` ↔ `<`, `==` ↔ `!=` |
+| `arithmetic-swap` | Inverts `+` ↔ `-`, `*` ↔ `/` |
+| `state-write-removal` | Drops a state update (`x += v` and plain `x = expr`) |
+
+Mutations reach into libraries, inherited base contracts, modifier bodies and
+nested directories — anything under the configured `src`. Writes to *local*
+variables are deliberately left alone: dropping one says nothing about the spec.
+
 A mutant counts as **killed only when a property produces a counterexample**.
 "No longer verified" is not the same thing: a mutation can break a property's
 `setUp` so it goes vacuous, which means it stopped executing, not that it
@@ -446,6 +460,19 @@ Mutation testing spends no model tokens; it is forge and halmos only. Each
 mutant costs one rebuild plus one Halmos run, so `--max-mutants` bounds the
 wall-clock cost. Mutants are chosen round-robin across operators so a small
 budget still yields a representative score.
+
+#### Does the score mean anything?
+
+The scorer is validated by giving one contract two specs and running the same
+mutants against both. Halmos cannot tell them apart; the score can:
+
+| Spec | Halmos reports | Mutation score |
+|------|----------------|----------------|
+| Pins the arithmetic exactly | `4 passed` | **71%** (5 killed, 2 survived) |
+| Tautologies (`assert(x == x)`) | `4 passed` | **0%** (0 killed, 7 survived) |
+
+The two survivors under the strong spec are accurate rather than noise: it
+assumes `a > 3` and so never exercises that boundary.
 
 ### Security model
 

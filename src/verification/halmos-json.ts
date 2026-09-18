@@ -233,9 +233,24 @@ export function runHalmos(opts: RunHalmosOptions): HalmosRun {
     }
 
     if (!existsSync(jsonPath)) {
-      // Surface what halmos actually said; the common causes (no tests matched,
-      // artifacts missing their `ast` field) are only visible in its output.
-      const detail = (stderr || stdout).trim().split("\n").slice(-6).join("\n");
+      const combined = `${stdout}\n${stderr}`;
+
+      // "No tests matched" is a legitimate outcome, not a failure: a suite may
+      // contain only fuzz tests, or every check_ function may have been renamed.
+      // Throwing here would abort a spec audit over an empty test set.
+      if (/No tests with/i.test(combined)) {
+        return {
+          outcomes: [],
+          verified: 0,
+          violated: 0,
+          vacuous: 0,
+          errored: 0,
+        };
+      }
+
+      // Otherwise surface what halmos actually said; the usual cause (artifacts
+      // missing their `ast` field) is only visible in its output.
+      const detail = combined.trim().split("\n").slice(-6).join("\n");
       throw new Error(
         "halmos produced no JSON report — it failed before running any test.\n" +
           (detail ? detail : "(no output captured)")
