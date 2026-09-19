@@ -95,7 +95,7 @@ Output: timestamped directory with `forge-proof-report.md` + `forge-proof-report
 
 | Tool | Required | Install |
 |------|----------|---------|
-| **Node.js** (20+) | Yes | [nodejs.org](https://nodejs.org) |
+| **Node.js** (22.12+) | Yes | [nodejs.org](https://nodejs.org) |
 | **Foundry** (forge, cast) | Yes | `curl -L https://foundry.paradigm.xyz \| bash && foundryup` |
 | **Halmos** | Yes | `uv tool install --python 3.12 halmos` (needs Python >= 3.11) |
 | **Claude credential** | Yes | `export ANTHROPIC_API_KEY=sk-ant-...` (see below for alternatives) |
@@ -128,10 +128,10 @@ export ANTHROPIC_AUTH_TOKEN="$OPENROUTER_API_KEY"
 export ANTHROPIC_API_KEY=""            # must be explicitly empty
 
 # Map the three agent tiers onto whichever models you want
-export ANTHROPIC_DEFAULT_OPUS_MODEL="anthropic/claude-sonnet-4.5"
-export ANTHROPIC_DEFAULT_SONNET_MODEL="anthropic/claude-haiku-4.5"
+export ANTHROPIC_DEFAULT_OPUS_MODEL="anthropic/claude-sonnet-4.6"
+export ANTHROPIC_DEFAULT_SONNET_MODEL="anthropic/claude-sonnet-4.6"
 export ANTHROPIC_DEFAULT_HAIKU_MODEL="anthropic/claude-haiku-4.5"
-export CLAUDE_CODE_SUBAGENT_MODEL="anthropic/claude-haiku-4.5"
+export CLAUDE_CODE_SUBAGENT_MODEL="anthropic/claude-sonnet-4.6"
 
 # The blueprint classifier calls the Messages API directly and needs the
 # gateway's namespaced model id
@@ -165,7 +165,7 @@ npm run dev -- analyze ./my-defi-project --threat-model forge-proof-output/threa
 ```
 
 For development, run `npm test` to build and run the regression suite. Tests use
-Node 22.3+ and its experimental module mocking; no API credentials are needed.
+Node 22.12+ and its experimental module mocking; no API credentials are needed.
 
 ### With on-chain data
 

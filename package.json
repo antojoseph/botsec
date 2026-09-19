@@ -1,13 +1,22 @@
 {
   "name": "forge-proof",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "AI-powered formal verification for smart contracts using the Claude Agent SDK + Halmos",
   "type": "module",
   "bin": {
     "forge-proof": "./dist/index.js"
   },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
+    "prepack": "npm run build",
     "test": "npm run build && node --experimental-test-module-mocks --test tests/*.test.mjs",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js"
