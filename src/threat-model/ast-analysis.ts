@@ -693,6 +693,9 @@ function extractOperationOrder(
 
     // FunctionCall
     if (expr.nodeType === "FunctionCall") {
+      // Arguments execute before the enclosing call, including arguments to
+      // built-ins such as require/assert whose own call step is omitted.
+      for (const arg of expr.arguments ?? []) classifyExpression(arg);
       let callExpr = expr.expression;
       // Unwrap FunctionCallOptions (e.g., .call{value: x}())
       if (callExpr?.nodeType === "FunctionCallOptions") {
@@ -730,8 +733,6 @@ function extractOperationOrder(
           src: expr.src,
         });
       }
-      // Recurse into arguments so nested calls (e.g. foo(bar())) are recorded too
-      for (const arg of expr.arguments ?? []) classifyExpression(arg);
       return;
     }
 

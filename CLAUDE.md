@@ -16,7 +16,7 @@ npm run dev -- check                     # Verify external tool dependencies
 npm run start -- analyze ./contract.sol  # Run from compiled dist/
 ```
 
-There is no test suite. Validation is done by running against `benchmarks/targets/` contracts.
+Run `npm test` for focused regression tests (Node 22.3+; uses Node's experimental module mocking). Full pipeline validation uses the `benchmarks/targets/` contracts.
 
 ## Required External Tools
 

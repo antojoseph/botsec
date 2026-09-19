@@ -164,6 +164,9 @@ npm run dev -- analyze ./my-defi-project --threat-model forge-proof-output/threa
 npm run dev -- analyze ./my-defi-project --threat-model forge-proof-output/threat-model-<timestamp>/threat-model.json --verify-only
 ```
 
+For development, run `npm test` to build and run the regression suite. Tests use
+Node 22.3+ and its experimental module mocking; no API credentials are needed.
+
 ### With on-chain data
 
 ```bash

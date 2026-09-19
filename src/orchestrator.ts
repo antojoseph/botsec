@@ -276,8 +276,6 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
     }
   }
 
-  if (specAudit) finalReport = finalReport.trimEnd() + "\n\n---\n\n" + specAudit;
-
   // Verification wrote tests (the guard above), yet the orchestrator returned no
   // final text — surface it instead of exiting 0 with no report.
   if (!finalReport.trim()) {
@@ -293,6 +291,8 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
         `  capable model for the orchestrator.`
     );
   }
+
+  if (specAudit) finalReport = finalReport.trimEnd() + "\n\n---\n\n" + specAudit;
 
   // Write report to timestamped run directory
   if (finalReport.trim()) {
