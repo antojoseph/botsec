@@ -56,8 +56,10 @@ export const soloditProvider: EnrichmentProvider = {
         }
       }
       console.log(`  Solodit: ${count} relevant findings attached.`);
-    } catch {
-      console.log("  Solodit: query failed, continuing without enrichment.");
+    } catch (err: any) {
+      console.error(
+        `  Solodit: query failed — ${err?.message ?? String(err)}`
+      );
     }
 
     return { findingsAttached: count, sourceKey: "solodit" };

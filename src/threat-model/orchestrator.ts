@@ -9,7 +9,7 @@
  */
 
 import { query } from "@anthropic-ai/claude-agent-sdk";
-import { writeFileSync, mkdirSync } from "fs";
+import { writeFileSync, mkdirSync, readFileSync } from "fs";
 import { join } from "path";
 
 import { threatModelerAgent } from "../agents/threat-modeler.js";
@@ -393,15 +393,27 @@ export async function generateThreatModel(
 // Orchestrator prompt
 // ---------------------------------------------------------------------------
 
+/** Resolve the Solidity source directory from foundry.toml (default "src"). */
+function resolveSrcDir(projectDir: string): string {
+  try {
+    const toml = readFileSync(join(projectDir, "foundry.toml"), "utf-8");
+    const m = toml.match(/^\s*src\s*=\s*['"]([^'"]+)['"]/m);
+    return m ? m[1] : "src";
+  } catch {
+    return "src";
+  }
+}
+
 function buildOrchestratorPrompt(pre: PrecomputedAnalysis): string {
+  const srcDir = resolveSrcDir(pre.projectDir);
   return `You are Forge Proof's threat modeling orchestrator.
 
-Your job is to delegate to the **threat-modeler** agent, which will deeply explore the smart contracts in ${pre.projectDir}/src/ and produce a structured threat model as JSON.
+Your job is to delegate to the **threat-modeler** agent, which will deeply explore the smart contracts in ${pre.projectDir}/${srcDir}/ and produce a structured threat model as JSON.
 
 ## Instructions
 
 1. Delegate to the **threat-modeler** agent with this brief:
-   "Analyze all smart contracts in ${pre.projectDir}/src/. Produce a complete threat model as JSON following your output format instructions. Use the pre-computed code map and on-chain data to guide your exploration. Every threat must include a TRACE."
+   "Analyze all smart contracts in ${pre.projectDir}/${srcDir}/. Produce a complete threat model as JSON following your output format instructions. Use the pre-computed code map and on-chain data to guide your exploration. Every threat must include a TRACE."
 
 2. When the threat-modeler returns its JSON output, present it as your final response.
 
@@ -420,6 +432,33 @@ pass the returned JSON to the StructuredOutput tool.`;
 // ---------------------------------------------------------------------------
 // Parse agent output into structured data
 // ---------------------------------------------------------------------------
+
+/**
+ * Scan from an opening bracket to its matching close, skipping JSON string
+ * literals so brackets inside strings are not counted. Returns undefined when
+ * the brackets never balance.
+ */
+function extractBracketed(text: string, start: number): string | undefined {
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  for (let i = start; i < text.length; i++) {
+    const ch = text[i];
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (ch === "\\") escaped = true;
+      else if (ch === '"') inString = false;
+      continue;
+    }
+    if (ch === '"') inString = true;
+    else if (ch === "[") depth++;
+    else if (ch === "]") {
+      depth--;
+      if (depth === 0) return text.slice(start, i + 1);
+    }
+  }
+  return undefined;
+}
 
 function parseAgentOutput(output: string): any {
   // Strategy 1: Try raw JSON parse
@@ -444,14 +483,20 @@ function parseAgentOutput(output: string): any {
     } catch { /* continue */ }
   }
 
-  // Strategy 4: Extract just the threats array and wrap it
-  const threatsMatch = output.match(/"threats"\s*:\s*(\[[\s\S]*\])/);
-  if (threatsMatch) {
-    try {
-      const threats = JSON.parse(threatsMatch[1]);
-      console.log(`  Recovered ${threats.length} threat(s) from partial JSON.`);
-      return { contractType: "other", actors: [], assets: [], trustBoundaries: [], threats };
-    } catch { /* continue */ }
+  // Strategy 4: Extract just the threats array and wrap it. Locate the key,
+  // then scan to the matching `]` with a depth counter so trailing text (and
+  // nested arrays) cannot over-capture.
+  const threatsKey = output.indexOf('"threats"');
+  if (threatsKey !== -1) {
+    const arrayStart = output.indexOf("[", output.indexOf(":", threatsKey));
+    const threatsJson = arrayStart === -1 ? undefined : extractBracketed(output, arrayStart);
+    if (threatsJson) {
+      try {
+        const threats = JSON.parse(threatsJson);
+        console.log(`  Recovered ${threats.length} threat(s) from partial JSON.`);
+        return { contractType: "other", actors: [], assets: [], trustBoundaries: [], threats };
+      } catch { /* continue */ }
+    }
   }
 
   console.warn(

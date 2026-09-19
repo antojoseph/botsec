@@ -4,7 +4,6 @@ import {
   copyFileSync,
   mkdirSync,
   existsSync,
-  readFileSync,
   writeFileSync,
   readdirSync,
   rmSync,
@@ -141,28 +140,6 @@ runs = 256
   }
 
   return projectDir;
-}
-
-/**
- * Detect the highest Solidity pragma across the copied sources.
- * Informational only — Foundry resolves the compiler itself; this just lets the
- * caller report what it is dealing with.
- */
-export function detectPragma(srcDir: string): string | undefined {
-  const versions: string[] = [];
-  const walk = (dir: string): void => {
-    if (!existsSync(dir)) return;
-    for (const entry of readdirSync(dir)) {
-      const p = join(dir, entry);
-      if (statSync(p).isDirectory()) walk(p);
-      else if (entry.endsWith(".sol")) {
-        const m = readFileSync(p, "utf-8").match(/pragma\s+solidity\s+([^;]+);/);
-        if (m) versions.push(m[1].trim());
-      }
-    }
-  };
-  walk(srcDir);
-  return versions.length ? [...new Set(versions)].join(", ") : undefined;
 }
 
 /**

@@ -14,7 +14,7 @@ export interface OnchainOpts {
 }
 
 export function onchainAgent(opts: OnchainOpts): AgentDefinition {
-  const etherscanBase = getEtherscanBase(opts.chainId);
+  const chainId = opts.chainId || "1";
   const apiKey = opts.etherscanApiKey || "YourApiKeyToken";
   const address = opts.address || "NOT_PROVIDED";
 
@@ -24,7 +24,7 @@ export function onchainAgent(opts: OnchainOpts): AgentDefinition {
       "on-chain address is provided to analyze real transaction history, identify " +
       "usage patterns, detect suspicious activity, and correlate with code-level " +
       "findings. Do NOT use this agent if no on-chain address was provided.",
-    prompt: buildOnchainPrompt(etherscanBase, apiKey, address),
+    prompt: buildOnchainPrompt(ETHERSCAN_V2_BASE, chainId, apiKey, address),
     tools: ["Bash", "Read"],
     model: "sonnet",
     omitClaudeMd: true,
@@ -33,6 +33,7 @@ export function onchainAgent(opts: OnchainOpts): AgentDefinition {
 
 function buildOnchainPrompt(
   etherscanBase: string,
+  chainId: string,
   apiKey: string,
   address: string
 ): string {
@@ -44,30 +45,31 @@ Analyze real blockchain transaction data for the target contract to understand h
 ## Available APIs
 Use curl via Bash to query these endpoints. Always use -s (silent) flag.
 
-### Etherscan API
+### Etherscan API v2
 Base URL: ${etherscanBase}
 API Key: ${apiKey}
+Chain ID: ${chainId}
 Contract Address: ${address}
 
 Key endpoints:
 
 Normal transactions:
-  curl -s "${etherscanBase}/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=desc&page=1&offset=50&apikey=${apiKey}"
+  curl -s "${etherscanBase}?chainid=${chainId}&module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=desc&page=1&offset=50&apikey=${apiKey}"
 
 Internal transactions:
-  curl -s "${etherscanBase}/api?module=account&action=txlistinternal&address=${address}&startblock=0&endblock=99999999&sort=desc&page=1&offset=50&apikey=${apiKey}"
+  curl -s "${etherscanBase}?chainid=${chainId}&module=account&action=txlistinternal&address=${address}&startblock=0&endblock=99999999&sort=desc&page=1&offset=50&apikey=${apiKey}"
 
 ERC20 token transfers:
-  curl -s "${etherscanBase}/api?module=account&action=tokentx&address=${address}&sort=desc&page=1&offset=50&apikey=${apiKey}"
+  curl -s "${etherscanBase}?chainid=${chainId}&module=account&action=tokentx&address=${address}&sort=desc&page=1&offset=50&apikey=${apiKey}"
 
 Event logs:
-  curl -s "${etherscanBase}/api?module=logs&action=getLogs&address=${address}&fromBlock=0&toBlock=latest&page=1&offset=100&apikey=${apiKey}"
+  curl -s "${etherscanBase}?chainid=${chainId}&module=logs&action=getLogs&address=${address}&fromBlock=0&toBlock=latest&page=1&offset=100&apikey=${apiKey}"
 
 Contract ABI:
-  curl -s "${etherscanBase}/api?module=contract&action=getabi&address=${address}&apikey=${apiKey}"
+  curl -s "${etherscanBase}?chainid=${chainId}&module=contract&action=getabi&address=${address}&apikey=${apiKey}"
 
 Contract verified source:
-  curl -s "${etherscanBase}/api?module=contract&action=getsourcecode&address=${address}&apikey=${apiKey}"
+  curl -s "${etherscanBase}?chainid=${chainId}&module=contract&action=getsourcecode&address=${address}&apikey=${apiKey}"
 
 ## Analysis Process
 
@@ -107,15 +109,4 @@ Provide a structured analysis with:
 - Any known exploit correlation`;
 }
 
-function getEtherscanBase(chainId?: string): string {
-  const chains: Record<string, string> = {
-    "1": "https://api.etherscan.io",
-    "5": "https://api-goerli.etherscan.io",
-    "11155111": "https://api-sepolia.etherscan.io",
-    "137": "https://api.polygonscan.com",
-    "42161": "https://api.arbiscan.io",
-    "10": "https://api-optimistic.etherscan.io",
-    "8453": "https://api.basescan.org",
-  };
-  return chains[chainId || "1"] || "https://api.etherscan.io";
-}
+const ETHERSCAN_V2_BASE = "https://api.etherscan.io/v2/api";

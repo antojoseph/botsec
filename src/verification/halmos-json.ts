@@ -33,7 +33,7 @@ interface RawTestResult {
   num_models: number;
   models: Array<{ model: Record<string, RawModelEntry>; is_valid: boolean }>;
   /** [total, normal (non-reverting), failed] */
-  num_paths: [number, number, number];
+  num_paths?: [number, number, number];
   time: number[];
   num_bounded_loops: number;
 }
@@ -100,7 +100,7 @@ const EXIT_COUNTEREXAMPLE = 1;
 const EXIT_ALL_PATHS_REVERTED = 4;
 
 function classify(t: RawTestResult): { verdict: Verdict; reason?: string } {
-  const [, normalPaths] = t.num_paths;
+  const normalPaths = t.num_paths?.[1] ?? 0;
 
   if (t.exitcode === EXIT_ALL_PATHS_REVERTED) {
     return {

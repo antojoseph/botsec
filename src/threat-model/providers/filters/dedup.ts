@@ -87,6 +87,10 @@ export const dedupProvider: SynthesisFilterProvider = {
 
           merged.add(dropIdx);
           mergeCount++;
+
+          // If the current outer threat was dropped, stop comparing it against
+          // later threats — its content is already merged into the keeper.
+          if (dropIdx === i) break;
         }
       }
     }

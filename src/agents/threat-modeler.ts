@@ -8,6 +8,8 @@
  * Every threat MUST include a TRACE — the exact code locations traversed to find it.
  */
 
+import { readFileSync } from "fs";
+import { join } from "path";
 import type { AgentDefinition } from "./explorer.js";
 import type { PrecomputedAnalysis } from "../threat-model/types.js";
 
@@ -41,8 +43,6 @@ function buildThreatModelerPrompt(pre: PrecomputedAnalysis, opts?: ThreatModeler
   // Read srcDir from foundry.toml if available
   let srcDir = "src";
   try {
-    const { readFileSync } = require("fs");
-    const { join } = require("path");
     const toml = readFileSync(join(pre.projectDir, "foundry.toml"), "utf-8");
     const m = toml.match(/^\s*src\s*=\s*['"]([^'"]+)['"]/m);
     if (m) srcDir = m[1];

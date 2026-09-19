@@ -202,8 +202,8 @@ const tmCmd = program
   .option("--max-budget <usd>", "Max budget in USD (default: 50)", "50")
   .option(
     "--allow-npm-install",
-    "Permit `npm install` inside the target project. This runs the target's " +
-      "lifecycle scripts — only use it on code you trust."
+    "Permit `npm install` inside the target project. The install runs with " +
+      "`--ignore-scripts`, so the target's lifecycle scripts are NOT executed."
   );
 
 // Auto-register provider flags from the registry.
@@ -327,4 +327,4 @@ function extractFlagName(flag: string): string {
   return match ? match[1] : flag;
 }
 
-program.parse();
+await program.parseAsync();

@@ -5,7 +5,6 @@
  * Used during the synthesis phase to enrich code-level threats with historical evidence.
  */
 
-import { execSync } from "child_process";
 import type { ContractType, ThreatCategory } from "./types.js";
 
 export interface SoloditFinding {
@@ -26,6 +25,13 @@ export async function searchSolodit(
 ): Promise<Map<ThreatCategory, SoloditFinding[]>> {
   const results = new Map<ThreatCategory, SoloditFinding[]>();
 
+  if (!soloditKey) {
+    console.error(
+      "Solodit: API key required — pass --solodit-key or set SOLODIT_API_KEY."
+    );
+    return results;
+  }
+
   // Build search queries from contract type + categories
   const queries = buildSearchQueries(contractType, categories);
 
@@ -37,8 +43,10 @@ export async function searchSolodit(
         console.log(`    Solodit query: "${keyword}"`);
         const searchResults = await querySolodit(keyword, soloditKey);
         findings.push(...searchResults);
-      } catch {
-        // Skip failed queries
+      } catch (err: any) {
+        console.error(
+          `    Solodit query failed: ${err?.message ?? String(err)}`
+        );
       }
 
       // Rate limit between queries
@@ -105,41 +113,63 @@ function buildSearchQueries(
 }
 
 /**
- * Query the Solodit API or MCP server for findings matching a keyword.
+ * Cyfrin Solodit Findings API endpoint.
+ *
+ * POST with the X-Cyfrin-API-Key header; the key is required (a missing key
+ * returns HTTP 401).
+ */
+const SOLODIT_FINDINGS_ENDPOINT =
+  "https://solodit.cyfrin.io/api/v1/solodit/findings";
+
+/**
+ * Query the Solodit Findings API for findings matching a keyword.
+ *
+ * Fails loudly: a missing key or a failed request is logged and yields no
+ * findings, rather than being reported as a silent success.
  */
 async function querySolodit(
   keyword: string,
-  _soloditKey?: string
+  soloditKey?: string
 ): Promise<SoloditFinding[]> {
-  // Try the Solodit MCP server first (if available)
-  // Fallback to curl-based search
-  try {
-    const encoded = encodeURIComponent(keyword);
-    const response = execSync(
-      `curl -s "https://solodit.cyfrin.io/api/v1/search?query=${encoded}&limit=5" 2>/dev/null`,
-      {
-        encoding: "utf-8",
-        timeout: 15_000,
-        stdio: ["pipe", "pipe", "pipe"],
-      }
+  if (!soloditKey) {
+    console.error(
+      "Solodit: API key required — pass --solodit-key or set SOLODIT_API_KEY."
     );
-
-    const json = JSON.parse(response);
-    if (Array.isArray(json.results || json.data || json)) {
-      const items = json.results || json.data || json;
-      return items.map((item: any) => ({
-        title: item.title || item.name || "Unknown",
-        severity: item.severity || item.impact || "Unknown",
-        description:
-          (item.description || item.content || "").slice(0, 500) || "",
-        url: item.url || item.link || undefined,
-      }));
-    }
-  } catch {
-    // Solodit API may not be available — this is non-fatal
+    return [];
   }
 
-  return [];
+  try {
+    const response = await fetch(SOLODIT_FINDINGS_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Cyfrin-API-Key": soloditKey,
+      },
+      body: JSON.stringify({
+        page: 1,
+        pageSize: 5,
+        filters: { keywords: keyword, impact: ["HIGH", "MEDIUM"] },
+      }),
+      signal: AbortSignal.timeout(15_000),
+    });
+
+    if (!response.ok) {
+      console.error(`Solodit: request failed (HTTP ${response.status}).`);
+      return [];
+    }
+
+    const json = (await response.json()) as { findings?: any[] };
+    const items = Array.isArray(json.findings) ? json.findings : [];
+    return items.map((item: any) => ({
+      title: item.title || "Unknown",
+      severity: item.impact || "Unknown",
+      description: (item.summary || item.content || "").slice(0, 500),
+      url: item.source_link || undefined,
+    }));
+  } catch (err: any) {
+    console.error(`Solodit: request error — ${err?.message ?? String(err)}`);
+    return [];
+  }
 }
 
 function sleep(ms: number): Promise<void> {

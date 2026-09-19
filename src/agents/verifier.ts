@@ -50,7 +50,7 @@ pragma solidity ^0.8.0;
 
 import {SymTest} from "halmos-cheatcodes/SymTest.sol";
 import {Test} from "forge-std/Test.sol";
-import {TargetContract} from "../src/TargetContract.sol";
+import {TargetContract} from "../../src/TargetContract.sol";
 
 contract TargetVerification is SymTest, Test {
     TargetContract target;

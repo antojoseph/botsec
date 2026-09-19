@@ -36,10 +36,10 @@ export async function precomputeAnalysis(
     }
     // Install npm dependencies — OPT-IN ONLY.
     //
-    // `npm install` executes the target's lifecycle scripts (preinstall/
-    // postinstall), which is arbitrary code execution. The whole point of this
-    // tool is to be pointed at code you do not trust, so this cannot be the
-    // default. Callers opt in with --allow-npm-install.
+    // The install runs with --ignore-scripts, so the target's lifecycle scripts
+    // (preinstall/postinstall) are NOT executed. It stays opt-in because the
+    // whole point of this tool is to be pointed at code you do not trust.
+    // Callers opt in with --allow-npm-install.
     const needsNpm =
       existsSync(join(projectDir, "package.json")) &&
       !existsSync(join(projectDir, "node_modules"));
@@ -58,8 +58,8 @@ export async function precomputeAnalysis(
     } else if (needsNpm) {
       console.warn(
         "  Note: target has package.json but no node_modules. Skipping npm install\n" +
-          "        (it would run the target's lifecycle scripts). Pass --allow-npm-install\n" +
-          "        if you trust this target and the build needs npm dependencies."
+          "        Pass --allow-npm-install if the build needs npm dependencies\n" +
+          "        (the install runs with --ignore-scripts, lifecycle scripts are not run)."
       );
     }
     // Capture stderr rather than discarding it — when this fails, the compiler

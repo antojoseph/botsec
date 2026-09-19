@@ -196,8 +196,7 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
   // success is the worst possible outcome, so check for the artifacts directly
   // rather than trusting the narrative.
   const testsWritten = countGeneratedTests(projectDir);
-  const verificationExpected = true; // every analyze mode ends in verification
-  if (verificationExpected && testsWritten === 0) {
+  if (testsWritten === 0) {
     const mode = opts.verifyOnly ? "--verify-only" : "analyze";
     throw new Error(
       `Verification produced no tests.\n` +
@@ -247,30 +246,53 @@ export async function analyze(opts: AnalyzeOptions): Promise<void> {
             `VACUOUS section of the report.`
         );
       }
-
-      if (opts.mutationTest) {
-        console.log("\n  Mutation testing (no model tokens — forge + halmos only)...");
-        const mreport: MutationReport = runMutationTesting({
-          projectDir,
-          env: halmosEnv,
-          loopBound: opts.loopBound,
-          solverTimeoutMs: opts.solverTimeout,
-          maxMutants: opts.maxMutants,
-          onProgress: (m) => console.log(m),
-        });
-        if (mreport.score !== undefined) {
-          console.log(`\n  Mutation score: ${Math.round(mreport.score * 100)}% ` +
-            `(${mreport.killed} killed / ${mreport.survived} survived)`);
-        }
-        specAudit += "\n" + formatMutationReport(mreport);
-      }
     } catch (err: any) {
       // A spec audit failure must not discard the verification work above it.
       console.warn(`  Spec audit skipped: ${err.message?.split("\n")[0] ?? err}`);
     }
   }
 
+  // Mutation testing is independent of the vacuity classification: it establishes
+  // its own baseline, so --no-audit-spec must not disable it.
+  if (opts.mutationTest) {
+    try {
+      console.log("\n  Mutation testing (no model tokens — forge + halmos only)...");
+      const mreport: MutationReport = runMutationTesting({
+        projectDir,
+        env: halmosEnv,
+        loopBound: opts.loopBound,
+        solverTimeoutMs: opts.solverTimeout,
+        maxMutants: opts.maxMutants,
+        onProgress: (m) => console.log(m),
+      });
+      if (mreport.score !== undefined) {
+        console.log(`\n  Mutation score: ${Math.round(mreport.score * 100)}% ` +
+          `(${mreport.killed} killed / ${mreport.survived} survived)`);
+      }
+      specAudit += "\n" + formatMutationReport(mreport);
+    } catch (err: any) {
+      // A mutation failure must not discard the verification work above it.
+      console.warn(`  Mutation testing skipped: ${err.message?.split("\n")[0] ?? err}`);
+    }
+  }
+
   if (specAudit) finalReport = finalReport.trimEnd() + "\n\n---\n\n" + specAudit;
+
+  // Verification wrote tests (the guard above), yet the orchestrator returned no
+  // final text — surface it instead of exiting 0 with no report.
+  if (!finalReport.trim()) {
+    const mode = opts.verifyOnly ? "--verify-only" : "analyze";
+    throw new Error(
+      `Verification produced no report.\n` +
+        `  ${testsWritten} test file(s) were written to ${join(projectDir, FORGE_PROOF_TEST_DIR)}, but the\n` +
+        `  orchestrator returned no final text, so no report will be written.\n\n` +
+        `  This usually means the orchestrator ended its turn believing the\n` +
+        `  formal-verifier was still running in the background. The Task tool is\n` +
+        `  synchronous; weaker models routed through an LLM gateway get this wrong.\n\n` +
+        `  Try: re-run ${mode}, or point ANTHROPIC_DEFAULT_OPUS_MODEL at a more\n` +
+        `  capable model for the orchestrator.`
+    );
+  }
 
   // Write report to timestamped run directory
   if (finalReport.trim()) {
@@ -360,6 +382,17 @@ function countGeneratedTests(projectDir: string): number {
   }
 }
 
+/** Resolve the Solidity source directory from foundry.toml (default "src"). */
+function resolveSrcDir(projectDir: string): string {
+  try {
+    const toml = readFileSync(join(projectDir, "foundry.toml"), "utf-8");
+    const m = toml.match(/^\s*src\s*=\s*['"]([^'"]+)['"]/m);
+    return m ? m[1] : "src";
+  } catch {
+    return "src";
+  }
+}
+
 function formatThreatModelSection(threatModel: ThreatModel): string {
   const threats = threatModel.threats
     .sort((a, b) => a.priority - b.priority)
@@ -403,13 +436,14 @@ function buildVerifyOnlyPrompt(
 ): string {
   const loopBound = opts.loopBound || 3;
   const solverTimeout = opts.solverTimeout || 10000;
+  const srcDir = resolveSrcDir(projectDir);
 
   const threatSection = formatThreatModelSection(threatModel);
 
   return `You are Forge Proof, running in VERIFY-ONLY mode. Skip all exploration — go straight to formal verification.
 
 Working directory (Foundry project): ${projectDir}
-Source contracts are in: ${projectDir}/src/
+Source contracts are in: ${projectDir}/${srcDir}/
 
 ${threatSection}
 
@@ -479,6 +513,7 @@ function buildOrchestratorPrompt(
 ): string {
   const loopBound = opts.loopBound || 3;
   const solverTimeout = opts.solverTimeout || 10000;
+  const srcDir = resolveSrcDir(projectDir);
 
   const threatModelSection = threatModel
     ? "\n" + formatThreatModelSection(threatModel) + "\n"
@@ -495,7 +530,7 @@ ${threatModelSection}
 
 ### Phase 1: Deep Understanding${hasOnchain ? " (run code-explorer and onchain-analyst IN PARALLEL)" : ""}
 
-1. Use the **code-explorer** agent to deeply analyze the contract source code in ${projectDir}/src/:
+1. Use the **code-explorer** agent to deeply analyze the contract source code in ${projectDir}/${srcDir}/:
    - Map all state variables, their visibility, and who can modify them
    - Trace all external calls and identify reentrancy surfaces
    - Identify access control patterns and potential bypasses

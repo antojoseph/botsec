@@ -256,8 +256,6 @@ function scoreAttackSurface(s: StructuralAnalysis): AttackSurfaceEntry[] {
 
     // Payable: can receive ETH
     // We detect this via ABI or presence of msg.value in dependencies
-    const receivesMsgValue = Object.values(s.dataDependency.tainted)
-      .some((vars) => vars.includes("msg.value"));
     const funcTainted = s.dataDependency.tainted[funcName] || [];
     const receivesValue = funcTainted.includes("msg.value");
     if (receivesValue) {
@@ -367,11 +365,11 @@ function inferInvariants(
       stateVars: [pair.aggregate, pair.individual],
       threatenedBy: pair.mismatchedUpdates.length > 0
         ? pair.mismatchedUpdates
-        : Object.values(s.functionSummary)
-            .filter((f) => f.stateVarsWritten.some((v) =>
+        : Object.entries(s.functionSummary)
+            .filter(([, f]) => f.stateVarsWritten.some((v) =>
               v === pair.aggregate || v === pair.individual
             ))
-            .map((_, i) => Object.keys(s.functionSummary)[i])
+            .map(([k]) => k)
             .filter(Boolean),
       assertion: `assert(${shortName(pair.aggregate)} == sum(${shortName(pair.individual)}[*]))`,
       confidence: pair.mismatchedUpdates.length > 0 ? "medium" : "high",

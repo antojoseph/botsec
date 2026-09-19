@@ -35,8 +35,13 @@ if [[ "${2:-}" == "--quick" ]]; then
   QUICK=true
 fi
 
-if [[ -z "${ANTHROPIC_API_KEY:-}" ]]; then
-  echo "Error: ANTHROPIC_API_KEY not set."
+if [[ -z "${ANTHROPIC_API_KEY:-}" && -z "${ANTHROPIC_AUTH_TOKEN:-}" && \
+      -z "${CLAUDE_CODE_USE_BEDROCK:-}" && -z "${CLAUDE_CODE_USE_VERTEX:-}" ]]; then
+  echo "Error: no Claude credential found. Provide one of:"
+  echo "  ANTHROPIC_API_KEY                          Anthropic API"
+  echo "  ANTHROPIC_BASE_URL + ANTHROPIC_AUTH_TOKEN  LLM gateway (e.g. OpenRouter)"
+  echo "  CLAUDE_CODE_USE_BEDROCK=1                  Amazon Bedrock"
+  echo "  CLAUDE_CODE_USE_VERTEX=1                   Google Vertex"
   exit 1
 fi
 

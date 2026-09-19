@@ -2,11 +2,11 @@
  * AST-based structural analysis — extracts call graphs, state variable read/write maps,
  * inheritance trees, and function summaries from Foundry build artifacts.
  *
- * Uses the solc AST embedded in each contract's JSON artifact (out/<File>.sol/<Contract>.json).
+ * Uses the solc AST embedded in the build-info file (out/build-info/*.json).
  * Zero external dependencies beyond Foundry itself.
  */
 
-import { readFileSync, readdirSync, existsSync, statSync } from "fs";
+import { readFileSync, readdirSync, existsSync } from "fs";
 import { join } from "path";
 import type {
   StructuralAnalysis,
@@ -622,8 +622,11 @@ function extractOperationOrder(
   function walkStatements(node: ASTNode): void {
     if (!node) return;
 
-    // Block: walk statements in order
-    if (node.nodeType === "Block" && Array.isArray(node.statements)) {
+    // Block / UncheckedBlock: walk statements in order
+    if (
+      (node.nodeType === "Block" || node.nodeType === "UncheckedBlock") &&
+      Array.isArray(node.statements)
+    ) {
       for (const stmt of node.statements) {
         walkStatements(stmt);
       }
@@ -650,10 +653,24 @@ function extractOperationOrder(
       return;
     }
 
-    // ForStatement / WhileStatement
-    if (node.nodeType === "ForStatement" || node.nodeType === "WhileStatement") {
+    // ForStatement / WhileStatement / DoWhileStatement
+    if (
+      node.nodeType === "ForStatement" ||
+      node.nodeType === "WhileStatement" ||
+      node.nodeType === "DoWhileStatement"
+    ) {
       steps.push({ index: idx++, type: "branch", target: "loop", src: node.src });
       if (node.body) walkStatements(node.body);
+      return;
+    }
+
+    // TryStatement — branch, classify the external call, walk each clause block
+    if (node.nodeType === "TryStatement") {
+      steps.push({ index: idx++, type: "branch", target: "try", src: node.src });
+      if (node.externalCall) classifyExpression(node.externalCall);
+      for (const clause of node.clauses ?? []) {
+        if (clause?.block) walkStatements(clause.block);
+      }
       return;
     }
 
@@ -713,6 +730,8 @@ function extractOperationOrder(
           src: expr.src,
         });
       }
+      // Recurse into arguments so nested calls (e.g. foo(bar())) are recorded too
+      for (const arg of expr.arguments ?? []) classifyExpression(arg);
       return;
     }
 
@@ -990,20 +1009,5 @@ function walkAST(node: any, visitor: (n: ASTNode) => void): void {
     } else if (typeof value === "object" && value !== null) {
       walkAST(value, visitor);
     }
-  }
-}
-
-function collectSolFileNames(dir: string, result: Set<string>): void {
-  if (!existsSync(dir)) return;
-  for (const entry of readdirSync(dir)) {
-    const fullPath = join(dir, entry);
-    try {
-      const stat = statSync(fullPath);
-      if (stat.isDirectory()) {
-        collectSolFileNames(fullPath, result);
-      } else if (entry.endsWith(".sol")) {
-        result.add(entry);
-      }
-    } catch { /* skip */ }
   }
 }

@@ -141,7 +141,7 @@ async function fetchOnChainProfile(
   }));
 
   // 4. Fetch internal txs for top value transactions
-  valueTxs.sort((a, b) => (b.value > a.value ? 1 : -1));
+  valueTxs.sort((a, b) => (a.value === b.value ? 0 : a.value > b.value ? -1 : 1));
   const topValueTxs = valueTxs.slice(0, 20);
 
   for (const { tx, value } of topValueTxs) {
@@ -182,7 +182,7 @@ async function fetchOnChainProfile(
     funcValues[funcName].push(value);
   }
   for (const [funcName, values] of Object.entries(funcValues)) {
-    values.sort((a, b) => (a > b ? 1 : -1));
+    values.sort((a, b) => (a === b ? 0 : a > b ? 1 : -1));
     profile.parameterRanges[funcName] = {
       min: values[0].toString(),
       max: values[values.length - 1].toString(),

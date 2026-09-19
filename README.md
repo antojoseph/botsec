@@ -11,7 +11,7 @@ AI-powered smart contract security analysis with formal verification. Uses Claud
                |___/
 ```
 
-## Benchmark: Damn Vulnerable DeFi — 19/19 Vulnerabilities Found
+## Benchmark: Damn Vulnerable DeFi — 18/18 Challenges Found
 
 Tested against [Damn Vulnerable DeFi v4](https://www.damnvulnerabledefi.xyz/) — the industry-standard benchmark for smart contract security tools.
 
@@ -72,7 +72,7 @@ Two-stage pipeline: **threat model** identifies what to look for, **analyze** pr
 
 Generates a ranked threat model for a Foundry project.
 
-1. **Pre-computation** — Builds the project, walks the solc AST to extract call graphs, state variable maps, inheritance, CEI ordering, auth checks, guards, and data dependencies. Installs npm dependencies only when `--allow-npm-install` is passed (it runs the target's lifecycle scripts). Filters out test/script contracts. Writes per-contract structural data to `.forge-proof/codemap/` and blueprint to `.forge-proof/blueprint.json`.
+1. **Pre-computation** — Builds the project, walks the solc AST to extract call graphs, state variable maps, inheritance, CEI ordering, auth checks, guards, and data dependencies. Installs npm dependencies only when `--allow-npm-install` is passed (the install runs with `--ignore-scripts`, so the target's lifecycle scripts are not executed). Filters out test/script contracts. Writes per-contract structural data to `.forge-proof/codemap/` and blueprint to `.forge-proof/blueprint.json`.
 2. **LLM classification** — Haiku classifies the contract type (vault, lending, dex, staking, etc.) to inform invariant inference and investigation questions.
 3. **Agentic exploration** — Opus agent reads the blueprint and per-contract code map files on-demand (file-based context — no prompt size limits). Focuses exclusively on untrusted-actor attack paths. Every threat requires a TRACE with exact file:line locations.
 4. **Synthesis** — Anti-slop filter drops traceless threats, self-contradiction filter downgrades primarily-exonerating threats, deduplication merges overlapping findings, threats ranked by severity x confidence.
@@ -184,8 +184,8 @@ forge-proof threat-model <project-path>
   -o, --output <dir>        Output directory [default: forge-proof-output]
   --max-turns <n>           Max agent turns [default: 200]
   --max-budget <usd>        Max spend in USD before stopping [default: 50]
-  --allow-npm-install       Run `npm install` in the target (executes its
-                            lifecycle scripts — trusted targets only)
+  --allow-npm-install       Run `npm install --ignore-scripts` in the target
+                            (lifecycle scripts are NOT executed)
 
   Provider toggles (all on by default, generated from the provider registry):
   --no-ast                  Disable solc AST structural analysis

@@ -12,7 +12,6 @@
 import type {
   Provider,
   PrecomputeProvider,
-  AgentPassProvider,
   EnrichmentProvider,
   SynthesisFilterProvider,
   OutputFormatProvider,
@@ -64,12 +63,6 @@ export function allProviders(): readonly Provider[] {
 export function precomputeProviders(active: Provider[]): PrecomputeProvider[] {
   return active.filter(
     (p): p is PrecomputeProvider => p.phase === "precompute",
-  );
-}
-
-export function agentPassProviders(active: Provider[]): AgentPassProvider[] {
-  return active.filter(
-    (p): p is AgentPassProvider => p.phase === "agent-pass",
   );
 }
 

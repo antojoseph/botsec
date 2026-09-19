@@ -96,7 +96,7 @@ forge-proof check
 - ES module project (Node16 module resolution, ES2022 target)
 - Agent definitions use the SDK's own `AgentDefinition` type (re-exported from `src/agents/explorer.ts`) — do not hand-roll a copy
 - Every agent sets `omitClaudeMd: true` and both orchestrators set `settingSources: []`: the cwd is the **untrusted audit target**, and the agents run with `permissionMode: "bypassPermissions"`. Never load instructions or settings from the target
-- `npm install` inside a target is opt-in via `--allow-npm-install` (it executes the target's lifecycle scripts)
+- `npm install` inside a target is opt-in via `--allow-npm-install` (it runs with `--ignore-scripts`, so the target's lifecycle scripts are NOT executed)
 - Strict TypeScript throughout
 - Agent system prompts are hardcoded in each agent file; the orchestrator prompt is built dynamically in `orchestrator.ts`
 - Halmos tests must use `check_` prefix, import `SymTest`, use `svm.createUint256()` for symbolic values, and `vm.assume()` for constraints
