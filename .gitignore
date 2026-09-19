@@ -3,6 +3,7 @@ dist/
 *.js.map
 .env
 forge-proof-output/
+FINDINGS.md
 
 # Foundry artifacts from temp projects
 cache/
