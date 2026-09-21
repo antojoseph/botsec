@@ -57,11 +57,11 @@ Balancer's Vault and WeightedPool sources match all 45 and 36 files respectively
 
 Socket's public repository history begins after the incident. Its source changes an ERC20 import path and a native-to-wrapped `transfer` to `safeTransfer`. Both versions retain the vulnerable call, but that is insufficient to call them identical. We explicitly select explorer source for the gateway and route and preserve the later repository only as supporting history. The unresolved metadata digests are disclosed above.
 
-## Next collection stage
+## Collection stage
 
 Build an isolated source-only analyzer workspace from the selected compiler inputs, preserving separate compilation units where versions differ. The restored provenance workspaces retain upstream tests and documentation, so they must not be supplied wholesale to the analyzer. Keep exploit scripts, postmortems, labels and this evidence directory outside its accessible context.
 
-Capture findings before synthesis filters, then obtain independent labels and broaden the project sample. `deploymentBenchmarkEligible: true` means eligible source input within the recorded scope and qualifications; it does not mean the finding dataset or adoption decision is ready. The previous Jev pilot remains unchanged. See the [decision record](../../../docs/decisions/2026-09-21-jev-evaluation.md).
+The [first real-source batch](../results/real-source-2026-09-21/assessment.md) now captures 15 raw findings from these three projects and compares 46 decisions. It uses explicitly provisional assistant labels frozen before Jev requests; human review is optional for this exploratory stage. Neither Jev task improved on the current filter decisions. Broader independent validation remains future work. `deploymentBenchmarkEligible: true` means eligible source input within the recorded scope and qualifications; it does not mean the finding dataset or adoption decision is ready. The previous Jev pilot remains unchanged. See the [decision record](../../../docs/decisions/2026-09-21-jev-evaluation.md).
 
 ## Validation performed
 

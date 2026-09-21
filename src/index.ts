@@ -181,6 +181,8 @@ program
 
 const tmCmd = program
   .command("threat-model")
+  .option("--capture-raw", "Preserve raw findings and synthesis stage inputs/outputs")
+  .option("--source-only", "Restrict model tools to reads within a prepared source workspace")
   .description(
     "Generate a structured threat model for a Foundry project using agentic code exploration"
   )
@@ -307,6 +309,8 @@ tmCmd.action(async (projectPath, opts) => {
       enabledProviders,
       providerFlagValues,
       allowNpmInstall: !!opts.allowNpmInstall,
+      captureRaw: !!opts.captureRaw,
+      sourceOnly: !!opts.sourceOnly,
     });
   } catch (err: any) {
     console.error(`\n  Fatal error: ${err.message || err}`);

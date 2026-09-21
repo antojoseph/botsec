@@ -1,0 +1,129 @@
+{
+  "classification": {
+    "type": "oracle",
+    "confidence": "high",
+    "signals": [
+      "Contract name contains 'Oracle' suffix",
+      "getPrice() function is characteristic of price oracle contracts",
+      "WeightedBalancer reference suggests it prices LP tokens, a common oracle use case"
+    ],
+    "knownVulnerabilityClasses": [
+      "Stale price data usage",
+      "Price manipulation in single block",
+      "Flash loan TWAP manipulation",
+      "Missing price feed validation",
+      "Decimal precision mismatches"
+    ]
+  },
+  "attackSurface": [
+    {
+      "function": "WeightedBalancerLPOracle.constructor",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "WeightedBalancerLPOracle.getPrice",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "11 external call(s): external.getPoolTokens, external.getPoolId, IPool.IPool, external.getNormalizedWeights, external.mulDown, external.powDown, external.divDown, external.getPrice, external.decimals, IERC20.IERC20, external.totalSupply"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    }
+  ],
+  "inferredInvariants": [],
+  "patternFindings": {
+    "externalCallReceivers": [
+      {
+        "function": "WeightedBalancerLPOracle.getPrice",
+        "call": "external.getPoolTokens",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WeightedBalancerLPOracle.getPrice",
+        "call": "external.getPoolId",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WeightedBalancerLPOracle.getPrice",
+        "call": "IPool.IPool",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WeightedBalancerLPOracle.getPrice",
+        "call": "external.getNormalizedWeights",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WeightedBalancerLPOracle.getPrice",
+        "call": "external.mulDown",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WeightedBalancerLPOracle.getPrice",
+        "call": "external.powDown",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WeightedBalancerLPOracle.getPrice",
+        "call": "external.divDown",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WeightedBalancerLPOracle.getPrice",
+        "call": "external.getPrice",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WeightedBalancerLPOracle.getPrice",
+        "call": "external.decimals",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WeightedBalancerLPOracle.getPrice",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WeightedBalancerLPOracle.getPrice",
+        "call": "external.totalSupply",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      }
+    ],
+    "ceiViolations": [],
+    "stateVarPairings": [],
+    "interfaceAssumptions": [],
+    "privilegeSurface": {
+      "adminFunctions": [],
+      "unguardedStateMutators": [
+        "WeightedBalancerLPOracle.constructor"
+      ],
+      "guardedBy": {}
+    },
+    "valueFlowPaths": []
+  },
+  "investigationQuestions": [
+    "Known oracle vulnerability: \"Stale price data usage\". Trace the relevant code path to confirm or rule out.",
+    "Known oracle vulnerability: \"Price manipulation in single block\". Trace the relevant code path to confirm or rule out.",
+    "Known oracle vulnerability: \"Flash loan TWAP manipulation\". Trace the relevant code path to confirm or rule out."
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "basis": "OpenRouter response usage.cost already preserved in the original ledger; original conservative reservations are unchanged.",
+  "records": [
+    {
+      "request": 1,
+      "responseId": "gen-1789972177-yRoLL67AU9xX9wvF2vv5",
+      "billedCostUsd": 0.000739,
+      "conservativeBudgetChargeUsd": 0.05685
+    },
+    {
+      "request": 2,
+      "responseId": "gen-1789972180-VWwyrrZqjMrfhkNuaVmE",
+      "billedCostUsd": 0.02756625,
+      "conservativeBudgetChargeUsd": 0.5174
+    },
+    {
+      "request": 3,
+      "responseId": "gen-1789972183-6bKZUrgDXUd7cAl07QUV",
+      "billedCostUsd": 0.02362875,
+      "conservativeBudgetChargeUsd": 0.46906000000000003
+    },
+    {
+      "request": 4,
+      "responseId": "gen-1789972187-AOnez8mtQug20z26wvwC",
+      "billedCostUsd": 0.01841655,
+      "conservativeBudgetChargeUsd": 0.58484
+    },
+    {
+      "request": 5,
+      "responseId": "gen-1789972190-jlavama9G5vFvtG1DBE3",
+      "billedCostUsd": 0.07082805,
+      "conservativeBudgetChargeUsd": 0.72707
+    },
+    {
+      "request": 6,
+      "responseId": "gen-1789972251-lxfEnLdPzJSuAZQJINYU",
+      "billedCostUsd": 0.0883596,
+      "conservativeBudgetChargeUsd": 0.91484
+    },
+    {
+      "request": 7,
+      "responseId": "gen-1789972328-CMota61jK7VDKNrnm54u",
+      "billedCostUsd": 0.0261192,
+      "conservativeBudgetChargeUsd": 1.14281
+    },
+    {
+      "request": 8,
+      "responseId": "gen-1789972330-7BEQevocl0VsySba0eci",
+      "billedCostUsd": 0.1200396,
+      "conservativeBudgetChargeUsd": 1.2289400000000001
+    },
+    {
+      "request": 9,
+      "responseId": "gen-1789972444-Q3pb0DTBqsx95glAKQUH",
+      "billedCostUsd": 0.11415495,
+      "conservativeBudgetChargeUsd": 0.7377900000000001
+    },
+    {
+      "request": 10,
+      "responseId": "gen-1789972540-9L0jh8pzHmiB64CAJj1P",
+      "billedCostUsd": 0.000568,
+      "conservativeBudgetChargeUsd": 0.05557
+    },
+    {
+      "request": 11,
+      "responseId": "gen-1789972542-hfEMerFKQhfhNMc6iuCO",
+      "billedCostUsd": 0.0106164,
+      "conservativeBudgetChargeUsd": 0.5174
+    },
+    {
+      "request": 12,
+      "responseId": "gen-1789972545-mTCsdMTD0D37p93MTZCG",
+      "billedCostUsd": 0.0159387,
+      "conservativeBudgetChargeUsd": 0.46906000000000003
+    },
+    {
+      "request": 13,
+      "responseId": "gen-1789972549-BD9iLP6mn0X4CZeu5COz",
+      "billedCostUsd": 0.0138603,
+      "conservativeBudgetChargeUsd": 0.5437
+    },
+    {
+      "request": 14,
+      "responseId": "gen-1789972552-p7r0wHRWIS5aspTdOEgu",
+      "billedCostUsd": 0.01023435,
+      "conservativeBudgetChargeUsd": 0.58724
+    },
+    {
+      "request": 15,
+      "responseId": "gen-1789972555-Ea9Ht2nXGuTqG2BJpECG",
+      "billedCostUsd": 0.0262413,
+      "conservativeBudgetChargeUsd": 0.60672
+    },
+    {
+      "request": 16,
+      "responseId": "gen-1789972580-xgslhwTfvMlSzDJiw333",
+      "billedCostUsd": 0.1003515,
+      "conservativeBudgetChargeUsd": 0.75034
+    },
+    {
+      "request": 17,
+      "responseId": "gen-1789972677-bYO8aqjdfmzBY9Lqajw8",
+      "billedCostUsd": 0.09826995,
+      "conservativeBudgetChargeUsd": 0.09826995
+    },
+    {
+      "request": 18,
+      "responseId": "gen-1789972757-5icjQ9bsSO4jIdLeHjkR",
+      "billedCostUsd": 0.001275,
+      "conservativeBudgetChargeUsd": 0.06619
+    },
+    {
+      "request": 19,
+      "responseId": "gen-1789972760-SU7bqS9oM9kFJIpyQ6HX",
+      "billedCostUsd": 0.0106164,
+      "conservativeBudgetChargeUsd": 0.51752
+    },
+    {
+      "request": 20,
+      "responseId": "gen-1789972763-YXPJDcgQZXnlAwfaqXgQ",
+      "billedCostUsd": 0.0159387,
+      "conservativeBudgetChargeUsd": 0.46924
+    },
+    {
+      "request": 21,
+      "responseId": "gen-1789972766-KJO8BI1eLMGXJBPOrwBY",
+      "billedCostUsd": 0.08689155,
+      "conservativeBudgetChargeUsd": 1.15399
+    },
+    {
+      "request": 22,
+      "responseId": "gen-1789972770-SlsPs0lG4S5XWPt72Lq4",
+      "billedCostUsd": 0.03211725,
+      "conservativeBudgetChargeUsd": 1.34787
+    },
+    {
+      "request": 23,
+      "responseId": "gen-1789972775-JRtUS1Jldm2sfrlW80Mi",
+      "billedCostUsd": 0.0073587,
+      "conservativeBudgetChargeUsd": 0.53471
+    },
+    {
+      "request": 24,
+      "responseId": "gen-1789972779-UyKmJLzfi1gLaL0qsfvn",
+      "billedCostUsd": 0.03115155,
+      "conservativeBudgetChargeUsd": 0.68669
+    }
+  ],
+  "knownBilledCostUsd": 0.9512816000000001,
+  "unknownBills": 0,
+  "budgetChargeAfterReconciliationUsd": 0.9512816000000001,
+  "approvedAggregateGenerationBudgetUsd": 15,
+  "retryBudgetUsd": 13.5
+}

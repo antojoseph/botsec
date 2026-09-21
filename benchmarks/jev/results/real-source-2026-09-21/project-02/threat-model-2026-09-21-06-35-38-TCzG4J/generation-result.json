@@ -1,0 +1,26 @@
+{
+  "completionStatus": "success",
+  "parseSucceeded": true,
+  "observedModels": [
+    "anthropic/claude-sonnet-4.6"
+  ],
+  "modelUsage": {
+    "anthropic/claude-sonnet-4.6": {
+      "inputTokens": 60,
+      "outputTokens": 13102,
+      "cacheReadInputTokens": 44925,
+      "cacheCreationInputTokens": 17420,
+      "webSearchRequests": 0,
+      "costUSD": 0.2755125,
+      "contextWindow": 200000,
+      "maxOutputTokens": 32000,
+      "thinkingTokens": 2931,
+      "canonicalModel": "claude-sonnet-4-0",
+      "provider": "firstParty",
+      "costBasis": "list"
+    }
+  },
+  "sdkReportedCostUsd": 0.2755125,
+  "durationMs": 210573,
+  "numTurns": 3
+}

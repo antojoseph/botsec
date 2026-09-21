@@ -1,0 +1,2674 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-21T06:54:13.854Z",
+  "datasetSha256": "7cfa3ef349db8ec9535124d596c3e70b98391bfe23129bbd4d85d62f730af98f",
+  "labelsSha256": "d9708362bde555a70c8b12a21dade8bbdf5dceac683b9d724acecc9188596309",
+  "comparisonManifestSha256": "86dd7356646336ccabeeb9133ba9749df04a0760c903b882062908a34ef3ed15",
+  "independentAccuracy": null,
+  "interpretation": "All accuracy fields below mean agreement with provisional, non-independent assistant labels. They do not estimate vulnerability-detection accuracy or production accuracy. Absent-class recall/F1 is not estimable; consult support counts. Pairs share reports and projects.",
+  "tasks": {
+    "contradiction": {
+      "baseline": {
+        "n": 15,
+        "accuracy": 0.8666666666666667,
+        "macroF1": 0.30952380952380953,
+        "classes": {
+          "maintains": {
+            "support": 13,
+            "precision": 0.8666666666666667,
+            "recall": 1,
+            "f1": 0.9285714285714286
+          },
+          "retracts": {
+            "support": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "unresolved": {
+            "support": 2,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          }
+        },
+        "confusion": {
+          "maintains": {
+            "maintains": 13,
+            "retracts": 0,
+            "unresolved": 0,
+            "error": 0
+          },
+          "retracts": {
+            "maintains": 0,
+            "retracts": 0,
+            "unresolved": 0,
+            "error": 0
+          },
+          "unresolved": {
+            "maintains": 2,
+            "retracts": 0,
+            "unresolved": 0,
+            "error": 0
+          }
+        },
+        "clearLabelAccuracy": 1,
+        "clearLabelN": 13,
+        "harmfulErrors": 0,
+        "harmfulDenominator": 13,
+        "unsafeActionsOnUncertain": 0,
+        "errors": 0,
+        "abstentions": 0,
+        "actionCoverage": 1,
+        "selectiveAccuracy": 0.8666666666666667,
+        "brierScore": null,
+        "probabilityRows": 0,
+        "reliability": [
+          {
+            "range": [
+              0,
+              0.2
+            ],
+            "n": 0,
+            "probability": null,
+            "accuracy": null
+          },
+          {
+            "range": [
+              0.2,
+              0.4
+            ],
+            "n": 0,
+            "probability": null,
+            "accuracy": null
+          },
+          {
+            "range": [
+              0.4,
+              0.6
+            ],
+            "n": 0,
+            "probability": null,
+            "accuracy": null
+          },
+          {
+            "range": [
+              0.6,
+              0.8
+            ],
+            "n": 0,
+            "probability": null,
+            "accuracy": null
+          },
+          {
+            "range": [
+              0.8,
+              1
+            ],
+            "n": 0,
+            "probability": null,
+            "accuracy": null
+          }
+        ],
+        "riskCoverage": [
+          {
+            "threshold": 0,
+            "n": 0,
+            "coverage": 0,
+            "accuracy": null,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.5,
+            "n": 0,
+            "coverage": 0,
+            "accuracy": null,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.7,
+            "n": 0,
+            "coverage": 0,
+            "accuracy": null,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.8,
+            "n": 0,
+            "coverage": 0,
+            "accuracy": null,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.9,
+            "n": 0,
+            "coverage": 0,
+            "accuracy": null,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.95,
+            "n": 0,
+            "coverage": 0,
+            "accuracy": null,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.99,
+            "n": 0,
+            "coverage": 0,
+            "accuracy": null,
+            "harmful": 0
+          }
+        ],
+        "latencyMs": {
+          "median": 0.040167000001019915,
+          "p95": 0.16537500000000094
+        }
+      },
+      "jev": {
+        "n": 15,
+        "accuracy": 0.8666666666666667,
+        "macroF1": 0.30952380952380953,
+        "classes": {
+          "maintains": {
+            "support": 13,
+            "precision": 0.8666666666666667,
+            "recall": 1,
+            "f1": 0.9285714285714286
+          },
+          "retracts": {
+            "support": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "unresolved": {
+            "support": 2,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          }
+        },
+        "confusion": {
+          "maintains": {
+            "maintains": 13,
+            "retracts": 0,
+            "unresolved": 0,
+            "error": 0
+          },
+          "retracts": {
+            "maintains": 0,
+            "retracts": 0,
+            "unresolved": 0,
+            "error": 0
+          },
+          "unresolved": {
+            "maintains": 2,
+            "retracts": 0,
+            "unresolved": 0,
+            "error": 0
+          }
+        },
+        "clearLabelAccuracy": 1,
+        "clearLabelN": 13,
+        "harmfulErrors": 0,
+        "harmfulDenominator": 13,
+        "unsafeActionsOnUncertain": 0,
+        "errors": 0,
+        "abstentions": 0,
+        "actionCoverage": 1,
+        "selectiveAccuracy": 0.8666666666666667,
+        "brierScore": 0.26411999999999997,
+        "probabilityRows": 15,
+        "reliability": [
+          {
+            "range": [
+              0,
+              0.2
+            ],
+            "n": 0,
+            "probability": null,
+            "accuracy": null
+          },
+          {
+            "range": [
+              0.2,
+              0.4
+            ],
+            "n": 0,
+            "probability": null,
+            "accuracy": null
+          },
+          {
+            "range": [
+              0.4,
+              0.6
+            ],
+            "n": 0,
+            "probability": null,
+            "accuracy": null
+          },
+          {
+            "range": [
+              0.6,
+              0.8
+            ],
+            "n": 0,
+            "probability": null,
+            "accuracy": null
+          },
+          {
+            "range": [
+              0.8,
+              1
+            ],
+            "n": 15,
+            "probability": 0.9966666666666667,
+            "accuracy": 0.8666666666666667
+          }
+        ],
+        "riskCoverage": [
+          {
+            "threshold": 0,
+            "n": 15,
+            "coverage": 1,
+            "accuracy": 0.8666666666666667,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.5,
+            "n": 15,
+            "coverage": 1,
+            "accuracy": 0.8666666666666667,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.7,
+            "n": 15,
+            "coverage": 1,
+            "accuracy": 0.8666666666666667,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.8,
+            "n": 15,
+            "coverage": 1,
+            "accuracy": 0.8666666666666667,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.9,
+            "n": 15,
+            "coverage": 1,
+            "accuracy": 0.8666666666666667,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.95,
+            "n": 15,
+            "coverage": 1,
+            "accuracy": 0.8666666666666667,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.99,
+            "n": 14,
+            "coverage": 0.9333333333333333,
+            "accuracy": 0.8571428571428571,
+            "harmful": 0
+          }
+        ],
+        "latencyMs": {
+          "median": 242.87295799999993,
+          "p95": 392.76225
+        }
+      },
+      "pairedExploratoryInterval": {
+        "accuracyDifference": 0,
+        "low": 0,
+        "high": 0,
+        "clusters": 3,
+        "exploratoryOnly": true
+      },
+      "labelSensitivity": {
+        "ambiguousCases": [
+          "project-01-f001-position",
+          "project-01-f004-position",
+          "project-03-f004-position",
+          "project-03-f005-position"
+        ],
+        "minimumAgreementDifference": 0,
+        "maximumAgreementDifference": 0
+      }
+    },
+    "dedup": {
+      "baseline": {
+        "n": 31,
+        "accuracy": 0.967741935483871,
+        "macroF1": 0.32786885245901637,
+        "classes": {
+          "same": {
+            "support": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "distinct": {
+            "support": 30,
+            "precision": 0.967741935483871,
+            "recall": 1,
+            "f1": 0.9836065573770492
+          },
+          "insufficient": {
+            "support": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          }
+        },
+        "confusion": {
+          "same": {
+            "same": 0,
+            "distinct": 1,
+            "insufficient": 0,
+            "error": 0
+          },
+          "distinct": {
+            "same": 0,
+            "distinct": 30,
+            "insufficient": 0,
+            "error": 0
+          },
+          "insufficient": {
+            "same": 0,
+            "distinct": 0,
+            "insufficient": 0,
+            "error": 0
+          }
+        },
+        "clearLabelAccuracy": 0.967741935483871,
+        "clearLabelN": 31,
+        "harmfulErrors": 0,
+        "harmfulDenominator": 30,
+        "unsafeActionsOnUncertain": 0,
+        "errors": 0,
+        "abstentions": 0,
+        "actionCoverage": 1,
+        "selectiveAccuracy": 0.967741935483871,
+        "brierScore": null,
+        "probabilityRows": 0,
+        "reliability": [
+          {
+            "range": [
+              0,
+              0.2
+            ],
+            "n": 0,
+            "probability": null,
+            "accuracy": null
+          },
+          {
+            "range": [
+              0.2,
+              0.4
+            ],
+            "n": 0,
+            "probability": null,
+            "accuracy": null
+          },
+          {
+            "range": [
+              0.4,
+              0.6
+            ],
+            "n": 0,
+            "probability": null,
+            "accuracy": null
+          },
+          {
+            "range": [
+              0.6,
+              0.8
+            ],
+            "n": 0,
+            "probability": null,
+            "accuracy": null
+          },
+          {
+            "range": [
+              0.8,
+              1
+            ],
+            "n": 0,
+            "probability": null,
+            "accuracy": null
+          }
+        ],
+        "riskCoverage": [
+          {
+            "threshold": 0,
+            "n": 0,
+            "coverage": 0,
+            "accuracy": null,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.5,
+            "n": 0,
+            "coverage": 0,
+            "accuracy": null,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.7,
+            "n": 0,
+            "coverage": 0,
+            "accuracy": null,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.8,
+            "n": 0,
+            "coverage": 0,
+            "accuracy": null,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.9,
+            "n": 0,
+            "coverage": 0,
+            "accuracy": null,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.95,
+            "n": 0,
+            "coverage": 0,
+            "accuracy": null,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.99,
+            "n": 0,
+            "coverage": 0,
+            "accuracy": null,
+            "harmful": 0
+          }
+        ],
+        "latencyMs": {
+          "median": 0.020000000000436557,
+          "p95": 0.034416000000419444
+        }
+      },
+      "jev": {
+        "n": 31,
+        "accuracy": 0.967741935483871,
+        "macroF1": 0.32786885245901637,
+        "classes": {
+          "same": {
+            "support": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "distinct": {
+            "support": 30,
+            "precision": 0.967741935483871,
+            "recall": 1,
+            "f1": 0.9836065573770492
+          },
+          "insufficient": {
+            "support": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          }
+        },
+        "confusion": {
+          "same": {
+            "same": 0,
+            "distinct": 1,
+            "insufficient": 0,
+            "error": 0
+          },
+          "distinct": {
+            "same": 0,
+            "distinct": 30,
+            "insufficient": 0,
+            "error": 0
+          },
+          "insufficient": {
+            "same": 0,
+            "distinct": 0,
+            "insufficient": 0,
+            "error": 0
+          }
+        },
+        "clearLabelAccuracy": 0.967741935483871,
+        "clearLabelN": 31,
+        "harmfulErrors": 0,
+        "harmfulDenominator": 30,
+        "unsafeActionsOnUncertain": 0,
+        "errors": 0,
+        "abstentions": 0,
+        "actionCoverage": 1,
+        "selectiveAccuracy": 0.967741935483871,
+        "brierScore": 0.07198064516129031,
+        "probabilityRows": 31,
+        "reliability": [
+          {
+            "range": [
+              0,
+              0.2
+            ],
+            "n": 0,
+            "probability": null,
+            "accuracy": null
+          },
+          {
+            "range": [
+              0.2,
+              0.4
+            ],
+            "n": 0,
+            "probability": null,
+            "accuracy": null
+          },
+          {
+            "range": [
+              0.4,
+              0.6
+            ],
+            "n": 0,
+            "probability": null,
+            "accuracy": null
+          },
+          {
+            "range": [
+              0.6,
+              0.8
+            ],
+            "n": 1,
+            "probability": 0.66,
+            "accuracy": 1
+          },
+          {
+            "range": [
+              0.8,
+              1
+            ],
+            "n": 30,
+            "probability": 0.9996666666666667,
+            "accuracy": 0.9666666666666667
+          }
+        ],
+        "riskCoverage": [
+          {
+            "threshold": 0,
+            "n": 31,
+            "coverage": 1,
+            "accuracy": 0.967741935483871,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.5,
+            "n": 31,
+            "coverage": 1,
+            "accuracy": 0.967741935483871,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.7,
+            "n": 30,
+            "coverage": 0.967741935483871,
+            "accuracy": 0.9666666666666667,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.8,
+            "n": 30,
+            "coverage": 0.967741935483871,
+            "accuracy": 0.9666666666666667,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.9,
+            "n": 30,
+            "coverage": 0.967741935483871,
+            "accuracy": 0.9666666666666667,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.95,
+            "n": 30,
+            "coverage": 0.967741935483871,
+            "accuracy": 0.9666666666666667,
+            "harmful": 0
+          },
+          {
+            "threshold": 0.99,
+            "n": 30,
+            "coverage": 0.967741935483871,
+            "accuracy": 0.9666666666666667,
+            "harmful": 0
+          }
+        ],
+        "latencyMs": {
+          "median": 205.6111249999999,
+          "p95": 326.6080000000002
+        }
+      },
+      "pairedExploratoryInterval": {
+        "accuracyDifference": 0,
+        "low": 0,
+        "high": 0,
+        "clusters": 3,
+        "exploratoryOnly": true
+      },
+      "labelSensitivity": {
+        "ambiguousCases": [
+          "project-03-f001-project-03-f006-identity"
+        ],
+        "minimumAgreementDifference": 0,
+        "maximumAgreementDifference": 0
+      }
+    }
+  },
+  "byProject": {
+    "socket": {
+      "contradiction": {
+        "baseline": {
+          "n": 4,
+          "accuracy": 1,
+          "macroF1": 0.3333333333333333,
+          "classes": {
+            "maintains": {
+              "support": 4,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "retracts": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "unresolved": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            }
+          },
+          "confusion": {
+            "maintains": {
+              "maintains": 4,
+              "retracts": 0,
+              "unresolved": 0,
+              "error": 0
+            },
+            "retracts": {
+              "maintains": 0,
+              "retracts": 0,
+              "unresolved": 0,
+              "error": 0
+            },
+            "unresolved": {
+              "maintains": 0,
+              "retracts": 0,
+              "unresolved": 0,
+              "error": 0
+            }
+          },
+          "clearLabelAccuracy": 1,
+          "clearLabelN": 4,
+          "harmfulErrors": 0,
+          "harmfulDenominator": 4,
+          "unsafeActionsOnUncertain": 0,
+          "errors": 0,
+          "abstentions": 0,
+          "actionCoverage": 1,
+          "selectiveAccuracy": 1,
+          "brierScore": null,
+          "probabilityRows": 0,
+          "reliability": [
+            {
+              "range": [
+                0,
+                0.2
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.2,
+                0.4
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            }
+          ],
+          "riskCoverage": [
+            {
+              "threshold": 0,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.5,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.7,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.8,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.9,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.95,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.99,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            }
+          ],
+          "latencyMs": {
+            "median": 0.04850000000010368,
+            "p95": 0.16537500000000094
+          }
+        },
+        "jev": {
+          "n": 4,
+          "accuracy": 1,
+          "macroF1": 0.3333333333333333,
+          "classes": {
+            "maintains": {
+              "support": 4,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "retracts": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "unresolved": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            }
+          },
+          "confusion": {
+            "maintains": {
+              "maintains": 4,
+              "retracts": 0,
+              "unresolved": 0,
+              "error": 0
+            },
+            "retracts": {
+              "maintains": 0,
+              "retracts": 0,
+              "unresolved": 0,
+              "error": 0
+            },
+            "unresolved": {
+              "maintains": 0,
+              "retracts": 0,
+              "unresolved": 0,
+              "error": 0
+            }
+          },
+          "clearLabelAccuracy": 1,
+          "clearLabelN": 4,
+          "harmfulErrors": 0,
+          "harmfulDenominator": 4,
+          "unsafeActionsOnUncertain": 0,
+          "errors": 0,
+          "abstentions": 0,
+          "actionCoverage": 1,
+          "selectiveAccuracy": 1,
+          "brierScore": 0.0004000000000000005,
+          "probabilityRows": 4,
+          "reliability": [
+            {
+              "range": [
+                0,
+                0.2
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.2,
+                0.4
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "n": 4,
+              "probability": 0.99,
+              "accuracy": 1
+            }
+          ],
+          "riskCoverage": [
+            {
+              "threshold": 0,
+              "n": 4,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.5,
+              "n": 4,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.7,
+              "n": 4,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.8,
+              "n": 4,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.9,
+              "n": 4,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.95,
+              "n": 4,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.99,
+              "n": 3,
+              "coverage": 0.75,
+              "accuracy": 1,
+              "harmful": 0
+            }
+          ],
+          "latencyMs": {
+            "median": 244.57170799999994,
+            "p95": 305.05029200000035
+          }
+        },
+        "pairedExploratoryInterval": {
+          "accuracyDifference": 0,
+          "low": 0,
+          "high": 0,
+          "clusters": 1,
+          "exploratoryOnly": true
+        },
+        "labelSensitivity": {
+          "ambiguousCases": [
+            "project-01-f001-position",
+            "project-01-f004-position"
+          ],
+          "minimumAgreementDifference": 0,
+          "maximumAgreementDifference": 0
+        }
+      },
+      "dedup": {
+        "baseline": {
+          "n": 6,
+          "accuracy": 1,
+          "macroF1": 0.3333333333333333,
+          "classes": {
+            "same": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "distinct": {
+              "support": 6,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "insufficient": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            }
+          },
+          "confusion": {
+            "same": {
+              "same": 0,
+              "distinct": 0,
+              "insufficient": 0,
+              "error": 0
+            },
+            "distinct": {
+              "same": 0,
+              "distinct": 6,
+              "insufficient": 0,
+              "error": 0
+            },
+            "insufficient": {
+              "same": 0,
+              "distinct": 0,
+              "insufficient": 0,
+              "error": 0
+            }
+          },
+          "clearLabelAccuracy": 1,
+          "clearLabelN": 6,
+          "harmfulErrors": 0,
+          "harmfulDenominator": 6,
+          "unsafeActionsOnUncertain": 0,
+          "errors": 0,
+          "abstentions": 0,
+          "actionCoverage": 1,
+          "selectiveAccuracy": 1,
+          "brierScore": null,
+          "probabilityRows": 0,
+          "reliability": [
+            {
+              "range": [
+                0,
+                0.2
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.2,
+                0.4
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            }
+          ],
+          "riskCoverage": [
+            {
+              "threshold": 0,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.5,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.7,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.8,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.9,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.95,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.99,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            }
+          ],
+          "latencyMs": {
+            "median": 0.024833000000057837,
+            "p95": 0.035292000000026746
+          }
+        },
+        "jev": {
+          "n": 6,
+          "accuracy": 1,
+          "macroF1": 0.3333333333333333,
+          "classes": {
+            "same": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "distinct": {
+              "support": 6,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "insufficient": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            }
+          },
+          "confusion": {
+            "same": {
+              "same": 0,
+              "distinct": 0,
+              "insufficient": 0,
+              "error": 0
+            },
+            "distinct": {
+              "same": 0,
+              "distinct": 6,
+              "insufficient": 0,
+              "error": 0
+            },
+            "insufficient": {
+              "same": 0,
+              "distinct": 0,
+              "insufficient": 0,
+              "error": 0
+            }
+          },
+          "clearLabelAccuracy": 1,
+          "clearLabelN": 6,
+          "harmfulErrors": 0,
+          "harmfulDenominator": 6,
+          "unsafeActionsOnUncertain": 0,
+          "errors": 0,
+          "abstentions": 0,
+          "actionCoverage": 1,
+          "selectiveAccuracy": 1,
+          "brierScore": 0.00003333333333333337,
+          "probabilityRows": 6,
+          "reliability": [
+            {
+              "range": [
+                0,
+                0.2
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.2,
+                0.4
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "n": 6,
+              "probability": 0.9983333333333334,
+              "accuracy": 1
+            }
+          ],
+          "riskCoverage": [
+            {
+              "threshold": 0,
+              "n": 6,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.5,
+              "n": 6,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.7,
+              "n": 6,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.8,
+              "n": 6,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.9,
+              "n": 6,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.95,
+              "n": 6,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.99,
+              "n": 6,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            }
+          ],
+          "latencyMs": {
+            "median": 203.98087500000003,
+            "p95": 221.45958300000007
+          }
+        },
+        "pairedExploratoryInterval": {
+          "accuracyDifference": 0,
+          "low": 0,
+          "high": 0,
+          "clusters": 1,
+          "exploratoryOnly": true
+        },
+        "labelSensitivity": {
+          "ambiguousCases": [],
+          "minimumAgreementDifference": 0,
+          "maximumAgreementDifference": 0
+        }
+      }
+    },
+    "sentiment": {
+      "contradiction": {
+        "baseline": {
+          "n": 5,
+          "accuracy": 1,
+          "macroF1": 0.3333333333333333,
+          "classes": {
+            "maintains": {
+              "support": 5,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "retracts": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "unresolved": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            }
+          },
+          "confusion": {
+            "maintains": {
+              "maintains": 5,
+              "retracts": 0,
+              "unresolved": 0,
+              "error": 0
+            },
+            "retracts": {
+              "maintains": 0,
+              "retracts": 0,
+              "unresolved": 0,
+              "error": 0
+            },
+            "unresolved": {
+              "maintains": 0,
+              "retracts": 0,
+              "unresolved": 0,
+              "error": 0
+            }
+          },
+          "clearLabelAccuracy": 1,
+          "clearLabelN": 5,
+          "harmfulErrors": 0,
+          "harmfulDenominator": 5,
+          "unsafeActionsOnUncertain": 0,
+          "errors": 0,
+          "abstentions": 0,
+          "actionCoverage": 1,
+          "selectiveAccuracy": 1,
+          "brierScore": null,
+          "probabilityRows": 0,
+          "reliability": [
+            {
+              "range": [
+                0,
+                0.2
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.2,
+                0.4
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            }
+          ],
+          "riskCoverage": [
+            {
+              "threshold": 0,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.5,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.7,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.8,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.9,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.95,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.99,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            }
+          ],
+          "latencyMs": {
+            "median": 0.033792000000175904,
+            "p95": 0.0468340000002172
+          }
+        },
+        "jev": {
+          "n": 5,
+          "accuracy": 1,
+          "macroF1": 0.3333333333333333,
+          "classes": {
+            "maintains": {
+              "support": 5,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "retracts": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "unresolved": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            }
+          },
+          "confusion": {
+            "maintains": {
+              "maintains": 5,
+              "retracts": 0,
+              "unresolved": 0,
+              "error": 0
+            },
+            "retracts": {
+              "maintains": 0,
+              "retracts": 0,
+              "unresolved": 0,
+              "error": 0
+            },
+            "unresolved": {
+              "maintains": 0,
+              "retracts": 0,
+              "unresolved": 0,
+              "error": 0
+            }
+          },
+          "clearLabelAccuracy": 1,
+          "clearLabelN": 5,
+          "harmfulErrors": 0,
+          "harmfulDenominator": 5,
+          "unsafeActionsOnUncertain": 0,
+          "errors": 0,
+          "abstentions": 0,
+          "actionCoverage": 1,
+          "selectiveAccuracy": 1,
+          "brierScore": 0,
+          "probabilityRows": 5,
+          "reliability": [
+            {
+              "range": [
+                0,
+                0.2
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.2,
+                0.4
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "n": 5,
+              "probability": 1,
+              "accuracy": 1
+            }
+          ],
+          "riskCoverage": [
+            {
+              "threshold": 0,
+              "n": 5,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.5,
+              "n": 5,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.7,
+              "n": 5,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.8,
+              "n": 5,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.9,
+              "n": 5,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.95,
+              "n": 5,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.99,
+              "n": 5,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            }
+          ],
+          "latencyMs": {
+            "median": 262.4616669999996,
+            "p95": 265.81058400000074
+          }
+        },
+        "pairedExploratoryInterval": {
+          "accuracyDifference": 0,
+          "low": 0,
+          "high": 0,
+          "clusters": 1,
+          "exploratoryOnly": true
+        },
+        "labelSensitivity": {
+          "ambiguousCases": [],
+          "minimumAgreementDifference": 0,
+          "maximumAgreementDifference": 0
+        }
+      },
+      "dedup": {
+        "baseline": {
+          "n": 10,
+          "accuracy": 1,
+          "macroF1": 0.3333333333333333,
+          "classes": {
+            "same": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "distinct": {
+              "support": 10,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "insufficient": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            }
+          },
+          "confusion": {
+            "same": {
+              "same": 0,
+              "distinct": 0,
+              "insufficient": 0,
+              "error": 0
+            },
+            "distinct": {
+              "same": 0,
+              "distinct": 10,
+              "insufficient": 0,
+              "error": 0
+            },
+            "insufficient": {
+              "same": 0,
+              "distinct": 0,
+              "insufficient": 0,
+              "error": 0
+            }
+          },
+          "clearLabelAccuracy": 1,
+          "clearLabelN": 10,
+          "harmfulErrors": 0,
+          "harmfulDenominator": 10,
+          "unsafeActionsOnUncertain": 0,
+          "errors": 0,
+          "abstentions": 0,
+          "actionCoverage": 1,
+          "selectiveAccuracy": 1,
+          "brierScore": null,
+          "probabilityRows": 0,
+          "reliability": [
+            {
+              "range": [
+                0,
+                0.2
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.2,
+                0.4
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            }
+          ],
+          "riskCoverage": [
+            {
+              "threshold": 0,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.5,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.7,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.8,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.9,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.95,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.99,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            }
+          ],
+          "latencyMs": {
+            "median": 0.015209000000140804,
+            "p95": 0.027041999999710242
+          }
+        },
+        "jev": {
+          "n": 10,
+          "accuracy": 1,
+          "macroF1": 0.3333333333333333,
+          "classes": {
+            "same": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "distinct": {
+              "support": 10,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "insufficient": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            }
+          },
+          "confusion": {
+            "same": {
+              "same": 0,
+              "distinct": 0,
+              "insufficient": 0,
+              "error": 0
+            },
+            "distinct": {
+              "same": 0,
+              "distinct": 10,
+              "insufficient": 0,
+              "error": 0
+            },
+            "insufficient": {
+              "same": 0,
+              "distinct": 0,
+              "insufficient": 0,
+              "error": 0
+            }
+          },
+          "clearLabelAccuracy": 1,
+          "clearLabelN": 10,
+          "harmfulErrors": 0,
+          "harmfulDenominator": 10,
+          "unsafeActionsOnUncertain": 0,
+          "errors": 0,
+          "abstentions": 0,
+          "actionCoverage": 1,
+          "selectiveAccuracy": 1,
+          "brierScore": 0.02312,
+          "probabilityRows": 10,
+          "reliability": [
+            {
+              "range": [
+                0,
+                0.2
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.2,
+                0.4
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "n": 1,
+              "probability": 0.66,
+              "accuracy": 1
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "n": 9,
+              "probability": 1,
+              "accuracy": 1
+            }
+          ],
+          "riskCoverage": [
+            {
+              "threshold": 0,
+              "n": 10,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.5,
+              "n": 10,
+              "coverage": 1,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.7,
+              "n": 9,
+              "coverage": 0.9,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.8,
+              "n": 9,
+              "coverage": 0.9,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.9,
+              "n": 9,
+              "coverage": 0.9,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.95,
+              "n": 9,
+              "coverage": 0.9,
+              "accuracy": 1,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.99,
+              "n": 9,
+              "coverage": 0.9,
+              "accuracy": 1,
+              "harmful": 0
+            }
+          ],
+          "latencyMs": {
+            "median": 186.27779099999952,
+            "p95": 326.6080000000002
+          }
+        },
+        "pairedExploratoryInterval": {
+          "accuracyDifference": 0,
+          "low": 0,
+          "high": 0,
+          "clusters": 1,
+          "exploratoryOnly": true
+        },
+        "labelSensitivity": {
+          "ambiguousCases": [],
+          "minimumAgreementDifference": 0,
+          "maximumAgreementDifference": 0
+        }
+      }
+    },
+    "euler": {
+      "contradiction": {
+        "baseline": {
+          "n": 6,
+          "accuracy": 0.6666666666666666,
+          "macroF1": 0.26666666666666666,
+          "classes": {
+            "maintains": {
+              "support": 4,
+              "precision": 0.6666666666666666,
+              "recall": 1,
+              "f1": 0.8
+            },
+            "retracts": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "unresolved": {
+              "support": 2,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            }
+          },
+          "confusion": {
+            "maintains": {
+              "maintains": 4,
+              "retracts": 0,
+              "unresolved": 0,
+              "error": 0
+            },
+            "retracts": {
+              "maintains": 0,
+              "retracts": 0,
+              "unresolved": 0,
+              "error": 0
+            },
+            "unresolved": {
+              "maintains": 2,
+              "retracts": 0,
+              "unresolved": 0,
+              "error": 0
+            }
+          },
+          "clearLabelAccuracy": 1,
+          "clearLabelN": 4,
+          "harmfulErrors": 0,
+          "harmfulDenominator": 4,
+          "unsafeActionsOnUncertain": 0,
+          "errors": 0,
+          "abstentions": 0,
+          "actionCoverage": 1,
+          "selectiveAccuracy": 0.6666666666666666,
+          "brierScore": null,
+          "probabilityRows": 0,
+          "reliability": [
+            {
+              "range": [
+                0,
+                0.2
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.2,
+                0.4
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            }
+          ],
+          "riskCoverage": [
+            {
+              "threshold": 0,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.5,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.7,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.8,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.9,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.95,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.99,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            }
+          ],
+          "latencyMs": {
+            "median": 0.032499999999345164,
+            "p95": 0.04787500000020373
+          }
+        },
+        "jev": {
+          "n": 6,
+          "accuracy": 0.6666666666666666,
+          "macroF1": 0.26666666666666666,
+          "classes": {
+            "maintains": {
+              "support": 4,
+              "precision": 0.6666666666666666,
+              "recall": 1,
+              "f1": 0.8
+            },
+            "retracts": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "unresolved": {
+              "support": 2,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            }
+          },
+          "confusion": {
+            "maintains": {
+              "maintains": 4,
+              "retracts": 0,
+              "unresolved": 0,
+              "error": 0
+            },
+            "retracts": {
+              "maintains": 0,
+              "retracts": 0,
+              "unresolved": 0,
+              "error": 0
+            },
+            "unresolved": {
+              "maintains": 2,
+              "retracts": 0,
+              "unresolved": 0,
+              "error": 0
+            }
+          },
+          "clearLabelAccuracy": 1,
+          "clearLabelN": 4,
+          "harmfulErrors": 0,
+          "harmfulDenominator": 4,
+          "unsafeActionsOnUncertain": 0,
+          "errors": 0,
+          "abstentions": 0,
+          "actionCoverage": 1,
+          "selectiveAccuracy": 0.6666666666666666,
+          "brierScore": 0.6600333333333334,
+          "probabilityRows": 6,
+          "reliability": [
+            {
+              "range": [
+                0,
+                0.2
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.2,
+                0.4
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "n": 6,
+              "probability": 0.9983333333333334,
+              "accuracy": 0.6666666666666666
+            }
+          ],
+          "riskCoverage": [
+            {
+              "threshold": 0,
+              "n": 6,
+              "coverage": 1,
+              "accuracy": 0.6666666666666666,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.5,
+              "n": 6,
+              "coverage": 1,
+              "accuracy": 0.6666666666666666,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.7,
+              "n": 6,
+              "coverage": 1,
+              "accuracy": 0.6666666666666666,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.8,
+              "n": 6,
+              "coverage": 1,
+              "accuracy": 0.6666666666666666,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.9,
+              "n": 6,
+              "coverage": 1,
+              "accuracy": 0.6666666666666666,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.95,
+              "n": 6,
+              "coverage": 1,
+              "accuracy": 0.6666666666666666,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.99,
+              "n": 6,
+              "coverage": 1,
+              "accuracy": 0.6666666666666666,
+              "harmful": 0
+            }
+          ],
+          "latencyMs": {
+            "median": 220.20125000000007,
+            "p95": 242.87295799999993
+          }
+        },
+        "pairedExploratoryInterval": {
+          "accuracyDifference": 0,
+          "low": 0,
+          "high": 0,
+          "clusters": 1,
+          "exploratoryOnly": true
+        },
+        "labelSensitivity": {
+          "ambiguousCases": [
+            "project-03-f004-position",
+            "project-03-f005-position"
+          ],
+          "minimumAgreementDifference": 0,
+          "maximumAgreementDifference": 0
+        }
+      },
+      "dedup": {
+        "baseline": {
+          "n": 15,
+          "accuracy": 0.9333333333333333,
+          "macroF1": 0.3218390804597701,
+          "classes": {
+            "same": {
+              "support": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "distinct": {
+              "support": 14,
+              "precision": 0.9333333333333333,
+              "recall": 1,
+              "f1": 0.9655172413793104
+            },
+            "insufficient": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            }
+          },
+          "confusion": {
+            "same": {
+              "same": 0,
+              "distinct": 1,
+              "insufficient": 0,
+              "error": 0
+            },
+            "distinct": {
+              "same": 0,
+              "distinct": 14,
+              "insufficient": 0,
+              "error": 0
+            },
+            "insufficient": {
+              "same": 0,
+              "distinct": 0,
+              "insufficient": 0,
+              "error": 0
+            }
+          },
+          "clearLabelAccuracy": 0.9333333333333333,
+          "clearLabelN": 15,
+          "harmfulErrors": 0,
+          "harmfulDenominator": 14,
+          "unsafeActionsOnUncertain": 0,
+          "errors": 0,
+          "abstentions": 0,
+          "actionCoverage": 1,
+          "selectiveAccuracy": 0.9333333333333333,
+          "brierScore": null,
+          "probabilityRows": 0,
+          "reliability": [
+            {
+              "range": [
+                0,
+                0.2
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.2,
+                0.4
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            }
+          ],
+          "riskCoverage": [
+            {
+              "threshold": 0,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.5,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.7,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.8,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.9,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.95,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.99,
+              "n": 0,
+              "coverage": 0,
+              "accuracy": null,
+              "harmful": 0
+            }
+          ],
+          "latencyMs": {
+            "median": 0.019125000000713044,
+            "p95": 0.026665999999750056
+          }
+        },
+        "jev": {
+          "n": 15,
+          "accuracy": 0.9333333333333333,
+          "macroF1": 0.3218390804597701,
+          "classes": {
+            "same": {
+              "support": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "distinct": {
+              "support": 14,
+              "precision": 0.9333333333333333,
+              "recall": 1,
+              "f1": 0.9655172413793104
+            },
+            "insufficient": {
+              "support": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            }
+          },
+          "confusion": {
+            "same": {
+              "same": 0,
+              "distinct": 1,
+              "insufficient": 0,
+              "error": 0
+            },
+            "distinct": {
+              "same": 0,
+              "distinct": 14,
+              "insufficient": 0,
+              "error": 0
+            },
+            "insufficient": {
+              "same": 0,
+              "distinct": 0,
+              "insufficient": 0,
+              "error": 0
+            }
+          },
+          "clearLabelAccuracy": 0.9333333333333333,
+          "clearLabelN": 15,
+          "harmfulErrors": 0,
+          "harmfulDenominator": 14,
+          "unsafeActionsOnUncertain": 0,
+          "errors": 0,
+          "abstentions": 0,
+          "actionCoverage": 1,
+          "selectiveAccuracy": 0.9333333333333333,
+          "brierScore": 0.13333333333333333,
+          "probabilityRows": 15,
+          "reliability": [
+            {
+              "range": [
+                0,
+                0.2
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.2,
+                0.4
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "n": 0,
+              "probability": null,
+              "accuracy": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "n": 15,
+              "probability": 1,
+              "accuracy": 0.9333333333333333
+            }
+          ],
+          "riskCoverage": [
+            {
+              "threshold": 0,
+              "n": 15,
+              "coverage": 1,
+              "accuracy": 0.9333333333333333,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.5,
+              "n": 15,
+              "coverage": 1,
+              "accuracy": 0.9333333333333333,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.7,
+              "n": 15,
+              "coverage": 1,
+              "accuracy": 0.9333333333333333,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.8,
+              "n": 15,
+              "coverage": 1,
+              "accuracy": 0.9333333333333333,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.9,
+              "n": 15,
+              "coverage": 1,
+              "accuracy": 0.9333333333333333,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.95,
+              "n": 15,
+              "coverage": 1,
+              "accuracy": 0.9333333333333333,
+              "harmful": 0
+            },
+            {
+              "threshold": 0.99,
+              "n": 15,
+              "coverage": 1,
+              "accuracy": 0.9333333333333333,
+              "harmful": 0
+            }
+          ],
+          "latencyMs": {
+            "median": 205.92504199999985,
+            "p95": 231.1542499999996
+          }
+        },
+        "pairedExploratoryInterval": {
+          "accuracyDifference": 0,
+          "low": 0,
+          "high": 0,
+          "clusters": 1,
+          "exploratoryOnly": true
+        },
+        "labelSensitivity": {
+          "ambiguousCases": [
+            "project-03-f001-project-03-f006-identity"
+          ],
+          "minimumAgreementDifference": 0,
+          "maximumAgreementDifference": 0
+        }
+      }
+    }
+  }
+}

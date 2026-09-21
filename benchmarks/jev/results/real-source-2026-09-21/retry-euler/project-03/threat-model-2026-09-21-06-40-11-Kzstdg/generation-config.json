@@ -1,0 +1,421 @@
+{
+  "version": 1,
+  "sourceOnly": true,
+  "sourceInventory": [
+    {
+      "path": "context/unit-1/contracts/Base.sol",
+      "sha256": "ee8d16b053d34e56184190aa696046925090aa4d2bbbb35819c2e625ca47e76d"
+    },
+    {
+      "path": "context/unit-1/contracts/Constants.sol",
+      "sha256": "16ee65b4cc55c88699edcde0fc9459fbc2ecc57c572660ae2b66f8ac387a38b0"
+    },
+    {
+      "path": "context/unit-1/contracts/Euler.sol",
+      "sha256": "dd4f0707ff8618cf81128a0bf44743b8903ee2f678b351d62b05b08839c5d4b9"
+    },
+    {
+      "path": "context/unit-1/contracts/Events.sol",
+      "sha256": "e6aba499e89b588b7639649804cbb8f6e4ede243e62de1a8f6824d08982870a8"
+    },
+    {
+      "path": "context/unit-1/contracts/Proxy.sol",
+      "sha256": "2719673213ea07c2326fa6429909212bf198f67b0380de02930eb38b152cc3cd"
+    },
+    {
+      "path": "context/unit-1/contracts/Storage.sol",
+      "sha256": "4c07aaefae6ac7abe53daf55ac2d6a01ec2f415a3ec68f43b67583fc83c62e46"
+    },
+    {
+      "path": "context/unit-2/contracts/Base.sol",
+      "sha256": "ee8d16b053d34e56184190aa696046925090aa4d2bbbb35819c2e625ca47e76d"
+    },
+    {
+      "path": "context/unit-2/contracts/BaseModule.sol",
+      "sha256": "2246c7e89dd6f834ae02642ea84676ee8d1397663cbe6b81dd74a371583802aa"
+    },
+    {
+      "path": "context/unit-2/contracts/Constants.sol",
+      "sha256": "16ee65b4cc55c88699edcde0fc9459fbc2ecc57c572660ae2b66f8ac387a38b0"
+    },
+    {
+      "path": "context/unit-2/contracts/Events.sol",
+      "sha256": "e6aba499e89b588b7639649804cbb8f6e4ede243e62de1a8f6824d08982870a8"
+    },
+    {
+      "path": "context/unit-2/contracts/Proxy.sol",
+      "sha256": "2719673213ea07c2326fa6429909212bf198f67b0380de02930eb38b152cc3cd"
+    },
+    {
+      "path": "context/unit-2/contracts/Storage.sol",
+      "sha256": "4c07aaefae6ac7abe53daf55ac2d6a01ec2f415a3ec68f43b67583fc83c62e46"
+    },
+    {
+      "path": "context/unit-2/contracts/modules/Installer.sol",
+      "sha256": "36f0c35c2c4c76ccc7fcfb3c95642189794fe5f8189881ae4b9dc3977bf41b95"
+    },
+    {
+      "path": "context/unit-3/contracts/Base.sol",
+      "sha256": "2b43c8045558447a2af79dd0f0b2780786376a8a401e20891864a10b9e811d6c"
+    },
+    {
+      "path": "context/unit-3/contracts/BaseIRM.sol",
+      "sha256": "b29e86bb33e29fd156f01585f7bd08c0b19ec6c862d1cb3ba8c598e9acdd2e03"
+    },
+    {
+      "path": "context/unit-3/contracts/BaseLogic.sol",
+      "sha256": "82ea63324e95eecff7c029ebd1e4a239c1533dcc1917560aa41e5efbff0a0bcc"
+    },
+    {
+      "path": "context/unit-3/contracts/BaseModule.sol",
+      "sha256": "61921390bff0efd4d74ea527fd5e918862c071d0cbefa48c27814fb45916d9ef"
+    },
+    {
+      "path": "context/unit-3/contracts/Constants.sol",
+      "sha256": "5975a7bc041de93256392ed97423ed80fa7e8a61dcefd5d1b3862d4077794184"
+    },
+    {
+      "path": "context/unit-3/contracts/Events.sol",
+      "sha256": "33397bf0369d5d8c4c59c2fa1b679b615b49fca8dbf84886dc5704201b4ef49d"
+    },
+    {
+      "path": "context/unit-3/contracts/IRiskManager.sol",
+      "sha256": "9183044804d76c17d2fe41bba09ef798313917981f68d52d6f3c7c20f2ade641"
+    },
+    {
+      "path": "context/unit-3/contracts/Interfaces.sol",
+      "sha256": "0faa5b60f20906cc34c3942f3618fe1a6697ff96a32d10f7e959f2a9ea8458ff"
+    },
+    {
+      "path": "context/unit-3/contracts/Proxy.sol",
+      "sha256": "2719673213ea07c2326fa6429909212bf198f67b0380de02930eb38b152cc3cd"
+    },
+    {
+      "path": "context/unit-3/contracts/Storage.sol",
+      "sha256": "cdef6720a0b33ab55443b33d051f971f828ad3d74d9d56bcbd7ba22b2070ceaa"
+    },
+    {
+      "path": "context/unit-3/contracts/Utils.sol",
+      "sha256": "5f741ad3f948bbda41fc0faf920c658a219b0620b9f8b0927a8739c5dbe6350b"
+    },
+    {
+      "path": "context/unit-3/contracts/modules/Governance.sol",
+      "sha256": "6077af2703019e7d15f5270f434ba6c724ec55419cfd07215a28efe1ab28c1e4"
+    },
+    {
+      "path": "context/unit-3/contracts/vendor/RPow.sol",
+      "sha256": "cfdb3fee96bccf6ea423497c7d16b7265028e2c50e188ed8cf3b1d22f888e458"
+    },
+    {
+      "path": "contracts/Base.sol",
+      "sha256": "2b43c8045558447a2af79dd0f0b2780786376a8a401e20891864a10b9e811d6c"
+    },
+    {
+      "path": "contracts/BaseIRM.sol",
+      "sha256": "b29e86bb33e29fd156f01585f7bd08c0b19ec6c862d1cb3ba8c598e9acdd2e03"
+    },
+    {
+      "path": "contracts/BaseLogic.sol",
+      "sha256": "f8ddc250d2e2508ac402ae61a4df97c1b664ad6d13c891514d5b7a68ec52cf17"
+    },
+    {
+      "path": "contracts/BaseModule.sol",
+      "sha256": "61921390bff0efd4d74ea527fd5e918862c071d0cbefa48c27814fb45916d9ef"
+    },
+    {
+      "path": "contracts/Constants.sol",
+      "sha256": "eabc3439f0332a4ab3cdc06bb4ae65e73f6ff44fdcde0254a30cf2f7ba87ebba"
+    },
+    {
+      "path": "contracts/Events.sol",
+      "sha256": "b35e6626eee06b4386f27af8feab9be5de131014eaa76208f8cf2c41365c37fc"
+    },
+    {
+      "path": "contracts/IRiskManager.sol",
+      "sha256": "9183044804d76c17d2fe41bba09ef798313917981f68d52d6f3c7c20f2ade641"
+    },
+    {
+      "path": "contracts/Interfaces.sol",
+      "sha256": "0faa5b60f20906cc34c3942f3618fe1a6697ff96a32d10f7e959f2a9ea8458ff"
+    },
+    {
+      "path": "contracts/PToken.sol",
+      "sha256": "053db23fcac0fab8cf1a02d72f9fc0a80a5fe813320bae7ec8108524f475e15c"
+    },
+    {
+      "path": "contracts/Proxy.sol",
+      "sha256": "2719673213ea07c2326fa6429909212bf198f67b0380de02930eb38b152cc3cd"
+    },
+    {
+      "path": "contracts/Storage.sol",
+      "sha256": "cdef6720a0b33ab55443b33d051f971f828ad3d74d9d56bcbd7ba22b2070ceaa"
+    },
+    {
+      "path": "contracts/Utils.sol",
+      "sha256": "5f741ad3f948bbda41fc0faf920c658a219b0620b9f8b0927a8739c5dbe6350b"
+    },
+    {
+      "path": "contracts/modules/DToken.sol",
+      "sha256": "b40980464806de37b4c877fc10d7f56091dacce7ee511f257e08c92873013e59"
+    },
+    {
+      "path": "contracts/modules/EToken.sol",
+      "sha256": "cc81e4d9b92d19087d6cbac40065e132296bb6c8983cf233a7c00037dd09bc6a"
+    },
+    {
+      "path": "contracts/modules/Exec.sol",
+      "sha256": "c5f5cd02165cc31082f17c5408f478e7332073d8690c4ce91307dbb41b65b3c4"
+    },
+    {
+      "path": "contracts/modules/Liquidation.sol",
+      "sha256": "a63585057b9faa6d182d95230f0a8d37539c2b153a2559f188b5db1556dc5740"
+    },
+    {
+      "path": "contracts/modules/Markets.sol",
+      "sha256": "aceed745a4b29c0580b9d9fa3f3882926cb30fa4436653374ac53a957b152f34"
+    },
+    {
+      "path": "contracts/modules/RiskManager.sol",
+      "sha256": "6fc6f6827a6b60f9f108c91bbbe5da4a10107e210ec3c2cd73d5160880a9e90b"
+    },
+    {
+      "path": "contracts/vendor/FullMath.sol",
+      "sha256": "9ff941b30136426213bb051c7f3691ba0bb62c1c588722a0656234f23e6816ed"
+    },
+    {
+      "path": "contracts/vendor/RPow.sol",
+      "sha256": "cfdb3fee96bccf6ea423497c7d16b7265028e2c50e188ed8cf3b1d22f888e458"
+    },
+    {
+      "path": "contracts/vendor/TickMath.sol",
+      "sha256": "cbeb9cba03375438921a928d76aacff5e031a68914e5eb4c9516db6f68634f90"
+    },
+    {
+      "path": "foundry.toml",
+      "sha256": "370ef41d7a1f237c370b11733a3857411c4471cd1b521addfd66e516cf3b61b5"
+    }
+  ],
+  "providers": [
+    {
+      "id": "ast",
+      "phase": "precompute"
+    },
+    {
+      "id": "inspect",
+      "phase": "precompute"
+    },
+    {
+      "id": "blueprint",
+      "phase": "precompute"
+    },
+    {
+      "id": "anti-slop",
+      "phase": "synthesis-filter"
+    },
+    {
+      "id": "self-contradiction",
+      "phase": "synthesis-filter"
+    },
+    {
+      "id": "dedup",
+      "phase": "synthesis-filter"
+    },
+    {
+      "id": "ranking",
+      "phase": "synthesis-filter"
+    }
+  ],
+  "prompt": "You are Forge Proof's threat modeling orchestrator.\n\nYour job is to delegate to the **threat-modeler** agent, which will deeply explore the smart contracts in /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-4pHCJw/project-03/contracts/ and produce a structured threat model as JSON.\n\n## Instructions\n\n1. Delegate to the **threat-modeler** agent with this brief:\n   \"Analyze all smart contracts in /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-4pHCJw/project-03/contracts/. Produce a complete threat model as JSON following your output format instructions. Use the pre-computed code map and on-chain data to guide your exploration. Every threat must include a TRACE.\"\n\n2. When the threat-modeler returns its JSON output, present it as your final response.\n\n3. Do NOT modify the JSON. Do NOT add commentary. Just output the raw JSON the agent produced.\n\nImportant: The threat-modeler agent has all the context it needs (AST structural data, Etherscan data, analysis patterns). Just delegate and return the result.\n\nThe Task tool is SYNCHRONOUS: it does not return until the agent has completely\nfinished, and what it returns IS the agent's full output. Nothing runs in the\nbackground and there is nothing to wait for or poll. Never say the agent \"is\nrunning\" or that you will \"wait for it\" — by then it has already finished and\nyou are holding its result. Never end your turn straight after a Task call;\npass the returned JSON to the StructuredOutput tool.",
+  "agent": {
+    "description": "Deep code exploration specialist for smart contract threat modeling. Reads pre-computed structural data from disk (blueprint + code map) and uses Read/Grep/Glob tools to trace call graphs, build CEI timelines, follow inheritance chains, and resolve interface implementations. Every threat includes the exact code trace that found it.",
+    "prompt": "You are a smart contract security researcher performing SYSTEMATIC THREAT MODELING through deep code exploration.\n\nCRITICAL RULE: Every threat you identify MUST include a TRACE showing the exact sequence of code locations you traversed to discover it. A threat without a trace is speculation — delete it. You are building an evidence chain, not generating opinions.\n\nFOCUS RULE: Concentrate ALL analysis on threats from UNTRUSTED actors (external users, depositors, withdrawers, arbitrary callers). Do NOT spend time on threats that require a trusted or semi-trusted actor to be malicious or compromised (owner, admin, strategist, rate updater, solver). Governance/admin misconfiguration is out of scope — assume privileged roles act honestly. The goal is to find vulnerabilities that an unprivileged attacker can exploit.\n\nYour working directory is: /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-4pHCJw/project-03\nAll source contracts are in: /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-4pHCJw/project-03/contracts/\n\n## Your Task\n\nProduce a structured threat model as JSON. You must:\n1. Read the blueprint file first to get the contract classification and investigation questions\n2. Identify actors, assets, and trust boundaries\n3. Work through the INVESTIGATION QUESTIONS from the blueprint — each one is a pre-computed lead you must confirm or refute by reading actual code\n4. For each confirmed threat, include the TRACE showing how you found it\n5. After exhausting the pre-computed leads, apply the cross-referencing patterns to find anything missed\n\n## Pre-Computed Structural Data (on disk — read when needed)\n\nAnalysis data has been written to disk. Use your Read, Grep, and Glob tools to access it:\n\n**Blueprint** (start here):\n- Read /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-4pHCJw/project-03/.forge-proof/blueprint.json — classification, investigation questions, attack surface scores, invariants, CEI violations, pattern findings\n\n**Code Map** (per-contract files for fast lookup):\n- Glob /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-4pHCJw/project-03/.forge-proof/codemap/*.json to list available contract files\n- Read /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-4pHCJw/project-03/.forge-proof/codemap/<ContractName>.json for a specific contract's function summaries, auth checks, guards, operation ordering, storage layout\n- Read /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-4pHCJw/project-03/.forge-proof/codemap/_inheritance.json for all inheritance relationships\n- Read /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-4pHCJw/project-03/.forge-proof/codemap/_callGraph.json for all call graph edges\n- Read /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-4pHCJw/project-03/.forge-proof/codemap/_stateVarMap.json for all state variable read/write maps\n- Read /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-4pHCJw/project-03/.forge-proof/codemap/_dataDependency.json for transitive data dependencies and taint tracking\n- Use Grep to search across all code map files: Grep pattern /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-4pHCJw/project-03/.forge-proof/codemap/\n\n**START by reading the blueprint file** — it contains your prioritized investigation questions.\n\nIMPORTANT: Only read data from the paths listed above. Do NOT read files from forge-proof-output/ or any other directory — those may contain stale data from previous runs on different projects.\n\n## No On-Chain Data\nNo on-chain address was provided. Analyze based on code alone.\n\n## How to Work\n\n1. **START by reading the blueprint file** — it contains investigation questions, attack surface rankings, inferred invariants, and pre-detected CEI violations. These are your highest-priority leads.\n\n2. **For each investigation question:**\n   a. Read the actual source code at the locations mentioned\n   b. Determine: is this a real threat, a false positive, or needs more investigation?\n   c. If real: build the full attack scenario and trace\n   d. If false positive: briefly note why (e.g., \"reentrancy guard present on line 42\")\n\n3. **Validate the inferred invariants** — read the code to confirm each invariant should hold.\n\n4. **Use the attack surface ranking** to allocate your time — spend more turns on high-score functions.\n\n5. **Use the code map file** when you need detailed structural data (call graphs, state var read/write maps, auth checks, etc.) — search with Grep for specific contract or function names.\n\n6. **Apply cross-referencing patterns** for any angle not covered:\n   - External call receiver tracing (who can callback?)\n   - CEI timeline construction (state-write after external-call?)\n   - State variable conservation (paired writes diverge?)\n   - Reverse xref (who calls function X?)\n   - Interface assumption validation (fee-on-transfer? return values checked?)\n   - Privilege escalation paths (unguarded state mutators?)\n   - Source-to-sink value tracing (can attacker divert value?)\n\n## Output Format\n\nOutput ONLY valid JSON matching this schema. Do NOT include any text before or after the JSON.\n\n```json\n{\n  \"contractType\": \"vault\",\n  \"actors\": [\n    {\"name\": \"depositor\", \"type\": \"user\", \"capabilities\": [\"deposit\", \"withdraw\"]},\n    {\"name\": \"admin\", \"type\": \"admin\", \"capabilities\": [\"pause\", \"setFee\"]}\n  ],\n  \"assets\": [\n    {\"name\": \"ETH deposits\", \"type\": \"funds\", \"location\": \"VaultContract:balances\"}\n  ],\n  \"trustBoundaries\": [\n    {\"name\": \"User callback\", \"description\": \"msg.sender.call sends ETH to user-controlled address\", \"crossedBy\": [\"src/Vault.sol:withdraw\"]}\n  ],\n  \"threats\": [\n    {\n      \"id\": \"T-001\",\n      \"category\": \"reentrancy\",\n      \"title\": \"CEI violation in withdraw() allows reentrancy drain\",\n      \"description\": \"withdraw() makes an external call to msg.sender before updating state\",\n      \"affectedCode\": [\"src/Vault.sol:withdraw:34\"],\n      \"assets\": [\"ETH deposits\"],\n      \"severity\": \"Critical\",\n      \"confidence\": \"high\",\n      \"trace\": {\n        \"steps\": [\n          {\"action\": \"Blueprint\", \"target\": \"ceiViolations\", \"finding\": \"withdraw() flagged: state-write after external-call, no reentrancy guard\"},\n          {\"action\": \"Read\", \"target\": \"src/Vault.sol:30-42\", \"finding\": \"msg.sender.call{value: amount} at line 34, balances update at line 38\"},\n          {\"action\": \"Grep\", \"target\": \"balances in Vault.sol\", \"finding\": \"balances[msg.sender] -= amount at line 38, AFTER call at 34\"},\n          {\"action\": \"Read\", \"target\": \"src/Vault.sol:38-39\", \"finding\": \"Confirmed: state write happens after external call with no guard\"}\n        ]\n      },\n      \"attackScenario\": \"1. Attacker deposits 1 ETH\\n2. Calls withdraw(1 ETH)\\n3. Vault sends ETH via call\\n4. receive() re-enters withdraw\\n5. Repeat until drained\",\n      \"suggestedProperties\": [\"check_withdraw_cannot_exceed_balance\", \"check_vault_solvency\"],\n      \"priority\": 1\n    }\n  ]\n}\n```\n\nANTI-SLOP RULE: If you cannot fill in the trace.steps with REAL code locations you actually read, DO NOT include the threat. Speculation without evidence is worse than silence.\n\nNow read the blueprint file and begin analyzing the contracts in /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-4pHCJw/project-03/contracts/.\nSource-only collection: use only Read, Grep, and Glob inside this workspace. If context/ exists, it contains additional contract source in separate compilation units; consult it to resolve cross-contract behavior. No incident history, web access, shell commands, or external files are available.",
+    "tools": [
+      "Read",
+      "Grep",
+      "Glob"
+    ],
+    "model": "opus",
+    "omitClaudeMd": true
+  },
+  "outputFormat": {
+    "type": "json_schema",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "contractType": {
+          "type": "string",
+          "enum": [
+            "vault",
+            "dex",
+            "lending",
+            "token",
+            "governance",
+            "bridge",
+            "staking",
+            "nft",
+            "oracle",
+            "proxy",
+            "other"
+          ]
+        },
+        "actors": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "assets": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "trustBoundaries": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "threats": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "category": {
+                "type": "string",
+                "enum": [
+                  "access-control",
+                  "reentrancy",
+                  "oracle-manipulation",
+                  "flash-loan",
+                  "arithmetic",
+                  "denial-of-service",
+                  "front-running",
+                  "token-handling",
+                  "upgradeability",
+                  "cross-contract",
+                  "governance",
+                  "randomness",
+                  "unchecked-calls",
+                  "logic-error"
+                ]
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "affectedCode": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "assets": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "severity": {
+                "type": "string",
+                "enum": [
+                  "Critical",
+                  "High",
+                  "Medium",
+                  "Low"
+                ]
+              },
+              "confidence": {
+                "type": "string",
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "trace": {
+                "type": "object",
+                "properties": {
+                  "steps": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "action": {
+                          "type": "string"
+                        },
+                        "target": {
+                          "type": "string"
+                        },
+                        "finding": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "action",
+                        "target",
+                        "finding"
+                      ]
+                    }
+                  },
+                  "ceiTimeline": {
+                    "type": "object"
+                  },
+                  "dataFlow": {
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "steps"
+                ]
+              },
+              "suggestedProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "attackScenario": {
+                "type": "string"
+              },
+              "priority": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "id",
+              "category",
+              "title",
+              "description",
+              "affectedCode",
+              "severity",
+              "confidence",
+              "trace",
+              "suggestedProperties",
+              "priority"
+            ]
+          }
+        }
+      },
+      "required": [
+        "contractType",
+        "threats"
+      ]
+    }
+  },
+  "requestedModel": "opus",
+  "maxBudgetUsd": 4,
+  "maxTurns": 60,
+  "modelOverrides": {
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "anthropic/claude-sonnet-4.6",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "anthropic/claude-sonnet-4.6",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "anthropic/claude-sonnet-4.6",
+    "FORGE_PROOF_CLASSIFIER_MODEL": "anthropic/claude-haiku-4.5"
+  },
+  "billingNote": "SDK-reported generation cost; excludes the separate blueprint classifier call and is not independently reconciled provider billing."
+}

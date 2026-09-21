@@ -1,0 +1,252 @@
+{
+  "classification": {
+    "type": "dex",
+    "confidence": "medium",
+    "signals": [
+      "WrappedTokenSwapperImpl suggests token swapping functionality",
+      "performAction and performActionWithIn functions indicate action execution pattern common in DEX routers",
+      "SwapImplBase provides base implementation for swap operations",
+      "receive and fallback functions typical in DEX contracts for handling ETH"
+    ],
+    "knownVulnerabilityClasses": [
+      "Price manipulation via flash loan",
+      "Sandwich attack / front-running on swaps",
+      "Constant-product invariant violation",
+      "Reentrancy in swap callback",
+      "Reserve update inconsistency",
+      "Fee-on-transfer token pair handling"
+    ]
+  },
+  "attackSurface": [
+    {
+      "function": "SwapImplBase.rescueEther",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "1 external call(s): low_level.transfer",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "WrappedTokenSwapperImpl.performAction",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "5 external call(s): external.safeTransferFrom, ERC20.ERC20, low_level.call, low_level.transfer, external.balanceOf",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "WrappedTokenSwapperImpl.performActionWithIn",
+      "score": 45,
+      "factors": [
+        "external visibility",
+        "4 external call(s): external.safeTransferFrom, ERC20.ERC20, low_level.call, external.balanceOf",
+        "handles token transfers",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "SwapImplBase.rescueFunds",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.safeTransfer, ERC20.ERC20",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "SwapImplBase.killme",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "SwapImplBase.performAction",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "SwapImplBase.performActionWithIn",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "WrappedTokenSwapperImpl.constructor",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "WrappedTokenSwapperImpl.receive",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "WrappedTokenSwapperImpl.fallback",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    }
+  ],
+  "inferredInvariants": [
+    {
+      "description": "Admin-only functions (rescueFunds, rescueEther, killme) should revert when called by non-admin",
+      "kind": "access",
+      "stateVars": [],
+      "threatenedBy": [
+        "SwapImplBase.rescueFunds",
+        "SwapImplBase.rescueEther",
+        "SwapImplBase.killme"
+      ],
+      "assertion": "assert(msg.sender != admin implies revert)",
+      "confidence": "high"
+    }
+  ],
+  "patternFindings": {
+    "externalCallReceivers": [
+      {
+        "function": "SwapImplBase.rescueFunds",
+        "call": "external.safeTransfer",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "SwapImplBase.rescueFunds",
+        "call": "ERC20.ERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "SwapImplBase.rescueEther",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "WrappedTokenSwapperImpl.performAction",
+        "call": "external.safeTransferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WrappedTokenSwapperImpl.performAction",
+        "call": "ERC20.ERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WrappedTokenSwapperImpl.performAction",
+        "call": "low_level.call",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "WrappedTokenSwapperImpl.performAction",
+        "call": "low_level.transfer",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "WrappedTokenSwapperImpl.performAction",
+        "call": "external.balanceOf",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      },
+      {
+        "function": "WrappedTokenSwapperImpl.performActionWithIn",
+        "call": "external.safeTransferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WrappedTokenSwapperImpl.performActionWithIn",
+        "call": "ERC20.ERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "WrappedTokenSwapperImpl.performActionWithIn",
+        "call": "low_level.call",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "WrappedTokenSwapperImpl.performActionWithIn",
+        "call": "external.balanceOf",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      }
+    ],
+    "ceiViolations": [],
+    "stateVarPairings": [],
+    "interfaceAssumptions": [],
+    "privilegeSurface": {
+      "adminFunctions": [
+        "SwapImplBase.rescueFunds",
+        "SwapImplBase.rescueEther",
+        "SwapImplBase.killme"
+      ],
+      "unguardedStateMutators": [],
+      "guardedBy": {
+        "SwapImplBase.rescueFunds": [
+          "modifier: isSocketGatewayOwner"
+        ],
+        "SwapImplBase.rescueEther": [
+          "modifier: isSocketGatewayOwner"
+        ],
+        "SwapImplBase.killme": [
+          "modifier: msg.sender == socketDeployFactory"
+        ]
+      }
+    },
+    "valueFlowPaths": []
+  },
+  "investigationQuestions": [
+    "Invariant [access]: Admin-only functions (rescueFunds, rescueEther, killme) should revert when called by non-admin. Assertion: assert(msg.sender != admin implies revert). Threatened by: rescueFunds, rescueEther, killme. Read the code to verify this holds and identify any violation path.",
+    "Known dex vulnerability: \"Price manipulation via flash loan\". Trace the relevant code path to confirm or rule out.",
+    "Known dex vulnerability: \"Sandwich attack / front-running on swaps\". Trace the relevant code path to confirm or rule out.",
+    "Known dex vulnerability: \"Constant-product invariant violation\". Trace the relevant code path to confirm or rule out."
+  ]
+}

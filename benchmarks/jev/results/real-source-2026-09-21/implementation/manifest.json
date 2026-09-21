@@ -1,0 +1,115 @@
+{
+  "nodeVersion": "v22.23.1",
+  "note": "Generator and dependency sources retained for this first collection. Gateway snapshot reflects the initial conservative accounting implementation; later tooling recognizes response usage.cost directly. Review/compare scripts were added during generation and do not influence findings.",
+  "files": [
+    {
+      "path": "src/threat-model/architecture-analyzer.ts",
+      "sha256": "73acc1f79bb5d5175ebcaa64c19d6a8f6c8d40b9cceeac9d3b05ddd85902e94b"
+    },
+    {
+      "path": "src/threat-model/ast-analysis.ts",
+      "sha256": "97a34cb4d8e26a3977e98fd11ca37e1060c01e75a8084dae386cb1aa1542b43e"
+    },
+    {
+      "path": "src/threat-model/capture.ts",
+      "sha256": "ec17a8534838eef2757d542d7006a771d8cb49f3753534216680ca15a47491e1"
+    },
+    {
+      "path": "src/threat-model/orchestrator.ts",
+      "sha256": "97fc04a2f9cfe8e9e0b476a6c3a3bf692a59644712eb67bfd0bca861b04c028e"
+    },
+    {
+      "path": "src/threat-model/precompute.ts",
+      "sha256": "a9ae70d104a528ea95e67731d64ca35b4e309ca2cd4d7219e12c7921bd2d31b6"
+    },
+    {
+      "path": "src/threat-model/providers/enrichment/solodit.ts",
+      "sha256": "4488edb7d4b55fb11f1f76799577d5e2a6f04be029b52187cf1670953cb6b068"
+    },
+    {
+      "path": "src/threat-model/providers/filters/anti-slop.ts",
+      "sha256": "54ff5a7fdaf79b2a05a22d6fcf3fb7df5997a128dcb4951f480ec27940918eff"
+    },
+    {
+      "path": "src/threat-model/providers/filters/dedup.ts",
+      "sha256": "17c09c9c77ae128413b85e193f49c84d1f1802d0e069880c7d7fc56690d573e2"
+    },
+    {
+      "path": "src/threat-model/providers/filters/ranking.ts",
+      "sha256": "6dba1c1f5d3e7865845e0e7747f871a3ce9e855166b0f72e83554135959ba56e"
+    },
+    {
+      "path": "src/threat-model/providers/filters/self-contradiction.ts",
+      "sha256": "bd1254b0406b2b81c3820cc094e462e7ed8b5472bb5f65cc7127286f10aba097"
+    },
+    {
+      "path": "src/threat-model/providers/precompute/ast.ts",
+      "sha256": "2d9e5733de7061bc6f3c7357f3a133a490bc66d161721ce059f8fd53c4fe35f6"
+    },
+    {
+      "path": "src/threat-model/providers/precompute/blueprint.ts",
+      "sha256": "945b333c8aff817c92d09a4f1a7744acc90058fdad70e0fc6b39e33779850fa2"
+    },
+    {
+      "path": "src/threat-model/providers/precompute/etherscan.ts",
+      "sha256": "acf96736834c01c2797ba7088039d2ead92c38f6404bf6206212d1de9daebb82"
+    },
+    {
+      "path": "src/threat-model/providers/precompute/inspect.ts",
+      "sha256": "bb706cb050141a3921f25b23cb74da0ec83eda350f8ba9b69a47a5dd9b7fadd6"
+    },
+    {
+      "path": "src/threat-model/providers/registry.ts",
+      "sha256": "d3b826974926a7e976bc717b71cf1be9bd72da92f6839f98aff74dc0fad436f1"
+    },
+    {
+      "path": "src/threat-model/providers/types.ts",
+      "sha256": "954f4a5886c7860a6bbdba2211c3f5a3574fb0be8b0d8803e88ee713e57f51e6"
+    },
+    {
+      "path": "src/threat-model/solodit.ts",
+      "sha256": "1ac48c05bc58a94d52c2cda8cef50ade72e8a26ec83c2fd3d995665f02a2efc6"
+    },
+    {
+      "path": "src/threat-model/source-only.ts",
+      "sha256": "e13dd484c1069a9de68626f9aebda58c446813c3df3ad354b22798879558e488"
+    },
+    {
+      "path": "src/threat-model/types.ts",
+      "sha256": "0c93e2c1421c100f3d793552109c3b4692f4e903b46ed65214ba17ce8ae1c6a6"
+    },
+    {
+      "path": "src/agents/threat-modeler.ts",
+      "sha256": "990b609d59d8fd92f83e9ee0f3f9f8c40c103df435dde52347e7ec47040f49f5"
+    },
+    {
+      "path": "benchmarks/jev/collection/collect.mjs",
+      "sha256": "b6be9bd42a1e1fa9c4993e3f238b513c3908d6c6f50b2b2e621d855bf4378f93"
+    },
+    {
+      "path": "benchmarks/jev/collection/compare.mjs",
+      "sha256": "45fc6cc92743e40263d194997836ce102fed92dbceb9cdd0d8f8fee3c75040c8"
+    },
+    {
+      "path": "benchmarks/jev/collection/generation-gateway.mjs",
+      "sha256": "f022a348445dbdb49c98015898ea56388081ee875b91f803acf07278922109c2"
+    },
+    {
+      "path": "benchmarks/jev/collection/prepare.mjs",
+      "sha256": "d65d7c1fced40b54594a537f9e5653ae47f69162e3d803f8ca0ab24c9b980e24"
+    },
+    {
+      "path": "benchmarks/jev/collection/review.mjs",
+      "sha256": "30a998b19b8fd4fa53331d6f9e93880375b4fb044187667a0f80d6daa783b1bb"
+    },
+    {
+      "path": "package.json",
+      "sha256": "0f38819f4312f5403610e12f31c3ed010efb150e0491594d2c642e246d857cd7"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "9fd80c9f8bf3470f1b76ab20003b483ffc0d7f153d24127562c6d2c70bebebc1"
+    }
+  ],
+  "baseCommit": "579369a"
+}

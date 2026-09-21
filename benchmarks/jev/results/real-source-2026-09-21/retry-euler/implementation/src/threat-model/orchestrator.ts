@@ -60,7 +60,7 @@ export async function generateThreatModel(
   opts: ThreatModelOptions
 ): Promise<ThreatModel> {
   const baseOutputDir = opts.outputDir || "forge-proof-output";
-  if (opts.captureRaw) mkdirSync(baseOutputDir, { recursive: true });
+  mkdirSync(baseOutputDir, { recursive: true });
   const runDir = opts.captureRaw
     ? mkdtempSync(join(baseOutputDir, `threat-model-${timestamp()}-`))
     : join(baseOutputDir, `threat-model-${timestamp()}`);
@@ -180,87 +180,87 @@ export async function generateThreatModel(
   let numTurns = 0;
 
   const sdkOptions: Options = {
-    model: "opus",
-    allowedTools: ["Read", "Grep", "Glob", "Bash", "Task"],
-    // See src/orchestrator.ts — the cwd is the untrusted audit target.
-    settingSources: [],
-    permissionMode: "bypassPermissions",
-    maxTurns: opts.maxTurns || 200,
-    maxBudgetUsd: opts.maxBudgetUsd || 50,
-    thinking: { type: "adaptive" },
-    cwd: precomputed.projectDir,
-    agents,
-    outputFormat: {
-      type: "json_schema",
-      schema: {
-        type: "object",
-        properties: {
-          contractType: {
-            type: "string",
-            enum: [
-              "vault", "dex", "lending", "token", "governance",
-              "bridge", "staking", "nft", "oracle", "proxy", "other",
-            ],
-          },
-          actors: { type: "array", items: { type: "object" } },
-          assets: { type: "array", items: { type: "object" } },
-          trustBoundaries: { type: "array", items: { type: "object" } },
-          threats: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                id: { type: "string" },
-                category: {
-                  type: "string",
-                  enum: [
-                    "access-control", "reentrancy", "oracle-manipulation", "flash-loan",
-                    "arithmetic", "denial-of-service", "front-running", "token-handling",
-                    "upgradeability", "cross-contract", "governance", "randomness",
-                    "unchecked-calls", "logic-error",
-                  ],
-                },
-                title: { type: "string" },
-                description: { type: "string" },
-                affectedCode: { type: "array", items: { type: "string" } },
-                assets: { type: "array", items: { type: "string" } },
-                severity: { type: "string", enum: ["Critical", "High", "Medium", "Low"] },
-                confidence: { type: "string", enum: ["high", "medium", "low"] },
-                trace: {
-                  type: "object",
-                  properties: {
-                    steps: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          action: { type: "string" },
-                          target: { type: "string" },
-                          finding: { type: "string" },
-                        },
-                        required: ["action", "target", "finding"],
-                      },
-                    },
-                    ceiTimeline: { type: "object" },
-                    dataFlow: { type: "object" },
-                  },
-                  required: ["steps"],
-                },
-                suggestedProperties: { type: "array", items: { type: "string" } },
-                attackScenario: { type: "string" },
-                priority: { type: "number" },
-              },
-              required: [
-                "id", "category", "title", "description", "affectedCode",
-                "severity", "confidence", "trace", "suggestedProperties", "priority",
+      model: "opus",
+      allowedTools: ["Read", "Grep", "Glob", "Bash", "Task"],
+      // See src/orchestrator.ts — the cwd is the untrusted audit target.
+      settingSources: [],
+      permissionMode: "bypassPermissions",
+      maxTurns: opts.maxTurns || 200,
+      maxBudgetUsd: opts.maxBudgetUsd || 50,
+      thinking: { type: "adaptive" },
+      cwd: precomputed.projectDir,
+      agents,
+      outputFormat: {
+        type: "json_schema",
+        schema: {
+          type: "object",
+          properties: {
+            contractType: {
+              type: "string",
+              enum: [
+                "vault", "dex", "lending", "token", "governance",
+                "bridge", "staking", "nft", "oracle", "proxy", "other",
               ],
             },
+            actors: { type: "array", items: { type: "object" } },
+            assets: { type: "array", items: { type: "object" } },
+            trustBoundaries: { type: "array", items: { type: "object" } },
+            threats: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  id: { type: "string" },
+                  category: {
+                    type: "string",
+                    enum: [
+                      "access-control", "reentrancy", "oracle-manipulation", "flash-loan",
+                      "arithmetic", "denial-of-service", "front-running", "token-handling",
+                      "upgradeability", "cross-contract", "governance", "randomness",
+                      "unchecked-calls", "logic-error",
+                    ],
+                  },
+                  title: { type: "string" },
+                  description: { type: "string" },
+                  affectedCode: { type: "array", items: { type: "string" } },
+                  assets: { type: "array", items: { type: "string" } },
+                  severity: { type: "string", enum: ["Critical", "High", "Medium", "Low"] },
+                  confidence: { type: "string", enum: ["high", "medium", "low"] },
+                  trace: {
+                    type: "object",
+                    properties: {
+                      steps: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            action: { type: "string" },
+                            target: { type: "string" },
+                            finding: { type: "string" },
+                          },
+                          required: ["action", "target", "finding"],
+                        },
+                      },
+                      ceiTimeline: { type: "object" },
+                      dataFlow: { type: "object" },
+                    },
+                    required: ["steps"],
+                  },
+                  suggestedProperties: { type: "array", items: { type: "string" } },
+                  attackScenario: { type: "string" },
+                  priority: { type: "number" },
+                },
+                required: [
+                  "id", "category", "title", "description", "affectedCode",
+                  "severity", "confidence", "trace", "suggestedProperties", "priority",
+                ],
+              },
+            },
           },
+          required: ["contractType", "threats"],
         },
-        required: ["contractType", "threats"],
       },
-    },
-  };
+    };
   if (opts.sourceOnly) {
     sdkOptions.tools = ["Read", "Grep", "Glob", "Task", "Agent"];
     sdkOptions.allowedTools = ["Read", "Grep", "Glob", "Task", "Agent"];
@@ -279,36 +279,36 @@ export async function generateThreatModel(
   let completionStatus = "no-result";
   let modelUsage: unknown = null;
   try {
-    for await (const message of query({ prompt: orchestratorPrompt, options: sdkOptions })) {
-      handleMessage(message);
-      if (message.type === "assistant" && message.message?.model) observedModels.add(message.message.model);
+  for await (const message of query({ prompt: orchestratorPrompt, options: sdkOptions })) {
+    handleMessage(message);
+    if (message.type === "assistant" && message.message?.model) observedModels.add(message.message.model);
 
-      // Capture the final structured result
-      if (message?.type === "result") {
-        completionStatus = message.subtype;
-        modelUsage = (message as any).modelUsage ?? null;
-        costUsd = (message as any).total_cost_usd || 0;
-        durationMs = (message as any).duration_ms || 0;
-        numTurns = (message as any).num_turns || 0;
+    // Capture the final structured result
+    if (message?.type === "result") {
+      completionStatus = message.subtype;
+      modelUsage = (message as any).modelUsage ?? null;
+      costUsd = (message as any).total_cost_usd || 0;
+      durationMs = (message as any).duration_ms || 0;
+      numTurns = (message as any).num_turns || 0;
 
-        if (message.subtype === "success") {
-          // Prefer structured_output (SDK-validated JSON) over free-form text
-          rawModel = (message as any).structured_output || parseAgentOutput((message as any).result || "");
-        } else if (message.subtype === "error_max_turns") {
-          console.error(`\n  Turn limit (${opts.maxTurns || 200}) reached. Recovering partial results...`);
-          rawModel = (message as any).structured_output || parseAgentOutput((message as any).result || "");
-        } else if (message.subtype === "error_max_budget_usd") {
-          console.error(`\n  Budget limit ($${opts.maxBudgetUsd || 50}) reached. Recovering partial results...`);
-          rawModel = (message as any).structured_output || parseAgentOutput((message as any).result || "");
-        } else if (message.subtype === "error_max_structured_output_retries") {
-          console.error("\n  Structured output retries exceeded. Recovering partial results...");
-          rawModel = parseAgentOutput((message as any).result || "");
-        } else {
-          console.error(`\n  Agent error: ${(message as any).error || message.subtype}`);
-          rawModel = parseAgentOutput((message as any).result || "");
-        }
+      if (message.subtype === "success") {
+        // Prefer structured_output (SDK-validated JSON) over free-form text
+        rawModel = (message as any).structured_output || parseAgentOutput((message as any).result || "");
+      } else if (message.subtype === "error_max_turns") {
+        console.error(`\n  Turn limit (${opts.maxTurns || 200}) reached. Recovering partial results...`);
+        rawModel = (message as any).structured_output || parseAgentOutput((message as any).result || "");
+      } else if (message.subtype === "error_max_budget_usd") {
+        console.error(`\n  Budget limit ($${opts.maxBudgetUsd || 50}) reached. Recovering partial results...`);
+        rawModel = (message as any).structured_output || parseAgentOutput((message as any).result || "");
+      } else if (message.subtype === "error_max_structured_output_retries") {
+        console.error("\n  Structured output retries exceeded. Recovering partial results...");
+        rawModel = parseAgentOutput((message as any).result || "");
+      } else {
+        console.error(`\n  Agent error: ${(message as any).error || message.subtype}`);
+        rawModel = parseAgentOutput((message as any).result || "");
       }
     }
+  }
 
   } catch (error) {
     if (opts.captureRaw) captureJson(runDir, "generation-failure.json", { status: "query-threw", errorType: error instanceof Error ? error.name : "unknown", observedModels: [...observedModels] });

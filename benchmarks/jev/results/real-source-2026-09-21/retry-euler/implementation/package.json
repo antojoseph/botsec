@@ -1,0 +1,36 @@
+{
+  "name": "forge-proof",
+  "version": "0.2.1",
+  "description": "AI-powered formal verification for smart contracts using the Claude Agent SDK + Halmos",
+  "type": "module",
+  "bin": {
+    "forge-proof": "./dist/index.js"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepack": "npm run build",
+    "test": "npm run build && node --experimental-test-module-mocks --test tests/*.test.mjs",
+    "benchmark:jev": "npm run build && node benchmarks/jev/run.mjs",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.3.276",
+    "@anthropic-ai/sdk": "^0.126.0",
+    "commander": "^15.0.0",
+    "solidity-ast": "^0.4.62"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.1",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
+  }
+}

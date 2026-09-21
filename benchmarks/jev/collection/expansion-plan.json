@@ -1,0 +1,154 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-21T06:36:37.381Z",
+  "status": "prospective-sampling-plan-not-collected-data",
+  "targetProjectCount": 14,
+  "targetFamilyCount": 12,
+  "policy": "Keep related forks and conservatively shared implementation lineages in one split. Existing three incidents are development. Do not tune on held-out findings or predictions. Resolve source availability and final scopes before generating held-out findings; document substitutions before opening their results.",
+  "projects": [
+    {
+      "project": "socket",
+      "family": "socket",
+      "split": "development",
+      "stratum": "incident",
+      "status": "initial-source-collection"
+    },
+    {
+      "project": "sentiment",
+      "family": "sentiment",
+      "split": "development",
+      "stratum": "incident",
+      "status": "initial-source-collection"
+    },
+    {
+      "project": "euler",
+      "family": "euler",
+      "split": "development",
+      "stratum": "incident",
+      "status": "initial-source-collection"
+    },
+    {
+      "project": "beanstalk",
+      "family": "beanstalk",
+      "split": "development",
+      "stratum": "incident",
+      "status": "candidate-only-source-matching-pending",
+      "reference": {
+        "repository": "SunWeb3Sec/DeFiHackLabs",
+        "commit": "cb457812eacd4dad09bbd1b62a1fe2fcff1a8669",
+        "path": "src/test/2022-04/Beanstalk_exp.sol",
+        "gitBlob": "726e8de9a49c817ca1a9f32d7515d6a25989ad4a"
+      }
+    },
+    {
+      "project": "audius",
+      "family": "audius",
+      "split": "development",
+      "stratum": "incident",
+      "status": "candidate-only-source-matching-pending",
+      "reference": {
+        "repository": "SunWeb3Sec/DeFiHackLabs",
+        "commit": "cb457812eacd4dad09bbd1b62a1fe2fcff1a8669",
+        "path": "src/test/2022-07/Audius_exp.sol",
+        "gitBlob": "6693283728c367b2e1776a01d7be0874b195b8ec"
+      }
+    },
+    {
+      "project": "nomad",
+      "family": "nomad",
+      "split": "held-out",
+      "stratum": "incident",
+      "status": "candidate-only-source-matching-pending",
+      "reference": {
+        "repository": "SunWeb3Sec/DeFiHackLabs",
+        "commit": "cb457812eacd4dad09bbd1b62a1fe2fcff1a8669",
+        "path": "src/test/2022-08/NomadBridge_exp.sol",
+        "gitBlob": "79b58cca15abbaf72c6580e95ba620c819a41d0e"
+      }
+    },
+    {
+      "project": "lodestar",
+      "family": "compound-lineage",
+      "split": "held-out",
+      "stratum": "incident",
+      "status": "candidate-only-source-matching-pending",
+      "reference": {
+        "repository": "SunWeb3Sec/DeFiHackLabs",
+        "commit": "cb457812eacd4dad09bbd1b62a1fe2fcff1a8669",
+        "path": "src/test/2022-12/Lodestar_exp.sol",
+        "gitBlob": "47e6026c37fbc4be85c94907ad3fa1f68b63531a"
+      }
+    },
+    {
+      "project": "platypus",
+      "family": "platypus",
+      "split": "development",
+      "stratum": "incident",
+      "status": "candidate-only-source-matching-pending",
+      "reference": {
+        "repository": "SunWeb3Sec/DeFiHackLabs",
+        "commit": "cb457812eacd4dad09bbd1b62a1fe2fcff1a8669",
+        "path": "src/test/2023-02/Platypus_exp.sol",
+        "gitBlob": "8a42a888e17cb50f7e581ecf184315b784c99385"
+      }
+    },
+    {
+      "project": "kyber-elastic",
+      "family": "concentrated-liquidity-lineage",
+      "split": "held-out",
+      "stratum": "incident",
+      "status": "candidate-only-source-matching-pending",
+      "reference": {
+        "repository": "SunWeb3Sec/DeFiHackLabs",
+        "commit": "cb457812eacd4dad09bbd1b62a1fe2fcff1a8669",
+        "path": "src/test/2023-11/KyberSwap_exp.eth.1.sol",
+        "gitBlob": "5bb41cd606d5a58e923311924f0a8c327a21fbb3"
+      }
+    },
+    {
+      "project": "openzeppelin",
+      "family": "openzeppelin",
+      "split": "development",
+      "stratum": "ordinary-production-candidate",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "status": "candidate-only-source-version-and-scope-pending",
+      "groundTruth": "No claim of vulnerability absence"
+    },
+    {
+      "project": "uniswap-v3",
+      "family": "concentrated-liquidity-lineage",
+      "split": "held-out",
+      "stratum": "ordinary-production-candidate",
+      "repository": "Uniswap/v3-core",
+      "status": "candidate-only-source-version-and-scope-pending",
+      "groundTruth": "No claim of vulnerability absence"
+    },
+    {
+      "project": "compound-comet",
+      "family": "compound-lineage",
+      "split": "held-out",
+      "stratum": "ordinary-production-candidate",
+      "repository": "compound-finance/comet",
+      "status": "candidate-only-source-version-and-scope-pending",
+      "groundTruth": "No claim of vulnerability absence"
+    },
+    {
+      "project": "aave-v3",
+      "family": "aave",
+      "split": "held-out",
+      "stratum": "ordinary-production-candidate",
+      "repository": "aave/aave-v3-core",
+      "status": "candidate-only-source-version-and-scope-pending",
+      "groundTruth": "No claim of vulnerability absence"
+    },
+    {
+      "project": "maker-dss",
+      "family": "maker",
+      "split": "held-out",
+      "stratum": "ordinary-production-candidate",
+      "repository": "makerdao/dss",
+      "status": "candidate-only-source-version-and-scope-pending",
+      "groundTruth": "No claim of vulnerability absence"
+    }
+  ]
+}

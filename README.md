@@ -189,6 +189,8 @@ forge-proof threat-model <project-path>
   -o, --output <dir>        Output directory [default: forge-proof-output]
   --max-turns <n>           Max agent turns [default: 200]
   --max-budget <usd>        Max spend in USD before stopping [default: 50]
+  --capture-raw             Save pre-filter findings and every synthesis transition
+  --source-only             Restrict model tools to reads within a prepared workspace
   --allow-npm-install       Run `npm install --ignore-scripts` in the target
                             (lifecycle scripts are NOT executed)
 

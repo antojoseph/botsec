@@ -1,0 +1,459 @@
+{
+  "version": "1.0",
+  "target": "/var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-4pHCJw/project-03",
+  "contractType": "lending",
+  "timestamp": "2026-09-21T06:52:02.935Z",
+  "actors": [
+    {
+      "name": "depositor",
+      "type": "user",
+      "capabilities": [
+        "deposit",
+        "withdraw",
+        "mint",
+        "burn",
+        "donateToReserves",
+        "transferEToken"
+      ]
+    },
+    {
+      "name": "borrower",
+      "type": "user",
+      "capabilities": [
+        "borrow",
+        "repay",
+        "deferLiquidityCheck",
+        "batchDispatch"
+      ]
+    },
+    {
+      "name": "flash_loan_user",
+      "type": "user",
+      "capabilities": [
+        "DToken.flashLoan"
+      ]
+    },
+    {
+      "name": "liquidator",
+      "type": "user",
+      "capabilities": [
+        "liquidate",
+        "checkLiquidation"
+      ]
+    },
+    {
+      "name": "ptoken_user",
+      "type": "user",
+      "capabilities": [
+        "PToken.wrap",
+        "PToken.unwrap",
+        "PToken.claimSurplus",
+        "Exec.pTokenWrap"
+      ]
+    },
+    {
+      "name": "market_activator",
+      "type": "user",
+      "capabilities": [
+        "Markets.activateMarket",
+        "Markets.activatePToken"
+      ]
+    },
+    {
+      "name": "governance",
+      "type": "admin",
+      "capabilities": [
+        "setAssetConfig",
+        "setIRM",
+        "setPricingConfig"
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "name": "underlying token pool",
+      "type": "funds",
+      "location": "ERC20.balanceOf(euler) per market, cached in AssetStorage.poolSize"
+    },
+    {
+      "name": "eToken balances",
+      "type": "accounting",
+      "location": "AssetStorage.users[account].balance"
+    },
+    {
+      "name": "dToken debt balances",
+      "type": "accounting",
+      "location": "AssetStorage.users[account].owed"
+    },
+    {
+      "name": "protocol reserves",
+      "type": "funds",
+      "location": "AssetStorage.reserveBalance"
+    },
+    {
+      "name": "PToken wrapped balances",
+      "type": "funds",
+      "location": "PToken.balances, PToken.totalBalances"
+    }
+  ],
+  "trustBoundaries": [
+    {
+      "name": "ERC20 safeTransfer callback",
+      "description": "pushTokens/pullTokens cross into external ERC20; ERC-777 or callback tokens can attempt re-entry",
+      "crossedBy": [
+        "contracts/BaseLogic.sol:pushTokens",
+        "contracts/BaseLogic.sol:pullTokens"
+      ]
+    },
+    {
+      "name": "flash loan callback",
+      "description": "DToken.flashLoan calls IFlashLoan(msgSender).onFlashLoan — user-controlled code runs with nonReentrant lock held",
+      "crossedBy": [
+        "contracts/modules/DToken.sol:flashLoan"
+      ]
+    },
+    {
+      "name": "deferred liquidity check callback",
+      "description": "Exec.deferLiquidityCheck calls IDeferredLiquidityCheck(msgSender).onDeferredLiquidityCheck — reentrantOK, global reentrancy lock NOT set during this window",
+      "crossedBy": [
+        "contracts/modules/Exec.sol:deferLiquidityCheck"
+      ]
+    },
+    {
+      "name": "Uniswap V3 TWAP oracle",
+      "description": "Prices from on-chain Uniswap V3 observations; effective window can silently fall below configured minimum",
+      "crossedBy": [
+        "contracts/modules/RiskManager.sol:callUniswapObserve"
+      ]
+    },
+    {
+      "name": "PToken surplus claim",
+      "description": "PToken.claimSurplus is public with no access control; any caller can attribute any surplus to any address",
+      "crossedBy": [
+        "contracts/PToken.sol:claimSurplus"
+      ]
+    }
+  ],
+  "threats": [
+    {
+      "id": "T-001",
+      "category": "logic-error",
+      "title": "EToken.donateToReserves omits checkLiquidity, allowing deliberate creation of uncollateralized bad debt",
+      "description": "Every balance-reducing function in EToken — withdraw, burn, transferFrom — calls checkLiquidity at the end to enforce the collateral invariant. donateToReserves is the sole exception: it reduces assetStorage.users[account].balance and increases reserveBalance but never calls checkLiquidity. A user who has outstanding dToken debt can call donateToReserves to remove all or part of their collateral without triggering any solvency check, leaving the protocol with an undercollateralized or zero-collateral position. The vulnerability is further amplified by the deferLiquidityCheck mechanism: the deferred final check only fires when deferLiquidityStatus == DEFERLIQUIDITY__DIRTY, which is set only when checkLiquidity is called during the callback. Because donateToReserves never calls checkLiquidity, calling it as the sole (or last) operation inside a deferLiquidityCheck callback leaves status as DEFERLIQUIDITY__CLEAN, and the end-of-defer check is also skipped.",
+      "affectedCode": [
+        "contracts/modules/EToken.sol:donateToReserves:354-381",
+        "contracts/modules/EToken.sol:withdraw:178-198",
+        "contracts/modules/EToken.sol:burn:232-262",
+        "contracts/modules/EToken.sol:transferFrom:321-349",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101",
+        "contracts/BaseLogic.sol:checkLiquidity:580-588"
+      ],
+      "assets": [
+        "underlying token pool",
+        "dToken debt balances",
+        "protocol reserves"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "trace": {
+        "steps": [
+          {
+            "action": "Blueprint",
+            "target": "investigationQuestions[3]",
+            "finding": "Invariant [no-profit] threatened by withdrawAmounts, deposit, withdraw — led to examining every balance-decreasing EToken operation."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/modules/EToken.sol:354-381",
+            "finding": "donateToReserves sets assetStorage.users[account].balance = newBalance (decreased) and reserveBalance += amount, then calls logAssetStatus. No checkLiquidity call anywhere in the function."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/modules/EToken.sol:178-198",
+            "finding": "withdraw: pushTokens (external call), then decreaseBalance, then checkLiquidity(account). Establishes pattern: all other balance-decreasing functions end with checkLiquidity."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/modules/EToken.sol:232-262",
+            "finding": "burn: decreaseBalance, decreaseBorrow, checkLiquidity(account). Confirms pattern."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/modules/EToken.sol:321-349",
+            "finding": "transferFrom: transferBalance, checkLiquidity(from). Confirms pattern. donateToReserves is the anomaly."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/BaseLogic.sol:580-588",
+            "finding": "checkLiquidity: if deferLiquidityStatus == NONE, calls requireLiquidity immediately. If CLEAN, sets to DIRTY (deferred). donateToReserves never invokes this function under any status."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/modules/Exec.sol:89-101",
+            "finding": "deferLiquidityCheck: sets CLEAN, calls msgSender callback (reentrantOK — no global lock), reads status after callback. Only calls checkLiquidity if status == DIRTY. If donateToReserves is called inside callback without any prior checkLiquidity-triggering operation, status stays CLEAN and the final check does not run."
+          }
+        ]
+      },
+      "attackScenario": "Simple bad-debt path (no direct profit, disrupts protocol solvency):\n1. Deposit 100 DAI, borrow 74 DAI (below 75% collateral factor). checkLiquidity runs after borrow — passes.\n2. Call donateToReserves(0, type(uint256).max). No checkLiquidity runs.\n3. Account now has 74 dDAI debt, 0 eDAI collateral. Protocol absorbs 74 DAI irrecoverable bad debt.\n\nProfitable two-account path:\n1. Flash-loan large amount L. Deposit L into Euler (get L eTokens).\n2. Call deferLiquidityCheck(accountA):\n   a. Call mint(N*L) — self-borrow; checkLiquidity triggers, sets status DIRTY.\n   b. Call donateToReserves(large chunk) — strips collateral; status stays DIRTY.\n3. End of deferLiquidityCheck: status==DIRTY, requireLiquidity runs. If residual position barely passes, account A has extremely low health factor close to 1.\n4. Pre-funded accountB calls liquidate(accountA, ...) and collects the 20% MAXIMUM_DISCOUNT plus 2% UNDERLYING_RESERVES_FEE, receiving value from protocol reserves exceeding what was repaid.",
+      "suggestedProperties": [
+        "assert_donateToReserves_preserves_collateral_ratio",
+        "assert_no_balance_decrease_without_subsequent_checkLiquidity"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "T-002",
+      "category": "access-control",
+      "title": "PToken.claimSurplus is an unrestricted public function; any caller can redirect surplus tokens to an arbitrary address",
+      "description": "PToken.claimSurplus(address who) is declared public with no msg.sender check and no euler-only guard. It computes surplus = IERC20(underlyingToken).balanceOf(address(this)) - totalBalances and credits the entire surplus to the caller-specified who address. Any underlying tokens that arrive at the PToken contract outside of wrap() or pTokenWrap() — including direct ERC20 transfers, rebasing adjustments, or accidental sends — become immediately claimable by the first caller. The intended design confines surplus creation to wrap() and pTokenWrap(), which both call claimSurplus atomically in the same transaction and cannot be frontrun. The risk materializes for out-of-band token arrivals.",
+      "affectedCode": [
+        "contracts/PToken.sol:claimSurplus:123-132",
+        "contracts/PToken.sol:wrap:104-107",
+        "contracts/modules/Exec.sol:pTokenWrap:187-203"
+      ],
+      "assets": [
+        "PToken wrapped balances"
+      ],
+      "severity": "Medium",
+      "confidence": "high",
+      "trace": {
+        "steps": [
+          {
+            "action": "Blueprint",
+            "target": "attackSurface[0] + investigationQuestions[4]",
+            "finding": "PToken.claimSurplus score 40: public, external balanceOf call, no access control writes state. Investigation question explicitly asked about this."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/PToken.sol:123-132",
+            "finding": "claimSurplus is `public`, accepts arbitrary `who`, reads currBalance via IERC20.balanceOf, computes surplus, increments totalBalances and balances[who]. No require on msg.sender, no euler address guard."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/PToken.sol:104-107",
+            "finding": "wrap(): safeTransferFrom then claimSurplus(msg.sender) atomically. Frontrunning wrap() itself is not possible. The public surface is only exploitable for tokens arriving by other means."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/modules/Exec.sol:187-203",
+            "finding": "pTokenWrap: safeTransferFrom to pTokenAddr, checks newBalance == origBalance + amount (fee-on-transfer guard), calls PToken(pTokenAddr).claimSurplus(msgSender). Also atomic. Non-wrap arrivals remain vulnerable."
+          }
+        ]
+      },
+      "attackScenario": "1. User mistakenly calls ERC20.transfer(pTokenAddress, 500) directly instead of using wrap().\n2. Attacker monitors Transfer events on the underlying ERC20, detects 500 tokens sent to pTokenAddress with no corresponding claimSurplus.\n3. Attacker calls PToken.claimSurplus(attacker_address) before the original sender recovers.\n4. Attacker receives 500 pTokens at zero cost. Original sender's tokens are permanently lost to them.",
+      "suggestedProperties": [
+        "assert_claimSurplus_credits_only_msg_sender",
+        "assert_no_surplus_claimable_by_third_party"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "T-003",
+      "category": "oracle-manipulation",
+      "title": "Uniswap V3 TWAP silently falls back to shortest available window on new pools; no minimum twapPeriod enforced before using price",
+      "description": "RiskManager.callUniswapObserve requests a TWAP over the configured twapWindow. If the pool's observation history does not reach that far back (returning 'OLD' error), the code locates the oldest available observation and uses that shorter window instead. On a freshly activated market or a pool whose cardinality was just incremented, the fallback window can be seconds rather than the default 30 minutes. The returned twapPeriod reflects the actual window, but computeLiquidityRaw uses the price without checking twapPeriod against any minimum. A near-spot-price oracle is fully manipulatable within a single transaction via a flash loan swap on the Uniswap pool, enabling undercollateralized borrowing.",
+      "affectedCode": [
+        "contracts/modules/RiskManager.sol:callUniswapObserve:143-185",
+        "contracts/modules/RiskManager.sol:getPriceInternal:225-248",
+        "contracts/modules/RiskManager.sol:computeLiquidityRaw:286-349",
+        "contracts/Constants.sol:25-26"
+      ],
+      "assets": [
+        "underlying token pool",
+        "dToken debt balances"
+      ],
+      "severity": "High",
+      "confidence": "medium",
+      "trace": {
+        "steps": [
+          {
+            "action": "Blueprint",
+            "target": "investigationQuestions[6]",
+            "finding": "Known vulnerability: oracle price manipulation for undercollateralized borrow. Directed to RiskManager."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/modules/RiskManager.sol:143-185",
+            "finding": "On 'OLD' error: reads slot0 index and cardinality, checks observations((index+1)%cardinality), falls back to observations(0) if uninitialized. Sets ago = block.timestamp - oldestAvailableAge (can be seconds for new pool). Re-calls observe() with shorter ago. Returns (price, ago)."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/modules/RiskManager.sol:225-248",
+            "finding": "getPriceInternal for UNISWAP3_TWAP: calls callUniswapObserve(underlying, decimalsScaler, pool, twapWindow). Returns (twap, twapPeriod). No minimum twapPeriod check."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/modules/RiskManager.sol:286-349",
+            "finding": "computeLiquidityRaw: calls getPriceInternal per entered market, uses price directly to compute collateralValue and liabilityValue. twapPeriod return value is discarded."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/Constants.sol:25-26",
+            "finding": "MIN_UNISWAP3_OBSERVATION_CARDINALITY = 144, DEFAULT_TWAP_WINDOW_SECONDS = 1800. Cardinality only ensures slots exist; they fill at one per block (~12s each), requiring ~30 minutes of blocks before the full window is populated."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/modules/Markets.sol:50-80",
+            "finding": "doActivateMarket calls increaseObservationCardinalityNext(144) but the market immediately becomes usable for borrowing. No activation delay enforced."
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker activates a new market for a token paired with a Uniswap V3 pool that was just created or had cardinality just increased.\n2. Pool observation history covers only a few blocks (e.g., 30 seconds of data).\n3. In a single transaction: flash-loan large amounts of referenceAsset, swap into the target token on Uniswap to spike its price. Because twapPeriod is ~30 seconds, the returned TWAP closely approximates the manipulated spot.\n4. Deposit a small amount of the now-inflated-collateral token into Euler. computeLiquidityRaw sees high collateralValue.\n5. Borrow a large amount of a deep-liquidity asset against the inflated collateral. checkLiquidity passes.\n6. Repay flash loan, exit. Protocol left with undercollateralized debt.",
+      "suggestedProperties": [
+        "assert_twapPeriod_above_minimum_threshold_before_price_used",
+        "assert_new_market_has_warmup_period_before_borrowing_enabled"
+      ],
+      "priority": 3
+    },
+    {
+      "id": "T-004",
+      "category": "reentrancy",
+      "title": "EToken.withdraw transfers tokens before updating balances — CEI violation patched only by global reentrancy lock",
+      "description": "In EToken.withdraw, pushTokens (which calls safeTransfer on the underlying ERC20 to msgSender) executes at line 191, before decreaseBalance (state update) at line 193. This is a CEI violation. The nonReentrant modifier on withdraw sets the global reentrancyLock before execution, which blocks all other nonReentrant module functions during the callback. However, reentrantOK functions — notably Exec.deferLiquidityCheck and Exec.batchDispatch — can still be called from within a token callback. Currently, all meaningful state-mutating operations dispatched through batchDispatch are themselves nonReentrant and will revert when the lock is held, limiting exploitability. The risk is structural: the CEI violation means any future addition of a reentrantOK function that modifies balances would immediately enable a double-spend attack.",
+      "affectedCode": [
+        "contracts/modules/EToken.sol:withdraw:178-198",
+        "contracts/BaseLogic.sol:pushTokens:552-560",
+        "contracts/Base.sol:nonReentrant:44-50",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101"
+      ],
+      "assets": [
+        "underlying token pool",
+        "eToken balances"
+      ],
+      "severity": "Medium",
+      "confidence": "medium",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "contracts/modules/EToken.sol:178-198",
+            "finding": "Line 191: pushTokens(assetCache, msgSender, amount) — external safeTransfer. Line 193: decreaseBalance(assetStorage, assetCache, proxyAddr, account, amountInternal) — state update. External call before state update: CEI violated."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/BaseLogic.sol:552-560",
+            "finding": "pushTokens calls Utils.safeTransfer(assetCache.underlying, to, amount/scaler) then reads balanceOf to update poolSize. The safeTransfer is the trust-boundary crossing."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/Base.sol:44-50",
+            "finding": "nonReentrant: requires reentrancyLock == UNLOCKED, sets to LOCKED before body, resets to UNLOCKED after. Shared across all modules via delegatecall. All nonReentrant functions blocked during withdraw."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/modules/Exec.sol:89-101",
+            "finding": "deferLiquidityCheck is reentrantOK — does NOT consult reentrancyLock. Callable from within the ERC20 callback during withdraw. Inside the deferred callback, any dispatch to nonReentrant module functions will revert (lock is held). No immediate exploit path in current code, but CEI violation persists."
+          }
+        ]
+      },
+      "attackScenario": "Current code (no direct exploit): ERC-777 token fires receive hook on safeTransfer. Attacker calls deferLiquidityCheck (succeeds, reentrantOK). Inside onDeferredLiquidityCheck, attacker calls batchDispatch targeting a second withdraw — this inner call hits nonReentrant with lock already set and reverts. No drain.\nFuture risk scenario: if a new reentrantOK function is added that decreases eToken balance (e.g., a gas-optimized fast-path transfer), an attacker can re-enter withdraw before decreaseBalance executes, withdrawing the same balance twice.",
+      "suggestedProperties": [
+        "assert_withdraw_state_updated_before_external_call",
+        "assert_etoken_balance_unchanged_between_pushTokens_and_decreaseBalance"
+      ],
+      "priority": 4
+    },
+    {
+      "id": "T-005",
+      "category": "logic-error",
+      "title": "DToken.flashLoan repayment verified only via raw balanceOf — repayment can be satisfied by tokens from any source, fee is zero",
+      "description": "DToken.flashLoan records origBalance = IERC20(underlying).balanceOf(address(this)), transfers amount to msgSender, calls IFlashLoan(msgSender).onFlashLoan(data), then checks balanceOf(address(this)) >= origBalance. The repayment check does not require the tokens to come from the flash loan recipient — any third party topping up the contract balance would satisfy the check. There is no fee: borrowing costs nothing beyond gas. The nonReentrant lock on flashLoan prevents the callback from calling other nonReentrant module functions. However, reentrantOK functions (deferLiquidityCheck, batchDispatch) remain callable from within onFlashLoan. This allows the following sequence within a single flash loan callback: call deferLiquidityCheck, borrow against inflated/manipulated state, end deferred check. Because the global reentrancy lock is held, individual operations dispatched via batchDispatch will fail if they are nonReentrant, limiting but not eliminating this surface.",
+      "affectedCode": [
+        "contracts/modules/DToken.sol:flashLoan:154-164",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101",
+        "contracts/modules/Exec.sol:batchDispatch:106-108"
+      ],
+      "assets": [
+        "underlying token pool"
+      ],
+      "severity": "Low",
+      "confidence": "medium",
+      "trace": {
+        "steps": [
+          {
+            "action": "Blueprint",
+            "target": "investigationQuestions[8]",
+            "finding": "Known vulnerability: flash loan borrow without proper collateral check. Directed to DToken.flashLoan."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/modules/DToken.sol:154-164",
+            "finding": "flashLoan: origBalance = balanceOf(this); safeTransfer to msgSender; IFlashLoan(msgSender).onFlashLoan(data); require(balanceOf(this) >= origBalance). No fee. Repayment check only verifies net balance — any token source satisfies it. Function uses nonReentrant: lock is held during entire callback."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/modules/Exec.sol:89-101",
+            "finding": "deferLiquidityCheck is reentrantOK. Can be called from within onFlashLoan. Inside the deferred callback, nonReentrant functions (borrow, withdraw, etc.) will fail because the flashLoan lock is held. Limits but does not eliminate interaction."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/modules/DToken.sol:98-121",
+            "finding": "borrow: uses nonReentrant. If called from inside flashLoan callback, nonReentrant check will fail (lock already held by flashLoan). Direct borrow-inside-flashLoan is blocked."
+          }
+        ]
+      },
+      "attackScenario": "The immediate risk is low given the nonReentrant lock. The primary concern is protocol-level: zero-fee flash loans combined with the broader deferLiquidityCheck mechanism allow constructing complex atomic sequences. An attacker using an external flash loan (from another protocol) to fund an operation that calls deferLiquidityCheck on Euler (which does NOT hold the lock) can borrow within the deferred callback, then repay the external flash loan — bypassing the Euler flash loan mechanism entirely while still benefiting from deferred liquidity checking.",
+      "suggestedProperties": [
+        "assert_flashLoan_repayment_includes_minimum_fee",
+        "assert_no_borrow_increase_possible_within_flashLoan_callback"
+      ],
+      "priority": 5
+    },
+    {
+      "id": "T-006",
+      "category": "logic-error",
+      "title": "DToken.transferFrom allows debt to be pushed to any account that has granted a dTokenAllowance — recipient's health is checked but sender's is not verified to benefit",
+      "description": "DToken.transferFrom transfers outstanding debt from `from` to `to`. The allowance check requires dTokenAllowance[to][msgSender] (the receiving account approves the caller to impose debt). After transfer, checkLiquidity(to) is called but checkLiquidity(from) is NOT called. An account with a large debt can use an approved third party to transfer that debt to another willing account. While this requires the receiving account's prior approval, it means the sender's liquidity is never re-verified after debt is removed — if the sender had collateral exactly sized to their debt, removing the debt improves their position, which is benign. The risk is the inverse: a colluding pair (attacker controls both `from` and `to`) can use this to concentrate debt into an account that is then allowed to become undercollateralized via donateToReserves (T-001).",
+      "affectedCode": [
+        "contracts/modules/DToken.sol:transferFrom:211-239",
+        "contracts/modules/DToken.sol:approveDebt:171-184"
+      ],
+      "assets": [
+        "dToken debt balances"
+      ],
+      "severity": "Low",
+      "confidence": "medium",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "contracts/modules/DToken.sol:211-239",
+            "finding": "transferFrom: checks dTokenAllowance[to][msgSender] (to must approve msgSender to impose debt). Calls transferBorrow then checkLiquidity(to). No checkLiquidity(from) — sender's health after debt removal is not re-verified."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/modules/DToken.sol:171-184",
+            "finding": "approveDebt: sets dTokenAllowance[account][spender]. The `account` here is the debt receiver (to), not the debt sender. Requirement: !isSubAccountOf(spender, account) prevents self-approval."
+          },
+          {
+            "action": "Read",
+            "target": "contracts/BaseLogic.sol:498-525",
+            "finding": "transferBorrow: updates owed for both from and to. Handles dust transfer. Does not call checkLiquidity itself — that is left to the caller (transferFrom only checks to)."
+          }
+        ]
+      },
+      "attackScenario": "Primarily useful as a component in a multi-step attack with T-001. Attacker uses dToken.transferFrom to concentrate debt into an account that then calls donateToReserves to shed collateral. Standalone: two colluding accounts can shift debt freely between them as long as the receiver approves, which may be used to consolidate bad positions before abandoning them.",
+      "suggestedProperties": [
+        "assert_dtoken_transferFrom_verifies_sender_liquidity_when_debt_removed"
+      ],
+      "priority": 6
+    }
+  ],
+  "precomputed": {
+    "astAnalysisAvailable": true,
+    "blueprintAvailable": true,
+    "functionsAnalyzed": 181,
+    "stateVarsTracked": 85,
+    "invariantsInferred": 4,
+    "ceiViolationsDetected": 0,
+    "etherscanDataAvailable": false
+  },
+  "metadata": {
+    "sourcesQueried": [
+      "solc-ast",
+      "forge-inspect",
+      "architecture-blueprint"
+    ],
+    "soloditFindings": 0
+  }
+}

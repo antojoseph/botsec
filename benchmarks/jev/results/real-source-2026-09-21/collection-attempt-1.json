@@ -1,0 +1,1159 @@
+{
+  "version": 1,
+  "startedAt": "2026-09-21T06:29:37.307Z",
+  "preparation": {
+    "version": 1,
+    "createdAt": "2026-09-21T06:27:33.656Z",
+    "sourceLockSha256": "740c0a127bfc33c6e31e4907567fe4992490e49c4c4f38058ea90701d2c16a2f",
+    "split": "development-collection; already-selected public incidents, not a held-out test set",
+    "projects": [
+      {
+        "id": "project-01",
+        "family": "socket",
+        "primary": [
+          "socket-route"
+        ],
+        "context": [
+          "socket-gateway"
+        ],
+        "directory": "/var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-tLTefM/project-01",
+        "inventory": [
+          {
+            "path": "context/unit-1/lib/solmate/src/tokens/ERC20.sol",
+            "sha256": "a3a7e839f42762ef24623581542a916e838f3c7c0bef647963d1fdad0f9d208a",
+            "bytes": 6812
+          },
+          {
+            "path": "context/unit-1/lib/solmate/src/utils/SafeTransferLib.sol",
+            "sha256": "cb02c2a5b1b1c66b8ba3d700a47b400684483d96d93606ed71d0e63c0b6100bf",
+            "bytes": 5955
+          },
+          {
+            "path": "context/unit-1/src/bridges/across/Across.sol",
+            "sha256": "ee653fcafe6ba1b212166c06c75cbe6ca93df1ffc085b98c8f3008f61fcf419b",
+            "bytes": 10032
+          },
+          {
+            "path": "context/unit-1/src/bridges/across/interfaces/across.sol",
+            "sha256": "17e2c40fac991552536d1aa1a6647a03c5728be77a0ae094821587e2499e2f60",
+            "bytes": 1789
+          },
+          {
+            "path": "context/unit-1/src/bridges/anyswap-router-v4/l1/Anyswap.sol",
+            "sha256": "cc2c4f8904bcc3be5cdd21f070dfa587b006c91b9a935b5e23da68e37820c885",
+            "bytes": 8343
+          },
+          {
+            "path": "context/unit-1/src/bridges/anyswap-router-v4/l2/Anyswap.sol",
+            "sha256": "fe2d740cd4e7dd2e7933c97f1d69b7a2b55565f5c918c9a2487c5210706d6572",
+            "bytes": 8073
+          },
+          {
+            "path": "context/unit-1/src/bridges/arbitrum/interfaces/arbitrum.sol",
+            "sha256": "a46d9a86669624820af0d00d08d924a2b7d2ead37f67a990c7a85cedda3abd39",
+            "bytes": 1546
+          },
+          {
+            "path": "context/unit-1/src/bridges/arbitrum/l1/NativeArbitrum.sol",
+            "sha256": "aa3a9c2522b6d9666e32f25b4fdbe5a9fce257fec9e95a405813da45627ddbd4",
+            "bytes": 9831
+          },
+          {
+            "path": "context/unit-1/src/bridges/BridgeImplBase.sol",
+            "sha256": "f4b6331bf534bfc3585be3c29e7774c25475a2bf6060a33a43295d6494fdac02",
+            "bytes": 5012
+          },
+          {
+            "path": "context/unit-1/src/bridges/cbridge/CelerImpl.sol",
+            "sha256": "b90e933005668cd9b6b4ebe9f9daa9db6a8676ad75f609139ae4fee408aeb6ab",
+            "bytes": 18385
+          },
+          {
+            "path": "context/unit-1/src/bridges/cbridge/CelerStorageWrapper.sol",
+            "sha256": "bc1605bf66e4f3e851d4cef31a9d07638197576eafb9010c9adaf2b23837838d",
+            "bytes": 2852
+          },
+          {
+            "path": "context/unit-1/src/bridges/cbridge/interfaces/cbridge.sol",
+            "sha256": "052293912c1577ca02e727c3cb9e816bf06b3f53fb38d8680d7cdf1507bd8376",
+            "bytes": 706
+          },
+          {
+            "path": "context/unit-1/src/bridges/cbridge/interfaces/ICelerStorageWrapper.sol",
+            "sha256": "e1bdc367f1a86d06b7c1f32fe2d1ccd6887ade8d57fb3863b4158debdcd7945a",
+            "bytes": 1918
+          },
+          {
+            "path": "context/unit-1/src/bridges/hop/interfaces/amm.sol",
+            "sha256": "aa38575ab541557fd42ad42c8a482945cc10d29e8594e7f44c88dbe1d1b6b4b7",
+            "bytes": 1035
+          },
+          {
+            "path": "context/unit-1/src/bridges/hop/interfaces/IHopL1Bridge.sol",
+            "sha256": "655d8a21590cc32d5e7de5bc6f0ac374c58f30a752c0e84080451ddd175a16e2",
+            "bytes": 1377
+          },
+          {
+            "path": "context/unit-1/src/bridges/hop/l1/HopImplL1.sol",
+            "sha256": "a0f38000628b882e8d95cd5519ed48160af8cb87cbd8f3629310bb3658aaf2ee",
+            "bytes": 12243
+          },
+          {
+            "path": "context/unit-1/src/bridges/hop/l2/HopImplL2.sol",
+            "sha256": "fa2fd7588de9d06691fe602a5c1b2cfea7d863aa39710ce620e5eafe5aa8480d",
+            "bytes": 12715
+          },
+          {
+            "path": "context/unit-1/src/bridges/hyphen/Hyphen.sol",
+            "sha256": "e913bd287dc3f7d83ef40c71f5591be4d46fee9b1ffc2b76dccd4d270ad30f01",
+            "bytes": 9217
+          },
+          {
+            "path": "context/unit-1/src/bridges/hyphen/interfaces/hyphen.sol",
+            "sha256": "75fc74ade5b162b2aa27ce9a153c4cf4f797ae025afa81e367983ae1471ea21a",
+            "bytes": 1227
+          },
+          {
+            "path": "context/unit-1/src/bridges/optimism/interfaces/optimism.sol",
+            "sha256": "a77d6123dfef6fa99c6777472851208b7de22de9f09a9f3ce84e07d325e4ecb1",
+            "bytes": 2276
+          },
+          {
+            "path": "context/unit-1/src/bridges/optimism/l1/NativeOptimism.sol",
+            "sha256": "62b7ff3ed2c6268e98c1772a8cf742b7d383db19285d5955fc7b5ea75f58ab99",
+            "bytes": 15384
+          },
+          {
+            "path": "context/unit-1/src/bridges/polygon/interfaces/polygon.sol",
+            "sha256": "fea2b5a21ed323a918d68d435e1eef81676766b3ea94616807d7625c285114c2",
+            "bytes": 1088
+          },
+          {
+            "path": "context/unit-1/src/bridges/polygon/NativePolygon.sol",
+            "sha256": "29d1eef5c8d800a2e9909aac0e01b2fc6f1802d558c35445177fcf8143cff28e",
+            "bytes": 8468
+          },
+          {
+            "path": "context/unit-1/src/bridges/refuel/interfaces/refuel.sol",
+            "sha256": "88bee52f379388ac8191c38d0dccb8e383d2ca20ee683ca10cc20d8f5d688a62",
+            "bytes": 478
+          },
+          {
+            "path": "context/unit-1/src/bridges/refuel/refuel.sol",
+            "sha256": "8cf2c7473f31778996f7c592c8b7574d41a3844598310647b93fce4cde70cacb",
+            "bytes": 5763
+          },
+          {
+            "path": "context/unit-1/src/bridges/stargate/interfaces/stargate.sol",
+            "sha256": "18494ae35280538921eb7a793e20f0d0ea6bd2a0b8ccc16e6bf343d3c4640cc7",
+            "bytes": 1658
+          },
+          {
+            "path": "context/unit-1/src/bridges/stargate/l1/Stargate.sol",
+            "sha256": "22ce877cd5b321fec6ad27f9ac26655891e1945284be2e25f589b9571db55be5",
+            "bytes": 13585
+          },
+          {
+            "path": "context/unit-1/src/bridges/stargate/l2/Stargate.sol",
+            "sha256": "c5ed966197d133cf164686c331cdca243f3ca4628d7d01042533df9ba381e40a",
+            "bytes": 13798
+          },
+          {
+            "path": "context/unit-1/src/controllers/BaseController.sol",
+            "sha256": "d90cd21103c92f2459cdbac52a2dea41a53de34c93ad11f0ad469d717cbd1a26",
+            "bytes": 2276
+          },
+          {
+            "path": "context/unit-1/src/controllers/FeesTakerController.sol",
+            "sha256": "a49a30f8b24eb1a671bbffdea6e59e460023532b2c0d27f371eae66013a87402",
+            "bytes": 12249
+          },
+          {
+            "path": "context/unit-1/src/controllers/RefuelSwapAndBridgeController.sol",
+            "sha256": "44c0023171a1518b6c6b6c218e9bd7fb1812f59acf7230b9e670dead492bcbb7",
+            "bytes": 2297
+          },
+          {
+            "path": "context/unit-1/src/deployFactory/DisabledSocketRoute.sol",
+            "sha256": "54edd12802d5cd758586f6d7821646c3e075700eeb2423e1e2ce4fd6dc542491",
+            "bytes": 2420
+          },
+          {
+            "path": "context/unit-1/src/deployFactory/SocketDeployFactory.sol",
+            "sha256": "fcd820c716cfb384438c4d8f95c494bf0e2c6903ba7476f67a5e86fa75b49174",
+            "bytes": 12767
+          },
+          {
+            "path": "context/unit-1/src/errors/SocketErrors.sol",
+            "sha256": "0f982d9359dccc466ec3f18557945156638ae2b9c2951153c7a4ea85df174666",
+            "bytes": 498
+          },
+          {
+            "path": "context/unit-1/src/interfaces/ISocketBridgeBase.sol",
+            "sha256": "ba0f7069c02689bef5b9b75a52bfd1397b8ae3e83294de798b13bd327de546d3",
+            "bytes": 121
+          },
+          {
+            "path": "context/unit-1/src/interfaces/ISocketController.sol",
+            "sha256": "4c1f82a7b0587a1f957f92d2a974e4fb856afb4826c001f51938ac360dc04ed2",
+            "bytes": 1599
+          },
+          {
+            "path": "context/unit-1/src/interfaces/ISocketGateway.sol",
+            "sha256": "23281b89d266f4f9e6cffe006ead2e343afe4463985c217c2573a347a033ac11",
+            "bytes": 852
+          },
+          {
+            "path": "context/unit-1/src/interfaces/ISocketRequest.sol",
+            "sha256": "a2904b948d17ba3e45bb8f36fb164ab7f5d9c075ff7ea7745d8929d7d683d348",
+            "bytes": 2133
+          },
+          {
+            "path": "context/unit-1/src/interfaces/ISocketRoute.sol",
+            "sha256": "b6478b56b9c5dabb01ef54b1374ba95f8ae37776b67b6a81a594944f02c3aedd",
+            "bytes": 1328
+          },
+          {
+            "path": "context/unit-1/src/libraries/LibBytes.sol",
+            "sha256": "55d3676c43ae6900826f63c531537cf0d4088b8c2858b2adb0f9bf5183819c75",
+            "bytes": 6449
+          },
+          {
+            "path": "context/unit-1/src/libraries/LibUtil.sol",
+            "sha256": "3d750d5ab8b099d4e41c614fd02bb101b7a6247c75e9d96c928ebe7709571454",
+            "bytes": 1073
+          },
+          {
+            "path": "context/unit-1/src/libraries/Pb.sol",
+            "sha256": "68ce9a39d33d8167c35dd8425484ebf1ef8120ce3590b1aafbd81e87399a3a61",
+            "bytes": 4202
+          },
+          {
+            "path": "context/unit-1/src/SocketGateway.sol",
+            "sha256": "a053183175a7d158bfd6ba4a2caf2581dc61586ac5f6b34cc41c1be6cc088956",
+            "bytes": 131032
+          },
+          {
+            "path": "context/unit-1/src/SocketGatewayDeployment.sol",
+            "sha256": "38ba4559aea907dcbddc9f6d943d81fdba2776dfc44d36230220e578d7fe538c",
+            "bytes": 131024
+          },
+          {
+            "path": "context/unit-1/src/static/RouteIdentifiers.sol",
+            "sha256": "d4ea1fb57ec4ae4549a2986561082577ee4728c09370b0ef1f4d403d66a4a84e",
+            "bytes": 732
+          },
+          {
+            "path": "context/unit-1/src/swap/oneinch/OneInchImpl.sol",
+            "sha256": "c537fd8580002635d70720454fae8c7b22fa39895c69bab3979b5770d3a927ef",
+            "bytes": 5946
+          },
+          {
+            "path": "context/unit-1/src/swap/rainbow/Rainbow.sol",
+            "sha256": "f98eae9b0da3973de9bf4e1dca366b79c15626e62815ed2c97d4fce0c67e1659",
+            "bytes": 6851
+          },
+          {
+            "path": "context/unit-1/src/swap/SwapImplBase.sol",
+            "sha256": "33a7f5118f99d91223e11c6a87c8be69e566acee5e087de0a3754b085d0a0d6a",
+            "bytes": 5708
+          },
+          {
+            "path": "context/unit-1/src/swap/zerox/ZeroXSwapImpl.sol",
+            "sha256": "e774991b72345d31ede49d548717566080b0f1d5d8341c2b9ce80595963ee0b6",
+            "bytes": 6679
+          },
+          {
+            "path": "context/unit-1/src/utils/Ownable.sol",
+            "sha256": "92fc5bb45a851a3c4a393fa54524bac0735d784b9e666ddffd7c9ff4f3879139",
+            "bytes": 1210
+          },
+          {
+            "path": "lib/solmate/src/tokens/ERC20.sol",
+            "sha256": "a3a7e839f42762ef24623581542a916e838f3c7c0bef647963d1fdad0f9d208a",
+            "bytes": 6812
+          },
+          {
+            "path": "lib/solmate/src/utils/SafeTransferLib.sol",
+            "sha256": "cb02c2a5b1b1c66b8ba3d700a47b400684483d96d93606ed71d0e63c0b6100bf",
+            "bytes": 5955
+          },
+          {
+            "path": "src/errors/SocketErrors.sol",
+            "sha256": "32d88d96154ac3ce4e042fbbf7d2768c026d07a59e5d6fbc328ef220d7e3cef6",
+            "bytes": 530
+          },
+          {
+            "path": "src/interfaces/ISocketGateway.sol",
+            "sha256": "23281b89d266f4f9e6cffe006ead2e343afe4463985c217c2573a347a033ac11",
+            "bytes": 852
+          },
+          {
+            "path": "src/swap/SwapImplBase.sol",
+            "sha256": "a7d5ef4b68eb8e80a40734150326df5eabddfa8b28058ab4466cb7f52058b799",
+            "bytes": 5824
+          },
+          {
+            "path": "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol",
+            "sha256": "cc40579a1f0f1180b6fb912a6716e861ad4248efa9c67405632e2e2f1194590e",
+            "bytes": 5219
+          }
+        ],
+        "config": "[profile.default]\nsrc = \"src\"\ntest = \"test\"\nscript = \"script\"\nlibs = [\"lib\"]\nsolc_version = \"0.8.7\"\noptimizer = true\noptimizer_runs = 1000000\nevm_version = \"london\"\nremappings = []\n",
+        "configSha256": "3007405c196e0cd3e55effde00db238276da3fb8653121437a8f51d82c57b0ff",
+        "scope": "Primary compilation sources with separately preserved cross-contract source context; context units are readable but excluded from the primary AST build."
+      },
+      {
+        "id": "project-02",
+        "family": "sentiment",
+        "primary": [
+          "sentiment-source"
+        ],
+        "context": [
+          "sentiment-account-manager-implementation",
+          "sentiment-balancer-vault",
+          "20210418-weighted-pool"
+        ],
+        "directory": "/var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-tLTefM/project-02",
+        "inventory": [
+          {
+            "path": "context/unit-1/lib/controller/src/core/IController.sol",
+            "sha256": "2590f84ca36760518c3113e9abdd9361adb4e2506c17476415f2939a73559d70",
+            "bytes": 864
+          },
+          {
+            "path": "context/unit-1/lib/controller/src/core/IControllerFacade.sol",
+            "sha256": "dea87272e0c9e0084bda3a5e769ff153e195b6bc0ae20cf0a5212ae2bf46745b",
+            "bytes": 1071
+          },
+          {
+            "path": "context/unit-1/lib/oracle/src/core/IOracle.sol",
+            "sha256": "768eda8cdf750e7188c6ef7dd057a5ed8af1a702beceb123c8be08bd302b8ab0",
+            "bytes": 316
+          },
+          {
+            "path": "context/unit-1/lib/solmate/src/tokens/ERC20.sol",
+            "sha256": "a3a7e839f42762ef24623581542a916e838f3c7c0bef647963d1fdad0f9d208a",
+            "bytes": 6812
+          },
+          {
+            "path": "context/unit-1/src/core/AccountManager.sol",
+            "sha256": "e306ea775c250ad7ee8c3ecf9423405bfe7bfa1e3a7fe9e54115aece6cb072ed",
+            "bytes": 15840
+          },
+          {
+            "path": "context/unit-1/src/interface/core/IAccount.sol",
+            "sha256": "e0eeff8502eab2fb49fd2224669d391cecb8f8e228d1d048733a4ea7916d6f52",
+            "bytes": 1007
+          },
+          {
+            "path": "context/unit-1/src/interface/core/IAccountFactory.sol",
+            "sha256": "762f69bbf727981f19f4e1939a14d969b59d7a358e77a241537fc31601992157",
+            "bytes": 266
+          },
+          {
+            "path": "context/unit-1/src/interface/core/IAccountManager.sol",
+            "sha256": "2e068ee8a7dda165ac7d779a4df8aa8bb9ca1b4307ca93316562017d85b32998",
+            "bytes": 2373
+          },
+          {
+            "path": "context/unit-1/src/interface/core/IRateModel.sol",
+            "sha256": "125fe31252ac4c7a85c82192c22f1f6f3345f7480890810e3b644e80f1e5e1f2",
+            "bytes": 200
+          },
+          {
+            "path": "context/unit-1/src/interface/core/IRegistry.sol",
+            "sha256": "f4b6910ee5327dd89aaef9ceae73a15f726d4b589593cd0008baa52bf937e6d6",
+            "bytes": 1117
+          },
+          {
+            "path": "context/unit-1/src/interface/core/IRiskEngine.sol",
+            "sha256": "fc6ad0fd64eab702423e668fb232837a8bf59df7f00ef672d30b5d8ceeb87b99",
+            "bytes": 659
+          },
+          {
+            "path": "context/unit-1/src/interface/tokens/IERC20.sol",
+            "sha256": "b3daf2a12df2f81e8a8a441b40f1df54ad3c2fdc537486b8ab190f90ede4007f",
+            "bytes": 620
+          },
+          {
+            "path": "context/unit-1/src/interface/tokens/IERC4626.sol",
+            "sha256": "a08df8a7ac013267366c4d8d4df3a4e9abee2e333aeded9cf2e7c1d0e14b4282",
+            "bytes": 404
+          },
+          {
+            "path": "context/unit-1/src/interface/tokens/ILToken.sol",
+            "sha256": "e3e558c47f003ff4186e004095e28b569a77ca45bde1e48dcbeb795e9a891f14",
+            "bytes": 1147
+          },
+          {
+            "path": "context/unit-1/src/interface/utils/IOwnable.sol",
+            "sha256": "bdc76500d00d3499f01d149e23fc63d0ad7a23929e25caebac343d6257381c68",
+            "bytes": 129
+          },
+          {
+            "path": "context/unit-1/src/utils/Errors.sol",
+            "sha256": "247b674779a57b7cabe39ef5d8fb5d92f2caa1a34d92e5f1248fce9e07a87354",
+            "bytes": 884
+          },
+          {
+            "path": "context/unit-1/src/utils/Helpers.sol",
+            "sha256": "c0c6e7b1251059028ec1a7752cb2fb8c56dcf6f50f01cbaceea213d6978bf533",
+            "bytes": 2855
+          },
+          {
+            "path": "context/unit-1/src/utils/Ownable.sol",
+            "sha256": "795385a13cd6c767616644e59ab66031ebc9b9328006d0fbdcaad8000101ef3f",
+            "bytes": 743
+          },
+          {
+            "path": "context/unit-1/src/utils/Pausable.sol",
+            "sha256": "465255cd57291d5fad184f82318548e73a32d59688ca51a11d1a6feaabcf805c",
+            "bytes": 682
+          },
+          {
+            "path": "context/unit-1/src/utils/ReentrancyGuard.sol",
+            "sha256": "1335aacd6eb5cec551babbe5576ae66502c32da39d39e03eda774077256758b8",
+            "bytes": 456
+          },
+          {
+            "path": "context/unit-2/contracts/lib/helpers/AssetHelpers.sol",
+            "sha256": "c68497cc0703d5851564910be0c7e6671481736f0bf102bbd889a6423c15baae",
+            "bytes": 2767
+          },
+          {
+            "path": "context/unit-2/contracts/lib/helpers/Authentication.sol",
+            "sha256": "1d4b087a0c92c93b00c2e826efc9b71505f37d9afea24126ac27326b48c3cb21",
+            "bytes": 3016
+          },
+          {
+            "path": "context/unit-2/contracts/lib/helpers/BalancerErrors.sol",
+            "sha256": "a48c1be21fb6409543bef40fe75a0bbf94bfd81361e5016e5085f5196a999d04",
+            "bytes": 9843
+          },
+          {
+            "path": "context/unit-2/contracts/lib/helpers/IAuthentication.sol",
+            "sha256": "e0126f782a0251b648752779813a4881921bf4fc8ab67daa9dca830dfd10795c",
+            "bytes": 939
+          },
+          {
+            "path": "context/unit-2/contracts/lib/helpers/InputHelpers.sol",
+            "sha256": "eeed529514500d6bf4751d7a6e22a6e2d58a272bf34312ad95d297524389d065",
+            "bytes": 2117
+          },
+          {
+            "path": "context/unit-2/contracts/lib/helpers/ISignaturesValidator.sol",
+            "sha256": "1c77ae474a53632ed12f2112703952b44ae3d57e9e487f8fa8272f5b9715c66c",
+            "bytes": 1138
+          },
+          {
+            "path": "context/unit-2/contracts/lib/helpers/ITemporarilyPausable.sol",
+            "sha256": "453a31199b7309e3635481f14e002bfe2cf5bf41f52bcaad7d91b4f4e95caf01",
+            "bytes": 1198
+          },
+          {
+            "path": "context/unit-2/contracts/lib/helpers/SignaturesValidator.sol",
+            "sha256": "baa87ccdd4e01870054c984c7904529b231aa8cb46a66f2eece966ec3d4b4d50",
+            "bytes": 6149
+          },
+          {
+            "path": "context/unit-2/contracts/lib/helpers/TemporarilyPausable.sol",
+            "sha256": "f7eca7d4fd7c3ceccc1173e566211a7a40e20642f10776ebb7a7434948731554",
+            "bytes": 5121
+          },
+          {
+            "path": "context/unit-2/contracts/lib/math/FixedPoint.sol",
+            "sha256": "a6e91cd967cbaad44922d574bcafc73b15137e9b329e59c8de9390090c73326d",
+            "bytes": 4927
+          },
+          {
+            "path": "context/unit-2/contracts/lib/math/LogExpMath.sol",
+            "sha256": "9eb367a749270efefe809e96e29fde844f5f530568d694e164c153a0710cab79",
+            "bytes": 20356
+          },
+          {
+            "path": "context/unit-2/contracts/lib/math/Math.sol",
+            "sha256": "0fd8298b95ed3654e418d5b400feefee361e68517d9c1296b29fb582c9be833e",
+            "bytes": 2368
+          },
+          {
+            "path": "context/unit-2/contracts/lib/openzeppelin/Address.sol",
+            "sha256": "673a56dbfa28fc63f0c860c55b7c65c014890019cda91f9a38705e8a44f42646",
+            "bytes": 2481
+          },
+          {
+            "path": "context/unit-2/contracts/lib/openzeppelin/EIP712.sol",
+            "sha256": "e5d8893a18cdbb9ad7eec521a66a9634b0b99b6f584b993c725a9efc65c0e79b",
+            "bytes": 3818
+          },
+          {
+            "path": "context/unit-2/contracts/lib/openzeppelin/EnumerableMap.sol",
+            "sha256": "9c858b2d12d7c058e58bab43d01160d677ebd0112219f40479bda67922fdb6d9",
+            "bytes": 8285
+          },
+          {
+            "path": "context/unit-2/contracts/lib/openzeppelin/EnumerableSet.sol",
+            "sha256": "c6e322fb7d0df41ee4062099afa3ae59ed31a24d44f3f2187a3abda30998d9bd",
+            "bytes": 5313
+          },
+          {
+            "path": "context/unit-2/contracts/lib/openzeppelin/IERC20.sol",
+            "sha256": "e6856d34898f74b4aa8da281e8dac9cad9ed6aa22b7b4517bc2955a06b6d4c98",
+            "bytes": 2726
+          },
+          {
+            "path": "context/unit-2/contracts/lib/openzeppelin/ReentrancyGuard.sol",
+            "sha256": "9379b5ce722fd566daa5e7173072bca3a1c60b56c6c063361d7bce0694d6e2ea",
+            "bytes": 3122
+          },
+          {
+            "path": "context/unit-2/contracts/lib/openzeppelin/SafeCast.sol",
+            "sha256": "b6f5a82f7d83bc560944d8eb398f9899813ba1cc0fe03f87ddd01af2d6293b98",
+            "bytes": 1180
+          },
+          {
+            "path": "context/unit-2/contracts/lib/openzeppelin/SafeERC20.sol",
+            "sha256": "50753fd9190038a95a9b303576bb8a6342d865dc4da0fc9320608afca958d735",
+            "bytes": 2217
+          },
+          {
+            "path": "context/unit-2/contracts/vault/AssetManagers.sol",
+            "sha256": "b16512f367c65575fbc4bc7b585be6be74fd10ece8dd56b1eda86e72cbdd5f5d",
+            "bytes": 7714
+          },
+          {
+            "path": "context/unit-2/contracts/vault/AssetTransfersHandler.sol",
+            "sha256": "5ac981b5a418cc1589f4787e9510083bcdecf13f77b3692fabc29ea9ec8e2c65",
+            "bytes": 7022
+          },
+          {
+            "path": "context/unit-2/contracts/vault/balances/BalanceAllocation.sol",
+            "sha256": "0b5ed4ba0c0477a492c91e5833c40b28dba454a0a92c49114de36f1719541ab9",
+            "bytes": 14267
+          },
+          {
+            "path": "context/unit-2/contracts/vault/balances/GeneralPoolsBalance.sol",
+            "sha256": "b966c28cb5e064a54848f7e5e7580a95b4b2f5eb3bac626ee5306e9fa5d7f878",
+            "bytes": 9453
+          },
+          {
+            "path": "context/unit-2/contracts/vault/balances/MinimalSwapInfoPoolsBalance.sol",
+            "sha256": "a6a1615b3f5f419c35a4e39ff74bb61d97d1c7d0b189c91485f8f565cbfe76fa",
+            "bytes": 9721
+          },
+          {
+            "path": "context/unit-2/contracts/vault/balances/TwoTokenPoolsBalance.sol",
+            "sha256": "8d4d0873bac52c8dd22079f005fbf8538763e5e9ee7673575287a54c56765a3c",
+            "bytes": 16373
+          },
+          {
+            "path": "context/unit-2/contracts/vault/Fees.sol",
+            "sha256": "c7d3d693cebe4d75681f622df95b68b7cda67242db47ff20f7506dc3fdce4b13",
+            "bytes": 2521
+          },
+          {
+            "path": "context/unit-2/contracts/vault/FlashLoans.sol",
+            "sha256": "5056b411121198c449954401b205ff681f003703a5a84eb6af9bf320a3531fe5",
+            "bytes": 3610
+          },
+          {
+            "path": "context/unit-2/contracts/vault/interfaces/IAsset.sol",
+            "sha256": "45b9e9dd685aca25db3de89257952b3dd7297dacb859a9bd359ea877addf0008",
+            "bytes": 1097
+          },
+          {
+            "path": "context/unit-2/contracts/vault/interfaces/IAuthorizer.sol",
+            "sha256": "21446c174ae6d518a065c8dc84b979ed596440582fca265db590979768ba3c86",
+            "bytes": 999
+          },
+          {
+            "path": "context/unit-2/contracts/vault/interfaces/IBasePool.sol",
+            "sha256": "e6cb14f5c042311104da954570f69358407c6ac199f46f50331660996554ec94",
+            "bytes": 4807
+          },
+          {
+            "path": "context/unit-2/contracts/vault/interfaces/IFlashLoanRecipient.sol",
+            "sha256": "43a48cc8b943e688a3c2914f40f709c16cd91888ac6f022593a5797d60d0eae4",
+            "bytes": 1525
+          },
+          {
+            "path": "context/unit-2/contracts/vault/interfaces/IGeneralPool.sol",
+            "sha256": "6791df5af8943fc0fbe9cca732093fb2a2cb0dc590fee0a0b89b4c4fced3610e",
+            "bytes": 1608
+          },
+          {
+            "path": "context/unit-2/contracts/vault/interfaces/IMinimalSwapInfoPool.sol",
+            "sha256": "fbff888d9e28e110eca60056d4a22fc0dbcbae0fe1971de8fd8a8282263496e3",
+            "bytes": 1638
+          },
+          {
+            "path": "context/unit-2/contracts/vault/interfaces/IPoolSwapStructs.sol",
+            "sha256": "57904f44b579a5ae7e6d14e36cf4e2b291a476485e305cd50480cf5e76fc5615",
+            "bytes": 2596
+          },
+          {
+            "path": "context/unit-2/contracts/vault/interfaces/IVault.sol",
+            "sha256": "c9475141f79e41ae14f029a9e2ade3ec745b1a1ed261056e278d14d74883d8bd",
+            "bytes": 38359
+          },
+          {
+            "path": "context/unit-2/contracts/vault/interfaces/IWETH.sol",
+            "sha256": "00661fe02502219a46505abe7b589bcdc7d2aec7ec28adf07dff1fe1dd5fa537",
+            "bytes": 1081
+          },
+          {
+            "path": "context/unit-2/contracts/vault/PoolBalances.sol",
+            "sha256": "71c79ed096950876a51e56d575644718a4ec57c3fd468533881dd11294d60410",
+            "bytes": 13116
+          },
+          {
+            "path": "context/unit-2/contracts/vault/PoolRegistry.sol",
+            "sha256": "4bd2c739ee90f3ce039b65663fea6e128b2e08c7f84a4fd2271b1ec5e7497382",
+            "bytes": 6574
+          },
+          {
+            "path": "context/unit-2/contracts/vault/PoolTokens.sol",
+            "sha256": "dbe4b1aa0929e505eba1e98beeba51696510e14bbf50337efe38a8d218d8ce1f",
+            "bytes": 5518
+          },
+          {
+            "path": "context/unit-2/contracts/vault/ProtocolFeesCollector.sol",
+            "sha256": "273232be5e195e844a532ef3a4409a2bd424b49de5957bc562dc00b682abccfd",
+            "bytes": 4903
+          },
+          {
+            "path": "context/unit-2/contracts/vault/Swaps.sol",
+            "sha256": "21b1a98a55bb800be0f6dfb117b0933aed7d25a51a74aed023806caa4a42ea80",
+            "bytes": 25367
+          },
+          {
+            "path": "context/unit-2/contracts/vault/UserBalance.sol",
+            "sha256": "b5c25ddc2adc071d4d866dff96692ea32b687b1d76fb974f07e6a410fea5ae56",
+            "bytes": 10115
+          },
+          {
+            "path": "context/unit-2/contracts/vault/Vault.sol",
+            "sha256": "cc480291015a7f3258d9af4dbab37522aeb4c7ea21c502c1335dc207c8cccc34",
+            "bytes": 3893
+          },
+          {
+            "path": "context/unit-2/contracts/vault/VaultAuthorization.sol",
+            "sha256": "5e7b51d9605ddf4e377e8412fb5baa48a1de7296a294474f8bb99738e5af6468",
+            "bytes": 7569
+          },
+          {
+            "path": "context/unit-3/contracts/lib/helpers/Authentication.sol",
+            "sha256": "1d4b087a0c92c93b00c2e826efc9b71505f37d9afea24126ac27326b48c3cb21",
+            "bytes": 3016
+          },
+          {
+            "path": "context/unit-3/contracts/lib/helpers/BalancerErrors.sol",
+            "sha256": "a48c1be21fb6409543bef40fe75a0bbf94bfd81361e5016e5085f5196a999d04",
+            "bytes": 9843
+          },
+          {
+            "path": "context/unit-3/contracts/lib/helpers/IAuthentication.sol",
+            "sha256": "e0126f782a0251b648752779813a4881921bf4fc8ab67daa9dca830dfd10795c",
+            "bytes": 939
+          },
+          {
+            "path": "context/unit-3/contracts/lib/helpers/InputHelpers.sol",
+            "sha256": "eeed529514500d6bf4751d7a6e22a6e2d58a272bf34312ad95d297524389d065",
+            "bytes": 2117
+          },
+          {
+            "path": "context/unit-3/contracts/lib/helpers/ISignaturesValidator.sol",
+            "sha256": "1c77ae474a53632ed12f2112703952b44ae3d57e9e487f8fa8272f5b9715c66c",
+            "bytes": 1138
+          },
+          {
+            "path": "context/unit-3/contracts/lib/helpers/ITemporarilyPausable.sol",
+            "sha256": "453a31199b7309e3635481f14e002bfe2cf5bf41f52bcaad7d91b4f4e95caf01",
+            "bytes": 1198
+          },
+          {
+            "path": "context/unit-3/contracts/lib/helpers/TemporarilyPausable.sol",
+            "sha256": "f7eca7d4fd7c3ceccc1173e566211a7a40e20642f10776ebb7a7434948731554",
+            "bytes": 5121
+          },
+          {
+            "path": "context/unit-3/contracts/lib/math/FixedPoint.sol",
+            "sha256": "a6e91cd967cbaad44922d574bcafc73b15137e9b329e59c8de9390090c73326d",
+            "bytes": 4927
+          },
+          {
+            "path": "context/unit-3/contracts/lib/math/LogExpMath.sol",
+            "sha256": "9eb367a749270efefe809e96e29fde844f5f530568d694e164c153a0710cab79",
+            "bytes": 20356
+          },
+          {
+            "path": "context/unit-3/contracts/lib/math/Math.sol",
+            "sha256": "0fd8298b95ed3654e418d5b400feefee361e68517d9c1296b29fb582c9be833e",
+            "bytes": 2368
+          },
+          {
+            "path": "context/unit-3/contracts/lib/openzeppelin/EIP712.sol",
+            "sha256": "e5d8893a18cdbb9ad7eec521a66a9634b0b99b6f584b993c725a9efc65c0e79b",
+            "bytes": 3818
+          },
+          {
+            "path": "context/unit-3/contracts/lib/openzeppelin/ERC20.sol",
+            "sha256": "0ed4ceb26d6357721d20022c70c77604b20087d178ae8777f6f59f4783623436",
+            "bytes": 10916
+          },
+          {
+            "path": "context/unit-3/contracts/lib/openzeppelin/IERC20.sol",
+            "sha256": "e6856d34898f74b4aa8da281e8dac9cad9ed6aa22b7b4517bc2955a06b6d4c98",
+            "bytes": 2726
+          },
+          {
+            "path": "context/unit-3/contracts/lib/openzeppelin/IERC20Permit.sol",
+            "sha256": "467403c0360df0cf08837eacb7a5ac35fb91cc04a93dfa7e0f363b95ef5b805a",
+            "bytes": 2169
+          },
+          {
+            "path": "context/unit-3/contracts/lib/openzeppelin/ReentrancyGuard.sol",
+            "sha256": "9379b5ce722fd566daa5e7173072bca3a1c60b56c6c063361d7bce0694d6e2ea",
+            "bytes": 3122
+          },
+          {
+            "path": "context/unit-3/contracts/lib/openzeppelin/SafeERC20.sol",
+            "sha256": "50753fd9190038a95a9b303576bb8a6342d865dc4da0fc9320608afca958d735",
+            "bytes": 2217
+          },
+          {
+            "path": "context/unit-3/contracts/lib/openzeppelin/SafeMath.sol",
+            "sha256": "03bfe0c2cac917f66d4b8dac1a9750df9905c41cdcc3b6388faadf7d344bd4cd",
+            "bytes": 1944
+          },
+          {
+            "path": "context/unit-3/contracts/pools/BalancerPoolToken.sol",
+            "sha256": "25c177d502c0ccdc40bef355920df3631d638a2fd3d4835f928c655fdcec250a",
+            "bytes": 7106
+          },
+          {
+            "path": "context/unit-3/contracts/pools/BaseMinimalSwapInfoPool.sol",
+            "sha256": "22504418abb8f57013492374736c141b36e9d6ac4c775cd1e3eb06c3202c1405",
+            "bytes": 4962
+          },
+          {
+            "path": "context/unit-3/contracts/pools/BasePool.sol",
+            "sha256": "97f1653b052b0dff2389b88eb3dc0ab0eda6622b4b5130235e73f7fd625d7536",
+            "bytes": 32376
+          },
+          {
+            "path": "context/unit-3/contracts/pools/BasePoolAuthorization.sol",
+            "sha256": "5990c98a47956f8cd3bdfd1d6c0ec9e21eeb42b7375607a3317a43cf36c3d662",
+            "bytes": 2783
+          },
+          {
+            "path": "context/unit-3/contracts/pools/factories/BasePoolFactory.sol",
+            "sha256": "69d225ac287cfa0de2c7ae5acb3a6aba0aef0f970edcf25214eea1ab59978c00",
+            "bytes": 1976
+          },
+          {
+            "path": "context/unit-3/contracts/pools/factories/FactoryWidePauseWindow.sol",
+            "sha256": "5576303ef1426bb1af37287a4fed17274df607700ec529abf651931a6cbca5dc",
+            "bytes": 2956
+          },
+          {
+            "path": "context/unit-3/contracts/pools/weighted/WeightedMath.sol",
+            "sha256": "c3ac0e5e68c2a0e30548cb4150d2188510fdf65e38f662c3ded8df199d57cd3e",
+            "bytes": 18938
+          },
+          {
+            "path": "context/unit-3/contracts/pools/weighted/WeightedPool.sol",
+            "sha256": "29bb8bdd2b13e40154885278c7261fe25b8d2ad6d8844a4b4e873df536314edd",
+            "bytes": 22329
+          },
+          {
+            "path": "context/unit-3/contracts/pools/weighted/WeightedPoolFactory.sol",
+            "sha256": "0900a910093361bc363f1e9a583b851735889c969a650fc189ebf562d52947cb",
+            "bytes": 1896
+          },
+          {
+            "path": "context/unit-3/contracts/pools/weighted/WeightedPoolUserDataHelpers.sol",
+            "sha256": "ed77c39e9ee3b5e3651c0d23af3f5aac729e18f9991728c205fbd1725a37d73f",
+            "bytes": 2534
+          },
+          {
+            "path": "context/unit-3/contracts/vault/interfaces/IAsset.sol",
+            "sha256": "45b9e9dd685aca25db3de89257952b3dd7297dacb859a9bd359ea877addf0008",
+            "bytes": 1097
+          },
+          {
+            "path": "context/unit-3/contracts/vault/interfaces/IAuthorizer.sol",
+            "sha256": "21446c174ae6d518a065c8dc84b979ed596440582fca265db590979768ba3c86",
+            "bytes": 999
+          },
+          {
+            "path": "context/unit-3/contracts/vault/interfaces/IBasePool.sol",
+            "sha256": "e6cb14f5c042311104da954570f69358407c6ac199f46f50331660996554ec94",
+            "bytes": 4807
+          },
+          {
+            "path": "context/unit-3/contracts/vault/interfaces/IFlashLoanRecipient.sol",
+            "sha256": "43a48cc8b943e688a3c2914f40f709c16cd91888ac6f022593a5797d60d0eae4",
+            "bytes": 1525
+          },
+          {
+            "path": "context/unit-3/contracts/vault/interfaces/IMinimalSwapInfoPool.sol",
+            "sha256": "fbff888d9e28e110eca60056d4a22fc0dbcbae0fe1971de8fd8a8282263496e3",
+            "bytes": 1638
+          },
+          {
+            "path": "context/unit-3/contracts/vault/interfaces/IPoolSwapStructs.sol",
+            "sha256": "57904f44b579a5ae7e6d14e36cf4e2b291a476485e305cd50480cf5e76fc5615",
+            "bytes": 2596
+          },
+          {
+            "path": "context/unit-3/contracts/vault/interfaces/IVault.sol",
+            "sha256": "c9475141f79e41ae14f029a9e2ade3ec745b1a1ed261056e278d14d74883d8bd",
+            "bytes": 38359
+          },
+          {
+            "path": "context/unit-3/contracts/vault/interfaces/IWETH.sol",
+            "sha256": "00661fe02502219a46505abe7b589bcdc7d2aec7ec28adf07dff1fe1dd5fa537",
+            "bytes": 1081
+          },
+          {
+            "path": "context/unit-3/contracts/vault/ProtocolFeesCollector.sol",
+            "sha256": "273232be5e195e844a532ef3a4409a2bd424b49de5957bc562dc00b682abccfd",
+            "bytes": 4903
+          },
+          {
+            "path": "src/balancer/IPool.sol",
+            "sha256": "71f76d97e65357930f270208ce81a6292ceeb3c499d00c0a637c93f46299ff52",
+            "bytes": 330
+          },
+          {
+            "path": "src/balancer/IVault.sol",
+            "sha256": "c46b4b2bf57c6a975f94054b315e3f32af42e634e6f2b602544e062d056d890c",
+            "bytes": 183
+          },
+          {
+            "path": "src/balancer/library/BalancerErrors.sol",
+            "sha256": "abdadee34a4a8a7215604e95c5516c32271dbfc65665abbaf73ad042a0d5325a",
+            "bytes": 14771
+          },
+          {
+            "path": "src/balancer/library/FixedPoint.sol",
+            "sha256": "8f167d76e4f193ada455928559c029b69f6a62bf31169feae3a08b0359ddac77",
+            "bytes": 6037
+          },
+          {
+            "path": "src/balancer/library/LogExpMath.sol",
+            "sha256": "f75c2ccd0c161e57e748475526897cafafb9f77400ffe02989d24780be312cc5",
+            "bytes": 21256
+          },
+          {
+            "path": "src/balancer/WeightedBalancerLPOracle.sol",
+            "sha256": "3121ec22b720104545dd56feb729cb9769b2a567b48d2e46e2c45e722277afa0",
+            "bytes": 2299
+          },
+          {
+            "path": "src/core/IOracle.sol",
+            "sha256": "768eda8cdf750e7188c6ef7dd057a5ed8af1a702beceb123c8be08bd302b8ab0",
+            "bytes": 316
+          },
+          {
+            "path": "src/utils/IERC20.sol",
+            "sha256": "72600f1a8be063889ddff32d6d191c7ad70bc9030fac0512ee707f8694f0aba8",
+            "bytes": 195
+          }
+        ],
+        "config": "[profile.default]\nsrc = \"src\"\ntest = \"test\"\nscript = \"script\"\nlibs = [\"lib\"]\nsolc_version = \"0.8.17\"\noptimizer = true\noptimizer_runs = 200\nevm_version = \"london\"\nremappings = [\":ds-test/=lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":solmate/=lib/solmate/src/\",\":v3-core/=lib/v3-core/\"]\n",
+        "configSha256": "23aa81e58e6b316a60b56f52149a60e053bae937f83b845660a0cb350de80d0a",
+        "scope": "Primary compilation sources with separately preserved cross-contract source context; context units are readable but excluded from the primary AST build."
+      },
+      {
+        "id": "project-03",
+        "family": "euler",
+        "primary": [
+          "euler-etoken",
+          "euler-liquidation",
+          "euler-riskmanager",
+          "euler-markets",
+          "euler-exec",
+          "euler-dtoken"
+        ],
+        "context": [
+          "euler-core",
+          "euler-installer",
+          "euler-governance"
+        ],
+        "directory": "/var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-tLTefM/project-03",
+        "inventory": [
+          {
+            "path": "context/unit-1/contracts/Base.sol",
+            "sha256": "ee8d16b053d34e56184190aa696046925090aa4d2bbbb35819c2e625ca47e76d",
+            "bytes": 2815
+          },
+          {
+            "path": "context/unit-1/contracts/Constants.sol",
+            "sha256": "16ee65b4cc55c88699edcde0fc9459fbc2ecc57c572660ae2b66f8ac387a38b0",
+            "bytes": 3401
+          },
+          {
+            "path": "context/unit-1/contracts/Euler.sol",
+            "sha256": "dd4f0707ff8618cf81128a0bf44743b8903ee2f678b351d62b05b08839c5d4b9",
+            "bytes": 2331
+          },
+          {
+            "path": "context/unit-1/contracts/Events.sol",
+            "sha256": "e6aba499e89b588b7639649804cbb8f6e4ede243e62de1a8f6824d08982870a8",
+            "bytes": 3254
+          },
+          {
+            "path": "context/unit-1/contracts/Proxy.sol",
+            "sha256": "2719673213ea07c2326fa6429909212bf198f67b0380de02930eb38b152cc3cd",
+            "bytes": 1589
+          },
+          {
+            "path": "context/unit-1/contracts/Storage.sol",
+            "sha256": "4c07aaefae6ac7abe53daf55ac2d6a01ec2f415a3ec68f43b67583fc83c62e46",
+            "bytes": 2763
+          },
+          {
+            "path": "context/unit-2/contracts/Base.sol",
+            "sha256": "ee8d16b053d34e56184190aa696046925090aa4d2bbbb35819c2e625ca47e76d",
+            "bytes": 2815
+          },
+          {
+            "path": "context/unit-2/contracts/BaseModule.sol",
+            "sha256": "2246c7e89dd6f834ae02642ea84676ee8d1397663cbe6b81dd74a371583802aa",
+            "bytes": 2161
+          },
+          {
+            "path": "context/unit-2/contracts/Constants.sol",
+            "sha256": "16ee65b4cc55c88699edcde0fc9459fbc2ecc57c572660ae2b66f8ac387a38b0",
+            "bytes": 3401
+          },
+          {
+            "path": "context/unit-2/contracts/Events.sol",
+            "sha256": "e6aba499e89b588b7639649804cbb8f6e4ede243e62de1a8f6824d08982870a8",
+            "bytes": 3254
+          },
+          {
+            "path": "context/unit-2/contracts/modules/Installer.sol",
+            "sha256": "36f0c35c2c4c76ccc7fcfb3c95642189794fe5f8189881ae4b9dc3977bf41b95",
+            "bytes": 1724
+          },
+          {
+            "path": "context/unit-2/contracts/Proxy.sol",
+            "sha256": "2719673213ea07c2326fa6429909212bf198f67b0380de02930eb38b152cc3cd",
+            "bytes": 1589
+          },
+          {
+            "path": "context/unit-2/contracts/Storage.sol",
+            "sha256": "4c07aaefae6ac7abe53daf55ac2d6a01ec2f415a3ec68f43b67583fc83c62e46",
+            "bytes": 2763
+          },
+          {
+            "path": "context/unit-3/contracts/Base.sol",
+            "sha256": "2b43c8045558447a2af79dd0f0b2780786376a8a401e20891864a10b9e811d6c",
+            "bytes": 3107
+          },
+          {
+            "path": "context/unit-3/contracts/BaseIRM.sol",
+            "sha256": "b29e86bb33e29fd156f01585f7bd08c0b19ec6c862d1cb3ba8c598e9acdd2e03",
+            "bytes": 962
+          },
+          {
+            "path": "context/unit-3/contracts/BaseLogic.sol",
+            "sha256": "82ea63324e95eecff7c029ebd1e4a239c1533dcc1917560aa41e5efbff0a0bcc",
+            "bytes": 27871
+          },
+          {
+            "path": "context/unit-3/contracts/BaseModule.sol",
+            "sha256": "61921390bff0efd4d74ea527fd5e918862c071d0cbefa48c27814fb45916d9ef",
+            "bytes": 2048
+          },
+          {
+            "path": "context/unit-3/contracts/Constants.sol",
+            "sha256": "5975a7bc041de93256392ed97423ed80fa7e8a61dcefd5d1b3862d4077794184",
+            "bytes": 4105
+          },
+          {
+            "path": "context/unit-3/contracts/Events.sol",
+            "sha256": "33397bf0369d5d8c4c59c2fa1b679b615b49fca8dbf84886dc5704201b4ef49d",
+            "bytes": 3784
+          },
+          {
+            "path": "context/unit-3/contracts/Interfaces.sol",
+            "sha256": "0faa5b60f20906cc34c3942f3618fe1a6697ff96a32d10f7e959f2a9ea8458ff",
+            "bytes": 1772
+          },
+          {
+            "path": "context/unit-3/contracts/IRiskManager.sol",
+            "sha256": "9183044804d76c17d2fe41bba09ef798313917981f68d52d6f3c7c20f2ade641",
+            "bytes": 1185
+          },
+          {
+            "path": "context/unit-3/contracts/modules/Governance.sol",
+            "sha256": "6077af2703019e7d15f5270f434ba6c724ec55419cfd07215a28efe1ab28c1e4",
+            "bytes": 5517
+          },
+          {
+            "path": "context/unit-3/contracts/Proxy.sol",
+            "sha256": "2719673213ea07c2326fa6429909212bf198f67b0380de02930eb38b152cc3cd",
+            "bytes": 1589
+          },
+          {
+            "path": "context/unit-3/contracts/Storage.sol",
+            "sha256": "cdef6720a0b33ab55443b33d051f971f828ad3d74d9d56bcbd7ba22b2070ceaa",
+            "bytes": 2876
+          },
+          {
+            "path": "context/unit-3/contracts/Utils.sol",
+            "sha256": "5f741ad3f948bbda41fc0faf920c658a219b0620b9f8b0927a8739c5dbe6350b",
+            "bytes": 1012
+          },
+          {
+            "path": "context/unit-3/contracts/vendor/RPow.sol",
+            "sha256": "cfdb3fee96bccf6ea423497c7d16b7265028e2c50e188ed8cf3b1d22f888e458",
+            "bytes": 1874
+          },
+          {
+            "path": "contracts/Base.sol",
+            "sha256": "2b43c8045558447a2af79dd0f0b2780786376a8a401e20891864a10b9e811d6c",
+            "bytes": 3107
+          },
+          {
+            "path": "contracts/BaseIRM.sol",
+            "sha256": "b29e86bb33e29fd156f01585f7bd08c0b19ec6c862d1cb3ba8c598e9acdd2e03",
+            "bytes": 962
+          },
+          {
+            "path": "contracts/BaseLogic.sol",
+            "sha256": "f8ddc250d2e2508ac402ae61a4df97c1b664ad6d13c891514d5b7a68ec52cf17",
+            "bytes": 27607
+          },
+          {
+            "path": "contracts/BaseModule.sol",
+            "sha256": "61921390bff0efd4d74ea527fd5e918862c071d0cbefa48c27814fb45916d9ef",
+            "bytes": 2048
+          },
+          {
+            "path": "contracts/Constants.sol",
+            "sha256": "eabc3439f0332a4ab3cdc06bb4ae65e73f6ff44fdcde0254a30cf2f7ba87ebba",
+            "bytes": 3923
+          },
+          {
+            "path": "contracts/Events.sol",
+            "sha256": "b35e6626eee06b4386f27af8feab9be5de131014eaa76208f8cf2c41365c37fc",
+            "bytes": 3410
+          },
+          {
+            "path": "contracts/Interfaces.sol",
+            "sha256": "0faa5b60f20906cc34c3942f3618fe1a6697ff96a32d10f7e959f2a9ea8458ff",
+            "bytes": 1772
+          },
+          {
+            "path": "contracts/IRiskManager.sol",
+            "sha256": "9183044804d76c17d2fe41bba09ef798313917981f68d52d6f3c7c20f2ade641",
+            "bytes": 1185
+          },
+          {
+            "path": "contracts/modules/DToken.sol",
+            "sha256": "b40980464806de37b4c877fc10d7f56091dacce7ee511f257e08c92873013e59",
+            "bytes": 10299
+          },
+          {
+            "path": "contracts/modules/EToken.sol",
+            "sha256": "cc81e4d9b92d19087d6cbac40065e132296bb6c8983cf233a7c00037dd09bc6a",
+            "bytes": 16396
+          },
+          {
+            "path": "contracts/modules/Exec.sol",
+            "sha256": "c5f5cd02165cc31082f17c5408f478e7332073d8690c4ce91307dbb41b65b3c4",
+            "bytes": 15813
+          },
+          {
+            "path": "contracts/modules/Liquidation.sol",
+            "sha256": "a63585057b9faa6d182d95230f0a8d37539c2b153a2559f188b5db1556dc5740",
+            "bytes": 12261
+          },
+          {
+            "path": "contracts/modules/Markets.sol",
+            "sha256": "aceed745a4b29c0580b9d9fa3f3882926cb30fa4436653374ac53a957b152f34",
+            "bytes": 12380
+          },
+          {
+            "path": "contracts/modules/RiskManager.sol",
+            "sha256": "6fc6f6827a6b60f9f108c91bbbe5da4a10107e210ec3c2cd73d5160880a9e90b",
+            "bytes": 16922
+          },
+          {
+            "path": "contracts/Proxy.sol",
+            "sha256": "2719673213ea07c2326fa6429909212bf198f67b0380de02930eb38b152cc3cd",
+            "bytes": 1589
+          },
+          {
+            "path": "contracts/PToken.sol",
+            "sha256": "053db23fcac0fab8cf1a02d72f9fc0a80a5fe813320bae7ec8108524f475e15c",
+            "bytes": 5340
+          },
+          {
+            "path": "contracts/Storage.sol",
+            "sha256": "cdef6720a0b33ab55443b33d051f971f828ad3d74d9d56bcbd7ba22b2070ceaa",
+            "bytes": 2876
+          },
+          {
+            "path": "contracts/Utils.sol",
+            "sha256": "5f741ad3f948bbda41fc0faf920c658a219b0620b9f8b0927a8739c5dbe6350b",
+            "bytes": 1012
+          },
+          {
+            "path": "contracts/vendor/FullMath.sol",
+            "sha256": "9ff941b30136426213bb051c7f3691ba0bb62c1c588722a0656234f23e6816ed",
+            "bytes": 5388
+          },
+          {
+            "path": "contracts/vendor/RPow.sol",
+            "sha256": "cfdb3fee96bccf6ea423497c7d16b7265028e2c50e188ed8cf3b1d22f888e458",
+            "bytes": 1874
+          },
+          {
+            "path": "contracts/vendor/TickMath.sol",
+            "sha256": "cbeb9cba03375438921a928d76aacff5e031a68914e5eb4c9516db6f68634f90",
+            "bytes": 8898
+          }
+        ],
+        "config": "[profile.default]\nsrc = \"contracts\"\ntest = \"test\"\nscript = \"script\"\nlibs = [\"lib\"]\nsolc_version = \"0.8.10\"\noptimizer = true\noptimizer_runs = 1000000\nevm_version = \"london\"\nremappings = []\n",
+        "configSha256": "370ef41d7a1f237c370b11733a3857411c4471cd1b521addfd66e516cf3b61b5",
+        "scope": "Primary compilation sources with separately preserved cross-contract source context; context units are readable but excluded from the primary AST build."
+      }
+    ]
+  },
+  "generationBudgetUsd": 15,
+  "perProjectSdkBudgetUsd": 4,
+  "sampling": "One consecutive generation run per prepared project; no reruns selected for favorable findings.",
+  "split": "development",
+  "labels": "not-adjudicated",
+  "runs": [
+    {
+      "projectId": "project-01",
+      "family": "socket",
+      "status": "complete",
+      "directory": "project-01/threat-model-2026-09-21-06-29-37-Ax7QPB",
+      "rawFindingCount": 4
+    },
+    {
+      "projectId": "project-02",
+      "family": "sentiment",
+      "status": "complete",
+      "directory": "project-02/threat-model-2026-09-21-06-35-38-TCzG4J",
+      "rawFindingCount": 5
+    },
+    {
+      "projectId": "project-03",
+      "family": "euler",
+      "status": "failed",
+      "errorType": "Error"
+    }
+  ],
+  "finishedAt": "2026-09-21T06:39:46.931Z",
+  "generationBudgetChargedUsd": 14.784109950000001,
+  "generationPendingReservationUsd": -2.220446049250313e-16
+}

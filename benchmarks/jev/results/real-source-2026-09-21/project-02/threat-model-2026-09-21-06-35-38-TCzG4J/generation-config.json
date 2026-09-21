@@ -1,0 +1,669 @@
+{
+  "version": 1,
+  "sourceOnly": true,
+  "sourceInventory": [
+    {
+      "path": "context/unit-1/lib/controller/src/core/IController.sol",
+      "sha256": "2590f84ca36760518c3113e9abdd9361adb4e2506c17476415f2939a73559d70"
+    },
+    {
+      "path": "context/unit-1/lib/controller/src/core/IControllerFacade.sol",
+      "sha256": "dea87272e0c9e0084bda3a5e769ff153e195b6bc0ae20cf0a5212ae2bf46745b"
+    },
+    {
+      "path": "context/unit-1/lib/oracle/src/core/IOracle.sol",
+      "sha256": "768eda8cdf750e7188c6ef7dd057a5ed8af1a702beceb123c8be08bd302b8ab0"
+    },
+    {
+      "path": "context/unit-1/lib/solmate/src/tokens/ERC20.sol",
+      "sha256": "a3a7e839f42762ef24623581542a916e838f3c7c0bef647963d1fdad0f9d208a"
+    },
+    {
+      "path": "context/unit-1/src/core/AccountManager.sol",
+      "sha256": "e306ea775c250ad7ee8c3ecf9423405bfe7bfa1e3a7fe9e54115aece6cb072ed"
+    },
+    {
+      "path": "context/unit-1/src/interface/core/IAccount.sol",
+      "sha256": "e0eeff8502eab2fb49fd2224669d391cecb8f8e228d1d048733a4ea7916d6f52"
+    },
+    {
+      "path": "context/unit-1/src/interface/core/IAccountFactory.sol",
+      "sha256": "762f69bbf727981f19f4e1939a14d969b59d7a358e77a241537fc31601992157"
+    },
+    {
+      "path": "context/unit-1/src/interface/core/IAccountManager.sol",
+      "sha256": "2e068ee8a7dda165ac7d779a4df8aa8bb9ca1b4307ca93316562017d85b32998"
+    },
+    {
+      "path": "context/unit-1/src/interface/core/IRateModel.sol",
+      "sha256": "125fe31252ac4c7a85c82192c22f1f6f3345f7480890810e3b644e80f1e5e1f2"
+    },
+    {
+      "path": "context/unit-1/src/interface/core/IRegistry.sol",
+      "sha256": "f4b6910ee5327dd89aaef9ceae73a15f726d4b589593cd0008baa52bf937e6d6"
+    },
+    {
+      "path": "context/unit-1/src/interface/core/IRiskEngine.sol",
+      "sha256": "fc6ad0fd64eab702423e668fb232837a8bf59df7f00ef672d30b5d8ceeb87b99"
+    },
+    {
+      "path": "context/unit-1/src/interface/tokens/IERC20.sol",
+      "sha256": "b3daf2a12df2f81e8a8a441b40f1df54ad3c2fdc537486b8ab190f90ede4007f"
+    },
+    {
+      "path": "context/unit-1/src/interface/tokens/IERC4626.sol",
+      "sha256": "a08df8a7ac013267366c4d8d4df3a4e9abee2e333aeded9cf2e7c1d0e14b4282"
+    },
+    {
+      "path": "context/unit-1/src/interface/tokens/ILToken.sol",
+      "sha256": "e3e558c47f003ff4186e004095e28b569a77ca45bde1e48dcbeb795e9a891f14"
+    },
+    {
+      "path": "context/unit-1/src/interface/utils/IOwnable.sol",
+      "sha256": "bdc76500d00d3499f01d149e23fc63d0ad7a23929e25caebac343d6257381c68"
+    },
+    {
+      "path": "context/unit-1/src/utils/Errors.sol",
+      "sha256": "247b674779a57b7cabe39ef5d8fb5d92f2caa1a34d92e5f1248fce9e07a87354"
+    },
+    {
+      "path": "context/unit-1/src/utils/Helpers.sol",
+      "sha256": "c0c6e7b1251059028ec1a7752cb2fb8c56dcf6f50f01cbaceea213d6978bf533"
+    },
+    {
+      "path": "context/unit-1/src/utils/Ownable.sol",
+      "sha256": "795385a13cd6c767616644e59ab66031ebc9b9328006d0fbdcaad8000101ef3f"
+    },
+    {
+      "path": "context/unit-1/src/utils/Pausable.sol",
+      "sha256": "465255cd57291d5fad184f82318548e73a32d59688ca51a11d1a6feaabcf805c"
+    },
+    {
+      "path": "context/unit-1/src/utils/ReentrancyGuard.sol",
+      "sha256": "1335aacd6eb5cec551babbe5576ae66502c32da39d39e03eda774077256758b8"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/helpers/AssetHelpers.sol",
+      "sha256": "c68497cc0703d5851564910be0c7e6671481736f0bf102bbd889a6423c15baae"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/helpers/Authentication.sol",
+      "sha256": "1d4b087a0c92c93b00c2e826efc9b71505f37d9afea24126ac27326b48c3cb21"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/helpers/BalancerErrors.sol",
+      "sha256": "a48c1be21fb6409543bef40fe75a0bbf94bfd81361e5016e5085f5196a999d04"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/helpers/IAuthentication.sol",
+      "sha256": "e0126f782a0251b648752779813a4881921bf4fc8ab67daa9dca830dfd10795c"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/helpers/ISignaturesValidator.sol",
+      "sha256": "1c77ae474a53632ed12f2112703952b44ae3d57e9e487f8fa8272f5b9715c66c"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/helpers/ITemporarilyPausable.sol",
+      "sha256": "453a31199b7309e3635481f14e002bfe2cf5bf41f52bcaad7d91b4f4e95caf01"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/helpers/InputHelpers.sol",
+      "sha256": "eeed529514500d6bf4751d7a6e22a6e2d58a272bf34312ad95d297524389d065"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/helpers/SignaturesValidator.sol",
+      "sha256": "baa87ccdd4e01870054c984c7904529b231aa8cb46a66f2eece966ec3d4b4d50"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/helpers/TemporarilyPausable.sol",
+      "sha256": "f7eca7d4fd7c3ceccc1173e566211a7a40e20642f10776ebb7a7434948731554"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/math/FixedPoint.sol",
+      "sha256": "a6e91cd967cbaad44922d574bcafc73b15137e9b329e59c8de9390090c73326d"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/math/LogExpMath.sol",
+      "sha256": "9eb367a749270efefe809e96e29fde844f5f530568d694e164c153a0710cab79"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/math/Math.sol",
+      "sha256": "0fd8298b95ed3654e418d5b400feefee361e68517d9c1296b29fb582c9be833e"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/openzeppelin/Address.sol",
+      "sha256": "673a56dbfa28fc63f0c860c55b7c65c014890019cda91f9a38705e8a44f42646"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/openzeppelin/EIP712.sol",
+      "sha256": "e5d8893a18cdbb9ad7eec521a66a9634b0b99b6f584b993c725a9efc65c0e79b"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/openzeppelin/EnumerableMap.sol",
+      "sha256": "9c858b2d12d7c058e58bab43d01160d677ebd0112219f40479bda67922fdb6d9"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/openzeppelin/EnumerableSet.sol",
+      "sha256": "c6e322fb7d0df41ee4062099afa3ae59ed31a24d44f3f2187a3abda30998d9bd"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/openzeppelin/IERC20.sol",
+      "sha256": "e6856d34898f74b4aa8da281e8dac9cad9ed6aa22b7b4517bc2955a06b6d4c98"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/openzeppelin/ReentrancyGuard.sol",
+      "sha256": "9379b5ce722fd566daa5e7173072bca3a1c60b56c6c063361d7bce0694d6e2ea"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/openzeppelin/SafeCast.sol",
+      "sha256": "b6f5a82f7d83bc560944d8eb398f9899813ba1cc0fe03f87ddd01af2d6293b98"
+    },
+    {
+      "path": "context/unit-2/contracts/lib/openzeppelin/SafeERC20.sol",
+      "sha256": "50753fd9190038a95a9b303576bb8a6342d865dc4da0fc9320608afca958d735"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/AssetManagers.sol",
+      "sha256": "b16512f367c65575fbc4bc7b585be6be74fd10ece8dd56b1eda86e72cbdd5f5d"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/AssetTransfersHandler.sol",
+      "sha256": "5ac981b5a418cc1589f4787e9510083bcdecf13f77b3692fabc29ea9ec8e2c65"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/Fees.sol",
+      "sha256": "c7d3d693cebe4d75681f622df95b68b7cda67242db47ff20f7506dc3fdce4b13"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/FlashLoans.sol",
+      "sha256": "5056b411121198c449954401b205ff681f003703a5a84eb6af9bf320a3531fe5"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/PoolBalances.sol",
+      "sha256": "71c79ed096950876a51e56d575644718a4ec57c3fd468533881dd11294d60410"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/PoolRegistry.sol",
+      "sha256": "4bd2c739ee90f3ce039b65663fea6e128b2e08c7f84a4fd2271b1ec5e7497382"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/PoolTokens.sol",
+      "sha256": "dbe4b1aa0929e505eba1e98beeba51696510e14bbf50337efe38a8d218d8ce1f"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/ProtocolFeesCollector.sol",
+      "sha256": "273232be5e195e844a532ef3a4409a2bd424b49de5957bc562dc00b682abccfd"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/Swaps.sol",
+      "sha256": "21b1a98a55bb800be0f6dfb117b0933aed7d25a51a74aed023806caa4a42ea80"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/UserBalance.sol",
+      "sha256": "b5c25ddc2adc071d4d866dff96692ea32b687b1d76fb974f07e6a410fea5ae56"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/Vault.sol",
+      "sha256": "cc480291015a7f3258d9af4dbab37522aeb4c7ea21c502c1335dc207c8cccc34"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/VaultAuthorization.sol",
+      "sha256": "5e7b51d9605ddf4e377e8412fb5baa48a1de7296a294474f8bb99738e5af6468"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/balances/BalanceAllocation.sol",
+      "sha256": "0b5ed4ba0c0477a492c91e5833c40b28dba454a0a92c49114de36f1719541ab9"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/balances/GeneralPoolsBalance.sol",
+      "sha256": "b966c28cb5e064a54848f7e5e7580a95b4b2f5eb3bac626ee5306e9fa5d7f878"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/balances/MinimalSwapInfoPoolsBalance.sol",
+      "sha256": "a6a1615b3f5f419c35a4e39ff74bb61d97d1c7d0b189c91485f8f565cbfe76fa"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/balances/TwoTokenPoolsBalance.sol",
+      "sha256": "8d4d0873bac52c8dd22079f005fbf8538763e5e9ee7673575287a54c56765a3c"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/interfaces/IAsset.sol",
+      "sha256": "45b9e9dd685aca25db3de89257952b3dd7297dacb859a9bd359ea877addf0008"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/interfaces/IAuthorizer.sol",
+      "sha256": "21446c174ae6d518a065c8dc84b979ed596440582fca265db590979768ba3c86"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/interfaces/IBasePool.sol",
+      "sha256": "e6cb14f5c042311104da954570f69358407c6ac199f46f50331660996554ec94"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/interfaces/IFlashLoanRecipient.sol",
+      "sha256": "43a48cc8b943e688a3c2914f40f709c16cd91888ac6f022593a5797d60d0eae4"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/interfaces/IGeneralPool.sol",
+      "sha256": "6791df5af8943fc0fbe9cca732093fb2a2cb0dc590fee0a0b89b4c4fced3610e"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/interfaces/IMinimalSwapInfoPool.sol",
+      "sha256": "fbff888d9e28e110eca60056d4a22fc0dbcbae0fe1971de8fd8a8282263496e3"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/interfaces/IPoolSwapStructs.sol",
+      "sha256": "57904f44b579a5ae7e6d14e36cf4e2b291a476485e305cd50480cf5e76fc5615"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/interfaces/IVault.sol",
+      "sha256": "c9475141f79e41ae14f029a9e2ade3ec745b1a1ed261056e278d14d74883d8bd"
+    },
+    {
+      "path": "context/unit-2/contracts/vault/interfaces/IWETH.sol",
+      "sha256": "00661fe02502219a46505abe7b589bcdc7d2aec7ec28adf07dff1fe1dd5fa537"
+    },
+    {
+      "path": "context/unit-3/contracts/lib/helpers/Authentication.sol",
+      "sha256": "1d4b087a0c92c93b00c2e826efc9b71505f37d9afea24126ac27326b48c3cb21"
+    },
+    {
+      "path": "context/unit-3/contracts/lib/helpers/BalancerErrors.sol",
+      "sha256": "a48c1be21fb6409543bef40fe75a0bbf94bfd81361e5016e5085f5196a999d04"
+    },
+    {
+      "path": "context/unit-3/contracts/lib/helpers/IAuthentication.sol",
+      "sha256": "e0126f782a0251b648752779813a4881921bf4fc8ab67daa9dca830dfd10795c"
+    },
+    {
+      "path": "context/unit-3/contracts/lib/helpers/ISignaturesValidator.sol",
+      "sha256": "1c77ae474a53632ed12f2112703952b44ae3d57e9e487f8fa8272f5b9715c66c"
+    },
+    {
+      "path": "context/unit-3/contracts/lib/helpers/ITemporarilyPausable.sol",
+      "sha256": "453a31199b7309e3635481f14e002bfe2cf5bf41f52bcaad7d91b4f4e95caf01"
+    },
+    {
+      "path": "context/unit-3/contracts/lib/helpers/InputHelpers.sol",
+      "sha256": "eeed529514500d6bf4751d7a6e22a6e2d58a272bf34312ad95d297524389d065"
+    },
+    {
+      "path": "context/unit-3/contracts/lib/helpers/TemporarilyPausable.sol",
+      "sha256": "f7eca7d4fd7c3ceccc1173e566211a7a40e20642f10776ebb7a7434948731554"
+    },
+    {
+      "path": "context/unit-3/contracts/lib/math/FixedPoint.sol",
+      "sha256": "a6e91cd967cbaad44922d574bcafc73b15137e9b329e59c8de9390090c73326d"
+    },
+    {
+      "path": "context/unit-3/contracts/lib/math/LogExpMath.sol",
+      "sha256": "9eb367a749270efefe809e96e29fde844f5f530568d694e164c153a0710cab79"
+    },
+    {
+      "path": "context/unit-3/contracts/lib/math/Math.sol",
+      "sha256": "0fd8298b95ed3654e418d5b400feefee361e68517d9c1296b29fb582c9be833e"
+    },
+    {
+      "path": "context/unit-3/contracts/lib/openzeppelin/EIP712.sol",
+      "sha256": "e5d8893a18cdbb9ad7eec521a66a9634b0b99b6f584b993c725a9efc65c0e79b"
+    },
+    {
+      "path": "context/unit-3/contracts/lib/openzeppelin/ERC20.sol",
+      "sha256": "0ed4ceb26d6357721d20022c70c77604b20087d178ae8777f6f59f4783623436"
+    },
+    {
+      "path": "context/unit-3/contracts/lib/openzeppelin/IERC20.sol",
+      "sha256": "e6856d34898f74b4aa8da281e8dac9cad9ed6aa22b7b4517bc2955a06b6d4c98"
+    },
+    {
+      "path": "context/unit-3/contracts/lib/openzeppelin/IERC20Permit.sol",
+      "sha256": "467403c0360df0cf08837eacb7a5ac35fb91cc04a93dfa7e0f363b95ef5b805a"
+    },
+    {
+      "path": "context/unit-3/contracts/lib/openzeppelin/ReentrancyGuard.sol",
+      "sha256": "9379b5ce722fd566daa5e7173072bca3a1c60b56c6c063361d7bce0694d6e2ea"
+    },
+    {
+      "path": "context/unit-3/contracts/lib/openzeppelin/SafeERC20.sol",
+      "sha256": "50753fd9190038a95a9b303576bb8a6342d865dc4da0fc9320608afca958d735"
+    },
+    {
+      "path": "context/unit-3/contracts/lib/openzeppelin/SafeMath.sol",
+      "sha256": "03bfe0c2cac917f66d4b8dac1a9750df9905c41cdcc3b6388faadf7d344bd4cd"
+    },
+    {
+      "path": "context/unit-3/contracts/pools/BalancerPoolToken.sol",
+      "sha256": "25c177d502c0ccdc40bef355920df3631d638a2fd3d4835f928c655fdcec250a"
+    },
+    {
+      "path": "context/unit-3/contracts/pools/BaseMinimalSwapInfoPool.sol",
+      "sha256": "22504418abb8f57013492374736c141b36e9d6ac4c775cd1e3eb06c3202c1405"
+    },
+    {
+      "path": "context/unit-3/contracts/pools/BasePool.sol",
+      "sha256": "97f1653b052b0dff2389b88eb3dc0ab0eda6622b4b5130235e73f7fd625d7536"
+    },
+    {
+      "path": "context/unit-3/contracts/pools/BasePoolAuthorization.sol",
+      "sha256": "5990c98a47956f8cd3bdfd1d6c0ec9e21eeb42b7375607a3317a43cf36c3d662"
+    },
+    {
+      "path": "context/unit-3/contracts/pools/factories/BasePoolFactory.sol",
+      "sha256": "69d225ac287cfa0de2c7ae5acb3a6aba0aef0f970edcf25214eea1ab59978c00"
+    },
+    {
+      "path": "context/unit-3/contracts/pools/factories/FactoryWidePauseWindow.sol",
+      "sha256": "5576303ef1426bb1af37287a4fed17274df607700ec529abf651931a6cbca5dc"
+    },
+    {
+      "path": "context/unit-3/contracts/pools/weighted/WeightedMath.sol",
+      "sha256": "c3ac0e5e68c2a0e30548cb4150d2188510fdf65e38f662c3ded8df199d57cd3e"
+    },
+    {
+      "path": "context/unit-3/contracts/pools/weighted/WeightedPool.sol",
+      "sha256": "29bb8bdd2b13e40154885278c7261fe25b8d2ad6d8844a4b4e873df536314edd"
+    },
+    {
+      "path": "context/unit-3/contracts/pools/weighted/WeightedPoolFactory.sol",
+      "sha256": "0900a910093361bc363f1e9a583b851735889c969a650fc189ebf562d52947cb"
+    },
+    {
+      "path": "context/unit-3/contracts/pools/weighted/WeightedPoolUserDataHelpers.sol",
+      "sha256": "ed77c39e9ee3b5e3651c0d23af3f5aac729e18f9991728c205fbd1725a37d73f"
+    },
+    {
+      "path": "context/unit-3/contracts/vault/ProtocolFeesCollector.sol",
+      "sha256": "273232be5e195e844a532ef3a4409a2bd424b49de5957bc562dc00b682abccfd"
+    },
+    {
+      "path": "context/unit-3/contracts/vault/interfaces/IAsset.sol",
+      "sha256": "45b9e9dd685aca25db3de89257952b3dd7297dacb859a9bd359ea877addf0008"
+    },
+    {
+      "path": "context/unit-3/contracts/vault/interfaces/IAuthorizer.sol",
+      "sha256": "21446c174ae6d518a065c8dc84b979ed596440582fca265db590979768ba3c86"
+    },
+    {
+      "path": "context/unit-3/contracts/vault/interfaces/IBasePool.sol",
+      "sha256": "e6cb14f5c042311104da954570f69358407c6ac199f46f50331660996554ec94"
+    },
+    {
+      "path": "context/unit-3/contracts/vault/interfaces/IFlashLoanRecipient.sol",
+      "sha256": "43a48cc8b943e688a3c2914f40f709c16cd91888ac6f022593a5797d60d0eae4"
+    },
+    {
+      "path": "context/unit-3/contracts/vault/interfaces/IMinimalSwapInfoPool.sol",
+      "sha256": "fbff888d9e28e110eca60056d4a22fc0dbcbae0fe1971de8fd8a8282263496e3"
+    },
+    {
+      "path": "context/unit-3/contracts/vault/interfaces/IPoolSwapStructs.sol",
+      "sha256": "57904f44b579a5ae7e6d14e36cf4e2b291a476485e305cd50480cf5e76fc5615"
+    },
+    {
+      "path": "context/unit-3/contracts/vault/interfaces/IVault.sol",
+      "sha256": "c9475141f79e41ae14f029a9e2ade3ec745b1a1ed261056e278d14d74883d8bd"
+    },
+    {
+      "path": "context/unit-3/contracts/vault/interfaces/IWETH.sol",
+      "sha256": "00661fe02502219a46505abe7b589bcdc7d2aec7ec28adf07dff1fe1dd5fa537"
+    },
+    {
+      "path": "foundry.toml",
+      "sha256": "23aa81e58e6b316a60b56f52149a60e053bae937f83b845660a0cb350de80d0a"
+    },
+    {
+      "path": "src/balancer/IPool.sol",
+      "sha256": "71f76d97e65357930f270208ce81a6292ceeb3c499d00c0a637c93f46299ff52"
+    },
+    {
+      "path": "src/balancer/IVault.sol",
+      "sha256": "c46b4b2bf57c6a975f94054b315e3f32af42e634e6f2b602544e062d056d890c"
+    },
+    {
+      "path": "src/balancer/WeightedBalancerLPOracle.sol",
+      "sha256": "3121ec22b720104545dd56feb729cb9769b2a567b48d2e46e2c45e722277afa0"
+    },
+    {
+      "path": "src/balancer/library/BalancerErrors.sol",
+      "sha256": "abdadee34a4a8a7215604e95c5516c32271dbfc65665abbaf73ad042a0d5325a"
+    },
+    {
+      "path": "src/balancer/library/FixedPoint.sol",
+      "sha256": "8f167d76e4f193ada455928559c029b69f6a62bf31169feae3a08b0359ddac77"
+    },
+    {
+      "path": "src/balancer/library/LogExpMath.sol",
+      "sha256": "f75c2ccd0c161e57e748475526897cafafb9f77400ffe02989d24780be312cc5"
+    },
+    {
+      "path": "src/core/IOracle.sol",
+      "sha256": "768eda8cdf750e7188c6ef7dd057a5ed8af1a702beceb123c8be08bd302b8ab0"
+    },
+    {
+      "path": "src/utils/IERC20.sol",
+      "sha256": "72600f1a8be063889ddff32d6d191c7ad70bc9030fac0512ee707f8694f0aba8"
+    }
+  ],
+  "providers": [
+    {
+      "id": "ast",
+      "phase": "precompute"
+    },
+    {
+      "id": "inspect",
+      "phase": "precompute"
+    },
+    {
+      "id": "blueprint",
+      "phase": "precompute"
+    },
+    {
+      "id": "anti-slop",
+      "phase": "synthesis-filter"
+    },
+    {
+      "id": "self-contradiction",
+      "phase": "synthesis-filter"
+    },
+    {
+      "id": "dedup",
+      "phase": "synthesis-filter"
+    },
+    {
+      "id": "ranking",
+      "phase": "synthesis-filter"
+    }
+  ],
+  "prompt": "You are Forge Proof's threat modeling orchestrator.\n\nYour job is to delegate to the **threat-modeler** agent, which will deeply explore the smart contracts in /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-tLTefM/project-02/src/ and produce a structured threat model as JSON.\n\n## Instructions\n\n1. Delegate to the **threat-modeler** agent with this brief:\n   \"Analyze all smart contracts in /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-tLTefM/project-02/src/. Produce a complete threat model as JSON following your output format instructions. Use the pre-computed code map and on-chain data to guide your exploration. Every threat must include a TRACE.\"\n\n2. When the threat-modeler returns its JSON output, present it as your final response.\n\n3. Do NOT modify the JSON. Do NOT add commentary. Just output the raw JSON the agent produced.\n\nImportant: The threat-modeler agent has all the context it needs (AST structural data, Etherscan data, analysis patterns). Just delegate and return the result.\n\nThe Task tool is SYNCHRONOUS: it does not return until the agent has completely\nfinished, and what it returns IS the agent's full output. Nothing runs in the\nbackground and there is nothing to wait for or poll. Never say the agent \"is\nrunning\" or that you will \"wait for it\" — by then it has already finished and\nyou are holding its result. Never end your turn straight after a Task call;\npass the returned JSON to the StructuredOutput tool.",
+  "agent": {
+    "description": "Deep code exploration specialist for smart contract threat modeling. Reads pre-computed structural data from disk (blueprint + code map) and uses Read/Grep/Glob tools to trace call graphs, build CEI timelines, follow inheritance chains, and resolve interface implementations. Every threat includes the exact code trace that found it.",
+    "prompt": "You are a smart contract security researcher performing SYSTEMATIC THREAT MODELING through deep code exploration.\n\nCRITICAL RULE: Every threat you identify MUST include a TRACE showing the exact sequence of code locations you traversed to discover it. A threat without a trace is speculation — delete it. You are building an evidence chain, not generating opinions.\n\nFOCUS RULE: Concentrate ALL analysis on threats from UNTRUSTED actors (external users, depositors, withdrawers, arbitrary callers). Do NOT spend time on threats that require a trusted or semi-trusted actor to be malicious or compromised (owner, admin, strategist, rate updater, solver). Governance/admin misconfiguration is out of scope — assume privileged roles act honestly. The goal is to find vulnerabilities that an unprivileged attacker can exploit.\n\nYour working directory is: /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-tLTefM/project-02\nAll source contracts are in: /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-tLTefM/project-02/src/\n\n## Your Task\n\nProduce a structured threat model as JSON. You must:\n1. Read the blueprint file first to get the contract classification and investigation questions\n2. Identify actors, assets, and trust boundaries\n3. Work through the INVESTIGATION QUESTIONS from the blueprint — each one is a pre-computed lead you must confirm or refute by reading actual code\n4. For each confirmed threat, include the TRACE showing how you found it\n5. After exhausting the pre-computed leads, apply the cross-referencing patterns to find anything missed\n\n## Pre-Computed Structural Data (on disk — read when needed)\n\nAnalysis data has been written to disk. Use your Read, Grep, and Glob tools to access it:\n\n**Blueprint** (start here):\n- Read /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-tLTefM/project-02/.forge-proof/blueprint.json — classification, investigation questions, attack surface scores, invariants, CEI violations, pattern findings\n\n**Code Map** (per-contract files for fast lookup):\n- Glob /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-tLTefM/project-02/.forge-proof/codemap/*.json to list available contract files\n- Read /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-tLTefM/project-02/.forge-proof/codemap/<ContractName>.json for a specific contract's function summaries, auth checks, guards, operation ordering, storage layout\n- Read /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-tLTefM/project-02/.forge-proof/codemap/_inheritance.json for all inheritance relationships\n- Read /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-tLTefM/project-02/.forge-proof/codemap/_callGraph.json for all call graph edges\n- Read /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-tLTefM/project-02/.forge-proof/codemap/_stateVarMap.json for all state variable read/write maps\n- Read /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-tLTefM/project-02/.forge-proof/codemap/_dataDependency.json for transitive data dependencies and taint tracking\n- Use Grep to search across all code map files: Grep pattern /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-tLTefM/project-02/.forge-proof/codemap/\n\n**START by reading the blueprint file** — it contains your prioritized investigation questions.\n\nIMPORTANT: Only read data from the paths listed above. Do NOT read files from forge-proof-output/ or any other directory — those may contain stale data from previous runs on different projects.\n\n## No On-Chain Data\nNo on-chain address was provided. Analyze based on code alone.\n\n## How to Work\n\n1. **START by reading the blueprint file** — it contains investigation questions, attack surface rankings, inferred invariants, and pre-detected CEI violations. These are your highest-priority leads.\n\n2. **For each investigation question:**\n   a. Read the actual source code at the locations mentioned\n   b. Determine: is this a real threat, a false positive, or needs more investigation?\n   c. If real: build the full attack scenario and trace\n   d. If false positive: briefly note why (e.g., \"reentrancy guard present on line 42\")\n\n3. **Validate the inferred invariants** — read the code to confirm each invariant should hold.\n\n4. **Use the attack surface ranking** to allocate your time — spend more turns on high-score functions.\n\n5. **Use the code map file** when you need detailed structural data (call graphs, state var read/write maps, auth checks, etc.) — search with Grep for specific contract or function names.\n\n6. **Apply cross-referencing patterns** for any angle not covered:\n   - External call receiver tracing (who can callback?)\n   - CEI timeline construction (state-write after external-call?)\n   - State variable conservation (paired writes diverge?)\n   - Reverse xref (who calls function X?)\n   - Interface assumption validation (fee-on-transfer? return values checked?)\n   - Privilege escalation paths (unguarded state mutators?)\n   - Source-to-sink value tracing (can attacker divert value?)\n\n## Output Format\n\nOutput ONLY valid JSON matching this schema. Do NOT include any text before or after the JSON.\n\n```json\n{\n  \"contractType\": \"vault\",\n  \"actors\": [\n    {\"name\": \"depositor\", \"type\": \"user\", \"capabilities\": [\"deposit\", \"withdraw\"]},\n    {\"name\": \"admin\", \"type\": \"admin\", \"capabilities\": [\"pause\", \"setFee\"]}\n  ],\n  \"assets\": [\n    {\"name\": \"ETH deposits\", \"type\": \"funds\", \"location\": \"VaultContract:balances\"}\n  ],\n  \"trustBoundaries\": [\n    {\"name\": \"User callback\", \"description\": \"msg.sender.call sends ETH to user-controlled address\", \"crossedBy\": [\"src/Vault.sol:withdraw\"]}\n  ],\n  \"threats\": [\n    {\n      \"id\": \"T-001\",\n      \"category\": \"reentrancy\",\n      \"title\": \"CEI violation in withdraw() allows reentrancy drain\",\n      \"description\": \"withdraw() makes an external call to msg.sender before updating state\",\n      \"affectedCode\": [\"src/Vault.sol:withdraw:34\"],\n      \"assets\": [\"ETH deposits\"],\n      \"severity\": \"Critical\",\n      \"confidence\": \"high\",\n      \"trace\": {\n        \"steps\": [\n          {\"action\": \"Blueprint\", \"target\": \"ceiViolations\", \"finding\": \"withdraw() flagged: state-write after external-call, no reentrancy guard\"},\n          {\"action\": \"Read\", \"target\": \"src/Vault.sol:30-42\", \"finding\": \"msg.sender.call{value: amount} at line 34, balances update at line 38\"},\n          {\"action\": \"Grep\", \"target\": \"balances in Vault.sol\", \"finding\": \"balances[msg.sender] -= amount at line 38, AFTER call at 34\"},\n          {\"action\": \"Read\", \"target\": \"src/Vault.sol:38-39\", \"finding\": \"Confirmed: state write happens after external call with no guard\"}\n        ]\n      },\n      \"attackScenario\": \"1. Attacker deposits 1 ETH\\n2. Calls withdraw(1 ETH)\\n3. Vault sends ETH via call\\n4. receive() re-enters withdraw\\n5. Repeat until drained\",\n      \"suggestedProperties\": [\"check_withdraw_cannot_exceed_balance\", \"check_vault_solvency\"],\n      \"priority\": 1\n    }\n  ]\n}\n```\n\nANTI-SLOP RULE: If you cannot fill in the trace.steps with REAL code locations you actually read, DO NOT include the threat. Speculation without evidence is worse than silence.\n\nNow read the blueprint file and begin analyzing the contracts in /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-tLTefM/project-02/src/.\nSource-only collection: use only Read, Grep, and Glob inside this workspace. If context/ exists, it contains additional contract source in separate compilation units; consult it to resolve cross-contract behavior. No incident history, web access, shell commands, or external files are available.",
+    "tools": [
+      "Read",
+      "Grep",
+      "Glob"
+    ],
+    "model": "opus",
+    "omitClaudeMd": true
+  },
+  "outputFormat": {
+    "type": "json_schema",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "contractType": {
+          "type": "string",
+          "enum": [
+            "vault",
+            "dex",
+            "lending",
+            "token",
+            "governance",
+            "bridge",
+            "staking",
+            "nft",
+            "oracle",
+            "proxy",
+            "other"
+          ]
+        },
+        "actors": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "assets": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "trustBoundaries": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "threats": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "category": {
+                "type": "string",
+                "enum": [
+                  "access-control",
+                  "reentrancy",
+                  "oracle-manipulation",
+                  "flash-loan",
+                  "arithmetic",
+                  "denial-of-service",
+                  "front-running",
+                  "token-handling",
+                  "upgradeability",
+                  "cross-contract",
+                  "governance",
+                  "randomness",
+                  "unchecked-calls",
+                  "logic-error"
+                ]
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "affectedCode": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "assets": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "severity": {
+                "type": "string",
+                "enum": [
+                  "Critical",
+                  "High",
+                  "Medium",
+                  "Low"
+                ]
+              },
+              "confidence": {
+                "type": "string",
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "trace": {
+                "type": "object",
+                "properties": {
+                  "steps": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "action": {
+                          "type": "string"
+                        },
+                        "target": {
+                          "type": "string"
+                        },
+                        "finding": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "action",
+                        "target",
+                        "finding"
+                      ]
+                    }
+                  },
+                  "ceiTimeline": {
+                    "type": "object"
+                  },
+                  "dataFlow": {
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "steps"
+                ]
+              },
+              "suggestedProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "attackScenario": {
+                "type": "string"
+              },
+              "priority": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "id",
+              "category",
+              "title",
+              "description",
+              "affectedCode",
+              "severity",
+              "confidence",
+              "trace",
+              "suggestedProperties",
+              "priority"
+            ]
+          }
+        }
+      },
+      "required": [
+        "contractType",
+        "threats"
+      ]
+    }
+  },
+  "requestedModel": "opus",
+  "maxBudgetUsd": 4,
+  "maxTurns": 60,
+  "modelOverrides": {
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "anthropic/claude-sonnet-4.6",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "anthropic/claude-sonnet-4.6",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "anthropic/claude-sonnet-4.6",
+    "FORGE_PROOF_CLASSIFIER_MODEL": "anthropic/claude-haiku-4.5"
+  },
+  "billingNote": "SDK-reported generation cost; excludes the separate blueprint classifier call and is not independently reconciled provider billing."
+}

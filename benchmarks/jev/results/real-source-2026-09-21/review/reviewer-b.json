@@ -1,0 +1,332 @@
+{
+  "version": 1,
+  "datasetSha256": "7cfa3ef349db8ec9535124d596c3e70b98391bfe23129bbd4d85d62f730af98f",
+  "reviewer": {
+    "id": null,
+    "kind": "human"
+  },
+  "cases": [
+    {
+      "caseId": "project-01-f001-position",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-01-f001-project-01-f002-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-01-f001-project-01-f003-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-01-f001-project-01-f004-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-01-f002-position",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-01-f002-project-01-f003-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-01-f002-project-01-f004-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-01-f003-position",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-01-f003-project-01-f004-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-01-f004-position",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-02-f001-position",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-02-f001-project-02-f002-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-02-f001-project-02-f003-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-02-f001-project-02-f004-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-02-f001-project-02-f005-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-02-f002-position",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-02-f002-project-02-f003-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-02-f002-project-02-f004-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-02-f002-project-02-f005-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-02-f003-position",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-02-f003-project-02-f004-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-02-f003-project-02-f005-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-02-f004-position",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-02-f004-project-02-f005-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-02-f005-position",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f001-position",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f001-project-03-f002-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f001-project-03-f003-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f001-project-03-f004-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f001-project-03-f005-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f001-project-03-f006-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f002-position",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f002-project-03-f003-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f002-project-03-f004-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f002-project-03-f005-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f002-project-03-f006-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f003-position",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f003-project-03-f004-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f003-project-03-f005-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f003-project-03-f006-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f004-position",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f004-project-03-f005-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f004-project-03-f006-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f005-position",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f005-project-03-f006-identity",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    },
+    {
+      "caseId": "project-03-f006-position",
+      "label": null,
+      "rationale": "",
+      "sourceReferences": [],
+      "uncertainty": ""
+    }
+  ]
+}

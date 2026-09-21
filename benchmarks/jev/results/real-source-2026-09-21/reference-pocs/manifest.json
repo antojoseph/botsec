@@ -1,0 +1,30 @@
+{
+  "commit": "cb457812eacd4dad09bbd1b62a1fe2fcff1a8669",
+  "policy": "Trusted reference PoCs retained for coverage assessment; not executed or exposed to the generator.",
+  "records": [
+    {
+      "path": "src/test/2023-03/Euler_exp.sol",
+      "url": "https://raw.githubusercontent.com/SunWeb3Sec/DeFiHackLabs/cb457812eacd4dad09bbd1b62a1fe2fcff1a8669/src/test/2023-03/Euler_exp.sol",
+      "file": "Euler_exp.sol",
+      "bytes": 6127,
+      "sha256": "7ece83371eb2b97718f6b9cc7d11594767926fe1333a3a189c10f1560e3cb2cf",
+      "gitBlobSha1": "1b28e23efd669cbc6265f1ec3d4de8aa6d1b5e06"
+    },
+    {
+      "path": "src/test/2023-04/Sentiment_exp.sol",
+      "url": "https://raw.githubusercontent.com/SunWeb3Sec/DeFiHackLabs/cb457812eacd4dad09bbd1b62a1fe2fcff1a8669/src/test/2023-04/Sentiment_exp.sol",
+      "file": "Sentiment_exp.sol",
+      "bytes": 10672,
+      "sha256": "c8a76b858de145be7af2a5da9cf62f1f4b1c93950e408a5023eb3f7f3265f73f",
+      "gitBlobSha1": "678c37869dd95616d595df710aced19f961f0af8"
+    },
+    {
+      "path": "src/test/2024-01/SocketGateway_exp.sol",
+      "url": "https://raw.githubusercontent.com/SunWeb3Sec/DeFiHackLabs/cb457812eacd4dad09bbd1b62a1fe2fcff1a8669/src/test/2024-01/SocketGateway_exp.sol",
+      "file": "SocketGateway_exp.sol",
+      "bytes": 3002,
+      "sha256": "2f516615ff5c54d35f8d1562916b222de777ae74d0a6bb55e071ee8562349394",
+      "gitBlobSha1": "a9053874f7cbe1ba17bf663ad0297967f6e24549"
+    }
+  ]
+}

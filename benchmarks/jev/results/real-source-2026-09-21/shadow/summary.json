@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "accuracy": null,
+  "reason": "Independent labels are pending. Agreement is not accuracy.",
+  "cases": 46,
+  "completedAt": "2026-09-21T06:53:46.221Z",
+  "servedModel": "typesafe/jev-1.13-20260917",
+  "budgetChargedUsd": 0.0024222240000000006,
+  "billedCostUsd": 0.0024222240000000006,
+  "unknownBillingAttempts": 0,
+  "tasks": {
+    "contradiction": {
+      "n": 15,
+      "decisions": 15,
+      "disagreements": [],
+      "errors": 0,
+      "baselineActions": 0,
+      "jevActions": 0,
+      "abstentions": 0,
+      "p50LatencyMs": 242.87295799999993,
+      "p95LatencyMs": 392.76225
+    },
+    "dedup": {
+      "n": 31,
+      "decisions": 31,
+      "disagreements": [],
+      "errors": 0,
+      "baselineActions": 0,
+      "jevActions": 0,
+      "abstentions": 0,
+      "p50LatencyMs": 205.6111249999999,
+      "p95LatencyMs": 326.6080000000002
+    }
+  }
+}

@@ -1,0 +1,821 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-21T06:53:21.569Z",
+  "datasetSha256": "7cfa3ef349db8ec9535124d596c3e70b98391bfe23129bbd4d85d62f730af98f",
+  "reviewer": {
+    "kind": "assistant",
+    "id": "Codex primary assistant",
+    "independent": false
+  },
+  "status": "provisional; frozen before Jev requests; not independent accuracy ground truth",
+  "evidencePolicy": "Position and identity labels use report text under the unchanged pilot rubric. Source references identify the claimed implementations. Trusted DeFiHackLabs PoCs separately anchor incident coverage; they do not establish truth of every generated finding. No human review or exploit execution is claimed.",
+  "findings": {
+    "project-01-f001": {
+      "label": "maintains",
+      "rootCauseGroup": "unchecked-call",
+      "rationale": "The text withdraws the specific transfer path because rollback applies, but continues to allege arbitrary-call abuse, conditional approval abuse and malicious-target reentrancy. It does not withdraw the overall allegation.",
+      "identityRationale": "The claimed remedy is constraining caller-controlled callee/calldata. This differs from checking transfer return values, correcting execution-context balance accounting, and relaxing strict output equality.",
+      "alternativeLabels": [
+        "unresolved"
+      ],
+      "sourceReferences": [
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:46",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:71",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:122",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:144"
+      ]
+    },
+    "project-01-f002": {
+      "label": "maintains",
+      "rootCauseGroup": "unchecked-transfer-return",
+      "rationale": "The report consistently alleges silent failed delivery when transfer returns false. A nonstandard-token precondition does not retract that allegation.",
+      "identityRationale": "The stated defect is ignoring the ERC20 transfer return value; a checked/safe transfer addresses this independently.",
+      "alternativeLabels": [],
+      "sourceReferences": [
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:60"
+      ]
+    },
+    "project-01-f003": {
+      "label": "maintains",
+      "rootCauseGroup": "balance-context",
+      "rationale": "The report continues to claim direct-call ETH draining. Its incorrect net-profit inference is a validity issue, not a textual withdrawal.",
+      "identityRationale": "The stated defect compares gateway balances while transferring from the route in a direct call. Correct execution context/accounting differs from validating arbitrary calldata.",
+      "alternativeLabels": [],
+      "sourceReferences": [
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:62",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:77",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:85",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:28-30"
+      ]
+    },
+    "project-01-f004": {
+      "label": "maintains",
+      "rootCauseGroup": "strict-output-equality",
+      "rationale": "The attack text abandons pre-transfer front-running because the balance delta remains correct, then explicitly maintains a non-1:1 token compatibility/DoS allegation. It ends with that replacement allegation.",
+      "identityRationale": "The final alleged defect is strict 1:1 output equality without tolerance, separate from call validation, unchecked transfers and address-context mismatch.",
+      "alternativeLabels": [
+        "unresolved"
+      ],
+      "sourceReferences": [
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:45",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:52",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:54-57"
+      ]
+    },
+    "project-02-f001": {
+      "label": "maintains",
+      "rootCauseGroup": "internal-invariant-pricing",
+      "rationale": "The report repeatedly alleges flash-loan swaps can manipulate the internal balance-based invariant, even if external prices are robust. No withdrawal appears.",
+      "identityRationale": "The stated faulty input is the internal pool-balance/invariant component. Whether the invariant really changes as alleged is a separate validity question.",
+      "alternativeLabels": [],
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:47",
+        "src/balancer/WeightedBalancerLPOracle.sol:54-63",
+        "src/balancer/IVault.sol:5"
+      ]
+    },
+    "project-02-f002": {
+      "label": "maintains",
+      "rootCauseGroup": "external-oracle-pricing",
+      "rationale": "The conditional external spot-oracle attack is maintained; the report says it can amplify the first finding rather than retracting it.",
+      "identityRationale": "The stated additional defect is acceptance of manipulable external constituent-price feeds. Its repair is feed selection/validation, distinct from the internal invariant issue even though one exploit combines both.",
+      "alternativeLabels": [],
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:55-57",
+        "src/balancer/WeightedBalancerLPOracle.sol:37-40",
+        "src/core/IOracle.sol:10"
+      ]
+    },
+    "project-02-f003": {
+      "label": "maintains",
+      "rootCauseGroup": "zero-external-price",
+      "rationale": "The report consistently alleges propagation of a zero constituent price and conditional erroneous liquidation.",
+      "identityRationale": "The stated repair is rejecting zero external prices, separate from manipulation resistance, decimal normalization and zero supply handling.",
+      "alternativeLabels": [],
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:55-58",
+        "src/balancer/library/FixedPoint.sol:74-85",
+        "src/balancer/library/FixedPoint.sol:110-130"
+      ]
+    },
+    "project-02-f004": {
+      "label": "maintains",
+      "rootCauseGroup": "decimals-underflow",
+      "rationale": "The report consistently alleges an unsigned subtraction revert for decimals greater than 18. Whether such a pool can exist is outside the position rubric.",
+      "identityRationale": "The stated defect is decimal-scaling underflow. It has a separate input/repair from price trust and denominator validation.",
+      "alternativeLabels": [],
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:60"
+      ]
+    },
+    "project-02-f005": {
+      "label": "maintains",
+      "rootCauseGroup": "zero-supply",
+      "rationale": "The report consistently alleges division by zero for an unseeded pool. The lifecycle precondition does not retract it.",
+      "identityRationale": "The stated defect is unhandled zero LP supply in the denominator, distinct from zero constituent price in the numerator.",
+      "alternativeLabels": [],
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:65-66",
+        "src/balancer/library/FixedPoint.sol:74-75"
+      ]
+    },
+    "project-03-f001": {
+      "label": "maintains",
+      "rootCauseGroup": "donation-solvency",
+      "rationale": "The report consistently alleges that donateToReserves removes collateral without checkLiquidity. Inconsistencies in the profitable/deferred example do not withdraw the simpler bad-debt allegation.",
+      "identityRationale": "The defective operation is collateral donation without a solvency check; f006 explicitly treats ordinary debt transfer as benign and relies on this same donation defect for harm.",
+      "alternativeLabels": [],
+      "sourceReferences": [
+        "contracts/modules/EToken.sol:donateToReserves:354-381",
+        "contracts/modules/EToken.sol:withdraw:178-198",
+        "contracts/modules/EToken.sol:burn:232-262",
+        "contracts/modules/EToken.sol:transferFrom:321-349",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101",
+        "contracts/BaseLogic.sol:checkLiquidity:580-588"
+      ]
+    },
+    "project-03-f002": {
+      "label": "maintains",
+      "rootCauseGroup": "unrestricted-surplus",
+      "rationale": "The report excludes front-running atomic wraps but maintains theft of out-of-band token arrivals. Narrowing the affected path is not whole-report retraction.",
+      "identityRationale": "The stated defect is unrestricted assignment of surplus to an arbitrary beneficiary in PToken.claimSurplus, independently repaired from other findings.",
+      "alternativeLabels": [],
+      "sourceReferences": [
+        "contracts/PToken.sol:claimSurplus:123-132",
+        "contracts/PToken.sol:wrap:104-107",
+        "contracts/modules/Exec.sol:pTokenWrap:187-203"
+      ]
+    },
+    "project-03-f003": {
+      "label": "maintains",
+      "rootCauseGroup": "short-twap",
+      "rationale": "The report consistently alleges that a short fallback TWAP enables manipulated collateral valuation. No textual withdrawal occurs.",
+      "identityRationale": "The stated defect is using too short an oracle history without enforcing a minimum; it is independent of donation solvency.",
+      "alternativeLabels": [],
+      "sourceReferences": [
+        "contracts/modules/RiskManager.sol:callUniswapObserve:143-185",
+        "contracts/modules/RiskManager.sol:getPriceInternal:225-248",
+        "contracts/modules/RiskManager.sol:computeLiquidityRaw:286-349",
+        "contracts/Constants.sol:25-26"
+      ]
+    },
+    "project-03-f004": {
+      "label": "unresolved",
+      "rootCauseGroup": "withdraw-cei",
+      "rationale": "The report explicitly says the current reentrant withdrawal reverts and there is no drain, while maintaining a structural CEI concern and a hypothetical future exploit. The overall alleged defect versus current exploit is materially ambiguous under the frozen rubric.",
+      "identityRationale": "The stated structural problem is token transfer before balance update in EToken.withdraw. Its CEI repair is different from the donation check or flash-loan repayment policy.",
+      "alternativeLabels": [
+        "retracts",
+        "maintains"
+      ],
+      "sourceReferences": [
+        "contracts/modules/EToken.sol:withdraw:178-198",
+        "contracts/BaseLogic.sol:pushTokens:552-560",
+        "contracts/Base.sol:nonReentrant:44-50",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101"
+      ]
+    },
+    "project-03-f005": {
+      "label": "unresolved",
+      "rootCauseGroup": "flash-loan-policy",
+      "rationale": "The report concedes the lock blocks inner state-changing operations, then shifts from Euler flash-loan repayment/fees to a different external-loan/deferred sequence without establishing a failing solvency check. Its final defective behavior remains unresolved.",
+      "identityRationale": "The report discusses zero fees, raw-balance repayment and flash-loan callback/deferred interactions, without identifying the missing donation check. Those stated concerns are not enough to equate it to f001/f006.",
+      "alternativeLabels": [
+        "maintains"
+      ],
+      "sourceReferences": [
+        "contracts/modules/DToken.sol:flashLoan:154-164",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101",
+        "contracts/modules/Exec.sol:batchDispatch:106-108"
+      ]
+    },
+    "project-03-f006": {
+      "label": "maintains",
+      "rootCauseGroup": "donation-solvency",
+      "rationale": "The text expressly calls debt-removal benefits benign, but ends by maintaining a combined attack that concentrates debt then sheds collateral through donateToReserves.",
+      "identityRationale": "After excluding the debt-transfer behavior as benign, the only stated harmful defect is the missing donation solvency check already described in f001. Adding a benign preparatory step does not create a separately repairable defect.",
+      "alternativeLabels": [],
+      "sourceReferences": [
+        "contracts/modules/DToken.sol:transferFrom:211-239",
+        "contracts/modules/DToken.sol:approveDebt:171-184"
+      ]
+    }
+  },
+  "cases": [
+    {
+      "caseId": "project-01-f001-position",
+      "label": "maintains",
+      "rationale": "The text withdraws the specific transfer path because rollback applies, but continues to allege arbitrary-call abuse, conditional approval abuse and malicious-target reentrancy. It does not withdraw the overall allegation.",
+      "sourceReferences": [
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:46",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:71",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:122",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:144"
+      ],
+      "alternativeLabels": [
+        "unresolved"
+      ]
+    },
+    {
+      "caseId": "project-01-f001-project-01-f002-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-01-f001: The claimed remedy is constraining caller-controlled callee/calldata. This differs from checking transfer return values, correcting execution-context balance accounting, and relaxing strict output equality. project-01-f002: The stated defect is ignoring the ERC20 transfer return value; a checked/safe transfer addresses this independently.",
+      "sourceReferences": [
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:46",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:71",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:122",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:144",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:60"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-01-f001-project-01-f003-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-01-f001: The claimed remedy is constraining caller-controlled callee/calldata. This differs from checking transfer return values, correcting execution-context balance accounting, and relaxing strict output equality. project-01-f003: The stated defect compares gateway balances while transferring from the route in a direct call. Correct execution context/accounting differs from validating arbitrary calldata.",
+      "sourceReferences": [
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:46",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:71",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:122",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:144",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:62",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:77",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:85",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:28-30"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-01-f001-project-01-f004-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-01-f001: The claimed remedy is constraining caller-controlled callee/calldata. This differs from checking transfer return values, correcting execution-context balance accounting, and relaxing strict output equality. project-01-f004: The final alleged defect is strict 1:1 output equality without tolerance, separate from call validation, unchecked transfers and address-context mismatch.",
+      "sourceReferences": [
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:46",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:71",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:122",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:144",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:45",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:52",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:54-57"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-01-f002-position",
+      "label": "maintains",
+      "rationale": "The report consistently alleges silent failed delivery when transfer returns false. A nonstandard-token precondition does not retract that allegation.",
+      "sourceReferences": [
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:60"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-01-f002-project-01-f003-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-01-f002: The stated defect is ignoring the ERC20 transfer return value; a checked/safe transfer addresses this independently. project-01-f003: The stated defect compares gateway balances while transferring from the route in a direct call. Correct execution context/accounting differs from validating arbitrary calldata.",
+      "sourceReferences": [
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:60",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:62",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:77",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:85",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:28-30"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-01-f002-project-01-f004-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-01-f002: The stated defect is ignoring the ERC20 transfer return value; a checked/safe transfer addresses this independently. project-01-f004: The final alleged defect is strict 1:1 output equality without tolerance, separate from call validation, unchecked transfers and address-context mismatch.",
+      "sourceReferences": [
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:60",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:45",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:52",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:54-57"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-01-f003-position",
+      "label": "maintains",
+      "rationale": "The report continues to claim direct-call ETH draining. Its incorrect net-profit inference is a validity issue, not a textual withdrawal.",
+      "sourceReferences": [
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:62",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:77",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:85",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:28-30"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-01-f003-project-01-f004-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-01-f003: The stated defect compares gateway balances while transferring from the route in a direct call. Correct execution context/accounting differs from validating arbitrary calldata. project-01-f004: The final alleged defect is strict 1:1 output equality without tolerance, separate from call validation, unchecked transfers and address-context mismatch.",
+      "sourceReferences": [
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:62",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:77",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:85",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:28-30",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:45",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:52",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:54-57"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-01-f004-position",
+      "label": "maintains",
+      "rationale": "The attack text abandons pre-transfer front-running because the balance delta remains correct, then explicitly maintains a non-1:1 token compatibility/DoS allegation. It ends with that replacement allegation.",
+      "sourceReferences": [
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:45",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:52",
+        "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol:54-57"
+      ],
+      "alternativeLabels": [
+        "unresolved"
+      ]
+    },
+    {
+      "caseId": "project-02-f001-position",
+      "label": "maintains",
+      "rationale": "The report repeatedly alleges flash-loan swaps can manipulate the internal balance-based invariant, even if external prices are robust. No withdrawal appears.",
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:47",
+        "src/balancer/WeightedBalancerLPOracle.sol:54-63",
+        "src/balancer/IVault.sol:5"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-02-f001-project-02-f002-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-02-f001: The stated faulty input is the internal pool-balance/invariant component. Whether the invariant really changes as alleged is a separate validity question. project-02-f002: The stated additional defect is acceptance of manipulable external constituent-price feeds. Its repair is feed selection/validation, distinct from the internal invariant issue even though one exploit combines both.",
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:47",
+        "src/balancer/WeightedBalancerLPOracle.sol:54-63",
+        "src/balancer/IVault.sol:5",
+        "src/balancer/WeightedBalancerLPOracle.sol:55-57",
+        "src/balancer/WeightedBalancerLPOracle.sol:37-40",
+        "src/core/IOracle.sol:10"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-02-f001-project-02-f003-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-02-f001: The stated faulty input is the internal pool-balance/invariant component. Whether the invariant really changes as alleged is a separate validity question. project-02-f003: The stated repair is rejecting zero external prices, separate from manipulation resistance, decimal normalization and zero supply handling.",
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:47",
+        "src/balancer/WeightedBalancerLPOracle.sol:54-63",
+        "src/balancer/IVault.sol:5",
+        "src/balancer/WeightedBalancerLPOracle.sol:55-58",
+        "src/balancer/library/FixedPoint.sol:74-85",
+        "src/balancer/library/FixedPoint.sol:110-130"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-02-f001-project-02-f004-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-02-f001: The stated faulty input is the internal pool-balance/invariant component. Whether the invariant really changes as alleged is a separate validity question. project-02-f004: The stated defect is decimal-scaling underflow. It has a separate input/repair from price trust and denominator validation.",
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:47",
+        "src/balancer/WeightedBalancerLPOracle.sol:54-63",
+        "src/balancer/IVault.sol:5",
+        "src/balancer/WeightedBalancerLPOracle.sol:60"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-02-f001-project-02-f005-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-02-f001: The stated faulty input is the internal pool-balance/invariant component. Whether the invariant really changes as alleged is a separate validity question. project-02-f005: The stated defect is unhandled zero LP supply in the denominator, distinct from zero constituent price in the numerator.",
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:47",
+        "src/balancer/WeightedBalancerLPOracle.sol:54-63",
+        "src/balancer/IVault.sol:5",
+        "src/balancer/WeightedBalancerLPOracle.sol:65-66",
+        "src/balancer/library/FixedPoint.sol:74-75"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-02-f002-position",
+      "label": "maintains",
+      "rationale": "The conditional external spot-oracle attack is maintained; the report says it can amplify the first finding rather than retracting it.",
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:55-57",
+        "src/balancer/WeightedBalancerLPOracle.sol:37-40",
+        "src/core/IOracle.sol:10"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-02-f002-project-02-f003-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-02-f002: The stated additional defect is acceptance of manipulable external constituent-price feeds. Its repair is feed selection/validation, distinct from the internal invariant issue even though one exploit combines both. project-02-f003: The stated repair is rejecting zero external prices, separate from manipulation resistance, decimal normalization and zero supply handling.",
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:55-57",
+        "src/balancer/WeightedBalancerLPOracle.sol:37-40",
+        "src/core/IOracle.sol:10",
+        "src/balancer/WeightedBalancerLPOracle.sol:55-58",
+        "src/balancer/library/FixedPoint.sol:74-85",
+        "src/balancer/library/FixedPoint.sol:110-130"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-02-f002-project-02-f004-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-02-f002: The stated additional defect is acceptance of manipulable external constituent-price feeds. Its repair is feed selection/validation, distinct from the internal invariant issue even though one exploit combines both. project-02-f004: The stated defect is decimal-scaling underflow. It has a separate input/repair from price trust and denominator validation.",
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:55-57",
+        "src/balancer/WeightedBalancerLPOracle.sol:37-40",
+        "src/core/IOracle.sol:10",
+        "src/balancer/WeightedBalancerLPOracle.sol:60"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-02-f002-project-02-f005-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-02-f002: The stated additional defect is acceptance of manipulable external constituent-price feeds. Its repair is feed selection/validation, distinct from the internal invariant issue even though one exploit combines both. project-02-f005: The stated defect is unhandled zero LP supply in the denominator, distinct from zero constituent price in the numerator.",
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:55-57",
+        "src/balancer/WeightedBalancerLPOracle.sol:37-40",
+        "src/core/IOracle.sol:10",
+        "src/balancer/WeightedBalancerLPOracle.sol:65-66",
+        "src/balancer/library/FixedPoint.sol:74-75"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-02-f003-position",
+      "label": "maintains",
+      "rationale": "The report consistently alleges propagation of a zero constituent price and conditional erroneous liquidation.",
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:55-58",
+        "src/balancer/library/FixedPoint.sol:74-85",
+        "src/balancer/library/FixedPoint.sol:110-130"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-02-f003-project-02-f004-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-02-f003: The stated repair is rejecting zero external prices, separate from manipulation resistance, decimal normalization and zero supply handling. project-02-f004: The stated defect is decimal-scaling underflow. It has a separate input/repair from price trust and denominator validation.",
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:55-58",
+        "src/balancer/library/FixedPoint.sol:74-85",
+        "src/balancer/library/FixedPoint.sol:110-130",
+        "src/balancer/WeightedBalancerLPOracle.sol:60"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-02-f003-project-02-f005-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-02-f003: The stated repair is rejecting zero external prices, separate from manipulation resistance, decimal normalization and zero supply handling. project-02-f005: The stated defect is unhandled zero LP supply in the denominator, distinct from zero constituent price in the numerator.",
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:55-58",
+        "src/balancer/library/FixedPoint.sol:74-85",
+        "src/balancer/library/FixedPoint.sol:110-130",
+        "src/balancer/WeightedBalancerLPOracle.sol:65-66",
+        "src/balancer/library/FixedPoint.sol:74-75"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-02-f004-position",
+      "label": "maintains",
+      "rationale": "The report consistently alleges an unsigned subtraction revert for decimals greater than 18. Whether such a pool can exist is outside the position rubric.",
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:60"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-02-f004-project-02-f005-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-02-f004: The stated defect is decimal-scaling underflow. It has a separate input/repair from price trust and denominator validation. project-02-f005: The stated defect is unhandled zero LP supply in the denominator, distinct from zero constituent price in the numerator.",
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:60",
+        "src/balancer/WeightedBalancerLPOracle.sol:65-66",
+        "src/balancer/library/FixedPoint.sol:74-75"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-02-f005-position",
+      "label": "maintains",
+      "rationale": "The report consistently alleges division by zero for an unseeded pool. The lifecycle precondition does not retract it.",
+      "sourceReferences": [
+        "src/balancer/WeightedBalancerLPOracle.sol:65-66",
+        "src/balancer/library/FixedPoint.sol:74-75"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-03-f001-position",
+      "label": "maintains",
+      "rationale": "The report consistently alleges that donateToReserves removes collateral without checkLiquidity. Inconsistencies in the profitable/deferred example do not withdraw the simpler bad-debt allegation.",
+      "sourceReferences": [
+        "contracts/modules/EToken.sol:donateToReserves:354-381",
+        "contracts/modules/EToken.sol:withdraw:178-198",
+        "contracts/modules/EToken.sol:burn:232-262",
+        "contracts/modules/EToken.sol:transferFrom:321-349",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101",
+        "contracts/BaseLogic.sol:checkLiquidity:580-588"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-03-f001-project-03-f002-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-03-f001: The defective operation is collateral donation without a solvency check; f006 explicitly treats ordinary debt transfer as benign and relies on this same donation defect for harm. project-03-f002: The stated defect is unrestricted assignment of surplus to an arbitrary beneficiary in PToken.claimSurplus, independently repaired from other findings.",
+      "sourceReferences": [
+        "contracts/modules/EToken.sol:donateToReserves:354-381",
+        "contracts/modules/EToken.sol:withdraw:178-198",
+        "contracts/modules/EToken.sol:burn:232-262",
+        "contracts/modules/EToken.sol:transferFrom:321-349",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101",
+        "contracts/BaseLogic.sol:checkLiquidity:580-588",
+        "contracts/PToken.sol:claimSurplus:123-132",
+        "contracts/PToken.sol:wrap:104-107",
+        "contracts/modules/Exec.sol:pTokenWrap:187-203"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-03-f001-project-03-f003-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-03-f001: The defective operation is collateral donation without a solvency check; f006 explicitly treats ordinary debt transfer as benign and relies on this same donation defect for harm. project-03-f003: The stated defect is using too short an oracle history without enforcing a minimum; it is independent of donation solvency.",
+      "sourceReferences": [
+        "contracts/modules/EToken.sol:donateToReserves:354-381",
+        "contracts/modules/EToken.sol:withdraw:178-198",
+        "contracts/modules/EToken.sol:burn:232-262",
+        "contracts/modules/EToken.sol:transferFrom:321-349",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101",
+        "contracts/BaseLogic.sol:checkLiquidity:580-588",
+        "contracts/modules/RiskManager.sol:callUniswapObserve:143-185",
+        "contracts/modules/RiskManager.sol:getPriceInternal:225-248",
+        "contracts/modules/RiskManager.sol:computeLiquidityRaw:286-349",
+        "contracts/Constants.sol:25-26"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-03-f001-project-03-f004-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-03-f001: The defective operation is collateral donation without a solvency check; f006 explicitly treats ordinary debt transfer as benign and relies on this same donation defect for harm. project-03-f004: The stated structural problem is token transfer before balance update in EToken.withdraw. Its CEI repair is different from the donation check or flash-loan repayment policy.",
+      "sourceReferences": [
+        "contracts/modules/EToken.sol:donateToReserves:354-381",
+        "contracts/modules/EToken.sol:withdraw:178-198",
+        "contracts/modules/EToken.sol:burn:232-262",
+        "contracts/modules/EToken.sol:transferFrom:321-349",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101",
+        "contracts/BaseLogic.sol:checkLiquidity:580-588",
+        "contracts/BaseLogic.sol:pushTokens:552-560",
+        "contracts/Base.sol:nonReentrant:44-50"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-03-f001-project-03-f005-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-03-f001: The defective operation is collateral donation without a solvency check; f006 explicitly treats ordinary debt transfer as benign and relies on this same donation defect for harm. project-03-f005: The report discusses zero fees, raw-balance repayment and flash-loan callback/deferred interactions, without identifying the missing donation check. Those stated concerns are not enough to equate it to f001/f006.",
+      "sourceReferences": [
+        "contracts/modules/EToken.sol:donateToReserves:354-381",
+        "contracts/modules/EToken.sol:withdraw:178-198",
+        "contracts/modules/EToken.sol:burn:232-262",
+        "contracts/modules/EToken.sol:transferFrom:321-349",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101",
+        "contracts/BaseLogic.sol:checkLiquidity:580-588",
+        "contracts/modules/DToken.sol:flashLoan:154-164",
+        "contracts/modules/Exec.sol:batchDispatch:106-108"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-03-f001-project-03-f006-identity",
+      "label": "same",
+      "rationale": "Same final harmful mechanism. project-03-f001: The defective operation is collateral donation without a solvency check; f006 explicitly treats ordinary debt transfer as benign and relies on this same donation defect for harm. project-03-f006: After excluding the debt-transfer behavior as benign, the only stated harmful defect is the missing donation solvency check already described in f001. Adding a benign preparatory step does not create a separately repairable defect.",
+      "sourceReferences": [
+        "contracts/modules/EToken.sol:donateToReserves:354-381",
+        "contracts/modules/EToken.sol:withdraw:178-198",
+        "contracts/modules/EToken.sol:burn:232-262",
+        "contracts/modules/EToken.sol:transferFrom:321-349",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101",
+        "contracts/BaseLogic.sol:checkLiquidity:580-588",
+        "contracts/modules/DToken.sol:transferFrom:211-239",
+        "contracts/modules/DToken.sol:approveDebt:171-184"
+      ],
+      "alternativeLabels": [
+        "distinct"
+      ]
+    },
+    {
+      "caseId": "project-03-f002-position",
+      "label": "maintains",
+      "rationale": "The report excludes front-running atomic wraps but maintains theft of out-of-band token arrivals. Narrowing the affected path is not whole-report retraction.",
+      "sourceReferences": [
+        "contracts/PToken.sol:claimSurplus:123-132",
+        "contracts/PToken.sol:wrap:104-107",
+        "contracts/modules/Exec.sol:pTokenWrap:187-203"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-03-f002-project-03-f003-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-03-f002: The stated defect is unrestricted assignment of surplus to an arbitrary beneficiary in PToken.claimSurplus, independently repaired from other findings. project-03-f003: The stated defect is using too short an oracle history without enforcing a minimum; it is independent of donation solvency.",
+      "sourceReferences": [
+        "contracts/PToken.sol:claimSurplus:123-132",
+        "contracts/PToken.sol:wrap:104-107",
+        "contracts/modules/Exec.sol:pTokenWrap:187-203",
+        "contracts/modules/RiskManager.sol:callUniswapObserve:143-185",
+        "contracts/modules/RiskManager.sol:getPriceInternal:225-248",
+        "contracts/modules/RiskManager.sol:computeLiquidityRaw:286-349",
+        "contracts/Constants.sol:25-26"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-03-f002-project-03-f004-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-03-f002: The stated defect is unrestricted assignment of surplus to an arbitrary beneficiary in PToken.claimSurplus, independently repaired from other findings. project-03-f004: The stated structural problem is token transfer before balance update in EToken.withdraw. Its CEI repair is different from the donation check or flash-loan repayment policy.",
+      "sourceReferences": [
+        "contracts/PToken.sol:claimSurplus:123-132",
+        "contracts/PToken.sol:wrap:104-107",
+        "contracts/modules/Exec.sol:pTokenWrap:187-203",
+        "contracts/modules/EToken.sol:withdraw:178-198",
+        "contracts/BaseLogic.sol:pushTokens:552-560",
+        "contracts/Base.sol:nonReentrant:44-50",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-03-f002-project-03-f005-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-03-f002: The stated defect is unrestricted assignment of surplus to an arbitrary beneficiary in PToken.claimSurplus, independently repaired from other findings. project-03-f005: The report discusses zero fees, raw-balance repayment and flash-loan callback/deferred interactions, without identifying the missing donation check. Those stated concerns are not enough to equate it to f001/f006.",
+      "sourceReferences": [
+        "contracts/PToken.sol:claimSurplus:123-132",
+        "contracts/PToken.sol:wrap:104-107",
+        "contracts/modules/Exec.sol:pTokenWrap:187-203",
+        "contracts/modules/DToken.sol:flashLoan:154-164",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101",
+        "contracts/modules/Exec.sol:batchDispatch:106-108"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-03-f002-project-03-f006-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-03-f002: The stated defect is unrestricted assignment of surplus to an arbitrary beneficiary in PToken.claimSurplus, independently repaired from other findings. project-03-f006: After excluding the debt-transfer behavior as benign, the only stated harmful defect is the missing donation solvency check already described in f001. Adding a benign preparatory step does not create a separately repairable defect.",
+      "sourceReferences": [
+        "contracts/PToken.sol:claimSurplus:123-132",
+        "contracts/PToken.sol:wrap:104-107",
+        "contracts/modules/Exec.sol:pTokenWrap:187-203",
+        "contracts/modules/DToken.sol:transferFrom:211-239",
+        "contracts/modules/DToken.sol:approveDebt:171-184"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-03-f003-position",
+      "label": "maintains",
+      "rationale": "The report consistently alleges that a short fallback TWAP enables manipulated collateral valuation. No textual withdrawal occurs.",
+      "sourceReferences": [
+        "contracts/modules/RiskManager.sol:callUniswapObserve:143-185",
+        "contracts/modules/RiskManager.sol:getPriceInternal:225-248",
+        "contracts/modules/RiskManager.sol:computeLiquidityRaw:286-349",
+        "contracts/Constants.sol:25-26"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-03-f003-project-03-f004-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-03-f003: The stated defect is using too short an oracle history without enforcing a minimum; it is independent of donation solvency. project-03-f004: The stated structural problem is token transfer before balance update in EToken.withdraw. Its CEI repair is different from the donation check or flash-loan repayment policy.",
+      "sourceReferences": [
+        "contracts/modules/RiskManager.sol:callUniswapObserve:143-185",
+        "contracts/modules/RiskManager.sol:getPriceInternal:225-248",
+        "contracts/modules/RiskManager.sol:computeLiquidityRaw:286-349",
+        "contracts/Constants.sol:25-26",
+        "contracts/modules/EToken.sol:withdraw:178-198",
+        "contracts/BaseLogic.sol:pushTokens:552-560",
+        "contracts/Base.sol:nonReentrant:44-50",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-03-f003-project-03-f005-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-03-f003: The stated defect is using too short an oracle history without enforcing a minimum; it is independent of donation solvency. project-03-f005: The report discusses zero fees, raw-balance repayment and flash-loan callback/deferred interactions, without identifying the missing donation check. Those stated concerns are not enough to equate it to f001/f006.",
+      "sourceReferences": [
+        "contracts/modules/RiskManager.sol:callUniswapObserve:143-185",
+        "contracts/modules/RiskManager.sol:getPriceInternal:225-248",
+        "contracts/modules/RiskManager.sol:computeLiquidityRaw:286-349",
+        "contracts/Constants.sol:25-26",
+        "contracts/modules/DToken.sol:flashLoan:154-164",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101",
+        "contracts/modules/Exec.sol:batchDispatch:106-108"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-03-f003-project-03-f006-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-03-f003: The stated defect is using too short an oracle history without enforcing a minimum; it is independent of donation solvency. project-03-f006: After excluding the debt-transfer behavior as benign, the only stated harmful defect is the missing donation solvency check already described in f001. Adding a benign preparatory step does not create a separately repairable defect.",
+      "sourceReferences": [
+        "contracts/modules/RiskManager.sol:callUniswapObserve:143-185",
+        "contracts/modules/RiskManager.sol:getPriceInternal:225-248",
+        "contracts/modules/RiskManager.sol:computeLiquidityRaw:286-349",
+        "contracts/Constants.sol:25-26",
+        "contracts/modules/DToken.sol:transferFrom:211-239",
+        "contracts/modules/DToken.sol:approveDebt:171-184"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-03-f004-position",
+      "label": "unresolved",
+      "rationale": "The report explicitly says the current reentrant withdrawal reverts and there is no drain, while maintaining a structural CEI concern and a hypothetical future exploit. The overall alleged defect versus current exploit is materially ambiguous under the frozen rubric.",
+      "sourceReferences": [
+        "contracts/modules/EToken.sol:withdraw:178-198",
+        "contracts/BaseLogic.sol:pushTokens:552-560",
+        "contracts/Base.sol:nonReentrant:44-50",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101"
+      ],
+      "alternativeLabels": [
+        "retracts",
+        "maintains"
+      ]
+    },
+    {
+      "caseId": "project-03-f004-project-03-f005-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-03-f004: The stated structural problem is token transfer before balance update in EToken.withdraw. Its CEI repair is different from the donation check or flash-loan repayment policy. project-03-f005: The report discusses zero fees, raw-balance repayment and flash-loan callback/deferred interactions, without identifying the missing donation check. Those stated concerns are not enough to equate it to f001/f006.",
+      "sourceReferences": [
+        "contracts/modules/EToken.sol:withdraw:178-198",
+        "contracts/BaseLogic.sol:pushTokens:552-560",
+        "contracts/Base.sol:nonReentrant:44-50",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101",
+        "contracts/modules/DToken.sol:flashLoan:154-164",
+        "contracts/modules/Exec.sol:batchDispatch:106-108"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-03-f004-project-03-f006-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-03-f004: The stated structural problem is token transfer before balance update in EToken.withdraw. Its CEI repair is different from the donation check or flash-loan repayment policy. project-03-f006: After excluding the debt-transfer behavior as benign, the only stated harmful defect is the missing donation solvency check already described in f001. Adding a benign preparatory step does not create a separately repairable defect.",
+      "sourceReferences": [
+        "contracts/modules/EToken.sol:withdraw:178-198",
+        "contracts/BaseLogic.sol:pushTokens:552-560",
+        "contracts/Base.sol:nonReentrant:44-50",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101",
+        "contracts/modules/DToken.sol:transferFrom:211-239",
+        "contracts/modules/DToken.sol:approveDebt:171-184"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-03-f005-position",
+      "label": "unresolved",
+      "rationale": "The report concedes the lock blocks inner state-changing operations, then shifts from Euler flash-loan repayment/fees to a different external-loan/deferred sequence without establishing a failing solvency check. Its final defective behavior remains unresolved.",
+      "sourceReferences": [
+        "contracts/modules/DToken.sol:flashLoan:154-164",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101",
+        "contracts/modules/Exec.sol:batchDispatch:106-108"
+      ],
+      "alternativeLabels": [
+        "maintains"
+      ]
+    },
+    {
+      "caseId": "project-03-f005-project-03-f006-identity",
+      "label": "distinct",
+      "rationale": "Separate stated mechanisms and repairs. project-03-f005: The report discusses zero fees, raw-balance repayment and flash-loan callback/deferred interactions, without identifying the missing donation check. Those stated concerns are not enough to equate it to f001/f006. project-03-f006: After excluding the debt-transfer behavior as benign, the only stated harmful defect is the missing donation solvency check already described in f001. Adding a benign preparatory step does not create a separately repairable defect.",
+      "sourceReferences": [
+        "contracts/modules/DToken.sol:flashLoan:154-164",
+        "contracts/modules/Exec.sol:deferLiquidityCheck:89-101",
+        "contracts/modules/Exec.sol:batchDispatch:106-108",
+        "contracts/modules/DToken.sol:transferFrom:211-239",
+        "contracts/modules/DToken.sol:approveDebt:171-184"
+      ],
+      "alternativeLabels": []
+    },
+    {
+      "caseId": "project-03-f006-position",
+      "label": "maintains",
+      "rationale": "The text expressly calls debt-removal benefits benign, but ends by maintaining a combined attack that concentrates debt then sheds collateral through donateToReserves.",
+      "sourceReferences": [
+        "contracts/modules/DToken.sol:transferFrom:211-239",
+        "contracts/modules/DToken.sol:approveDebt:171-184"
+      ],
+      "alternativeLabels": []
+    }
+  ]
+}

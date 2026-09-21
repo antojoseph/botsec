@@ -1,10 +1,12 @@
 # Jev filter benchmark
 
+Completed real-source batch: [results and decision](results/real-source-2026-09-21/assessment.md). Jev and the current filters made identical decisions on 46 cases from 15 raw findings; no adoption benefit was demonstrated.
+
 Completed pilot: [assessment and recommendation](results/pilot-2026-09-21/assessment.md), [full metrics](results/pilot-2026-09-21/report.md).
 
 The [decision record and stronger-validation requirements](../../docs/decisions/2026-09-21-jev-evaluation.md) explain why this experiment was run, what the evidence supports, and what is still needed before adoption. The completed pilot is retained under `results/`; disposable reruns under `runs/` are ignored by Git.
 
-The [historical-source collection](corpus/README.md) preserves pinned public-repository snapshots for Euler, Sentiment, and Socket, with deployment-match evidence and explicit qualifications. These sources have not yet been used for a new Jev benchmark.
+The [historical-source collection](corpus/README.md) preserves pinned public-repository snapshots for Euler, Sentiment, and Socket, with deployment-match evidence and explicit qualifications. The [real-source collection tools](collection/README.md) capture findings before filtering and prepare blinded review packets. Unlabeled comparisons report disagreements and costs, not accuracy.
 
 This offline-corpus pilot compares the actual production self-contradiction and deduplication filters with Jev via OpenRouter's Decisions endpoint. It does not change production filtering or rerun threat generation.
 

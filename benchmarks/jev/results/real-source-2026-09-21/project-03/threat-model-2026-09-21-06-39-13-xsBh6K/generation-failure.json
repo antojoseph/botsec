@@ -1,0 +1,8 @@
+{
+  "status": "query-threw",
+  "errorType": "Error",
+  "observedModels": [
+    "anthropic/claude-sonnet-4.6",
+    "<synthetic>"
+  ]
+}
