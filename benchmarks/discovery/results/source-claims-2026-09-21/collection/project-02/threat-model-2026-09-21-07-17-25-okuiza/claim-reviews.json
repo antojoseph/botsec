@@ -1,0 +1,74 @@
+[
+  {
+    "id": "T-001",
+    "review": {
+      "status": "needs-review",
+      "executionVerified": false,
+      "issues": [
+        "Generator recorded missing evidence"
+      ],
+      "sourceReferences": [
+        {
+          "id": "R1",
+          "path": "src/balancer/WeightedBalancerLPOracle.sol",
+          "quoteMatches": true,
+          "fileSha256": "3121ec22b720104545dd56feb729cb9769b2a567b48d2e46e2c45e722277afa0"
+        },
+        {
+          "id": "R2",
+          "path": "src/utils/IERC20.sol",
+          "quoteMatches": true,
+          "fileSha256": "72600f1a8be063889ddff32d6d191c7ad70bc9030fac0512ee707f8694f0aba8"
+        },
+        {
+          "id": "R3",
+          "path": "context/unit-1/src/core/AccountManager.sol",
+          "quoteMatches": true,
+          "fileSha256": "e306ea775c250ad7ee8c3ecf9423405bfe7bfa1e3a7fe9e54115aece6cb072ed"
+        },
+        {
+          "id": "R4",
+          "path": "context/unit-1/src/core/AccountManager.sol",
+          "quoteMatches": true,
+          "fileSha256": "e306ea775c250ad7ee8c3ecf9423405bfe7bfa1e3a7fe9e54115aece6cb072ed"
+        }
+      ]
+    }
+  },
+  {
+    "id": "T-002",
+    "review": {
+      "status": "needs-review",
+      "executionVerified": false,
+      "issues": [
+        "Generator did not conclude the current-code attack is supported",
+        "Generator recorded missing evidence",
+        "Source quote does not match its line range: R6",
+        "Source quote does not match its line range: R7",
+        "Incomplete reachability check",
+        "guards-and-rollback is unresolved",
+        "profit-and-loss is unresolved"
+      ],
+      "sourceReferences": [
+        {
+          "id": "R5",
+          "path": "src/balancer/WeightedBalancerLPOracle.sol",
+          "quoteMatches": true,
+          "fileSha256": "3121ec22b720104545dd56feb729cb9769b2a567b48d2e46e2c45e722277afa0"
+        },
+        {
+          "id": "R6",
+          "path": "src/core/IOracle.sol",
+          "quoteMatches": false,
+          "fileSha256": "768eda8cdf750e7188c6ef7dd057a5ed8af1a702beceb123c8be08bd302b8ab0"
+        },
+        {
+          "id": "R7",
+          "path": "context/unit-1/src/interface/core/IRiskEngine.sol",
+          "quoteMatches": false,
+          "fileSha256": "fc6ad0fd64eab702423e668fb232837a8bf59df7f00ef672d30b5d8ceeb87b99"
+        }
+      ]
+    }
+  }
+]

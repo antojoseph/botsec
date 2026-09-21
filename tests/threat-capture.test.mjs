@@ -50,6 +50,21 @@ test('parse failure is recorded distinctly from a valid empty finding set', asyn
   const run = join(f.reports, readdirSync(f.reports)[0]);
   assert.equal(JSON.parse(readFileSync(join(run, 'generation-result.json'))).parseSucceeded, false);
 });
+test('structured claim generation is opt-in and recorded in capture configuration', async t => {
+  const f = fixture(t);
+  response = { contractType: 'other', threats: [], dismissedCandidates: [] };
+  for (const experimentalClaims of [false, true]) {
+    const reports = join(f.dir, experimentalClaims ? 'experimental' : 'default');
+    await generateThreatModel({ contractPath: f.project, outputDir: reports, captureRaw: true,
+      ...(experimentalClaims ? { experimentalClaims: true } : {}) });
+    const schema = queryOptions.outputFormat.schema;
+    assert.equal(schema.properties.threats.items.required.includes('claimAssessment'), experimentalClaims);
+    assert.equal(schema.required.includes('dismissedCandidates'), experimentalClaims);
+    assert.equal(queryOptions.agents['threat-modeler'].prompt.includes('claimAssessment'), experimentalClaims);
+    const run = join(reports, readdirSync(reports)[0]);
+    assert.equal(JSON.parse(readFileSync(join(run, 'generation-config.json'))).experimentalClaims, experimentalClaims);
+  }
+});
 test('source-only hooks reject external reads, traversal, symlinks, shell and other agents', async t => {
   const f = fixture(t), hook = sourceOnlyHook(f.project);
   const decision = async (tool_name, tool_input) => (await hook({ hook_event_name: 'PreToolUse', tool_name, tool_input }, undefined, {})).hookSpecificOutput.permissionDecision;

@@ -227,7 +227,9 @@ Adding a provider to `src/threat-model/providers/registry.ts` generates its CLI
 flag automatically from the provider's `ProviderMeta` — default-on providers get
 `--no-<flag>`, opt-in providers get `--<flag>`.
 
-Threat generation traces cross-contract producers, consumers and callback state as well as local blueprint leads. Each new finding includes a `claimAssessment` covering reachability, guards/rollback, callback timing and attacker economics. `claimReview` checks that cited source paths, line ranges and quotes match the workspace and records file hashes. `citations-checked` means the references match; it does **not** mean the exploit was executed or proved. Missing, blocked or inconsistent assessments remain visibly `needs-review`; candidates are not deleted by this check. Rejected leads are retained in `dismissedCandidates`. With `--capture-raw`, the original findings and separate `claim-reviews.json` are also saved.
+The opt-in `threat-model --experimental-claims` mode asks for cross-contract tracing and structured `claimAssessment` reasoning about reachability, guards/rollback, callback timing and attacker economics. Its first three-project development run did **not** improve discovery and suffered output truncation; the existing discovery prompt remains the default. See the [retained experiment and assessment](benchmarks/discovery/results/source-claims-2026-09-21/assessment.md).
+
+When assessments are present, `claimReview` checks source paths, line ranges and exact quotes and records file hashes. `citations-checked` means the references match and the required assessment fields pass mechanical checks; it does **not** mean the attack reasoning is correct or the exploit was executed. Missing assessments are `not-assessed`; blocked or incomplete assessments are `needs-review`. This check does not delete candidates. Experimental rejected leads are retained in `dismissedCandidates`, with citation checks on their counterevidence. With `--capture-raw`, original findings and separate `claim-reviews.json` and `dismissal-reviews.json` are saved.
 
 ## Output Structure
 

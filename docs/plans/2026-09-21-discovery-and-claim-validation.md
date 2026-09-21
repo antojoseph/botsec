@@ -7,12 +7,13 @@ The objective is to find the actual vulnerable mechanism and produce an attack n
 ## Current state
 
 - The baseline is preserved: 15 raw findings from Socket, Sentiment and Euler, plus source snapshots, trusted PoCs and billing. Sentiment's specific read-only reentrancy mechanism was missed; Socket and Euler reports identified relevant root causes but contained flawed attack reasoning.
-- Implementation commit `8081e11` adds a source inventory, earlier cross-contract exploration, structured attack assessments, exact source-quote checks and retained rejected leads. All 31 tests pass.
-- A fresh Sonnet run on those same three projects is in progress. This is a development regression check: the failures informed the changes, so it is not a held-out accuracy test.
-- The original $15 generation authorization remains the aggregate limit. Prior generation cost $2.09373585; this run has a $12 cap, keeping the combined maximum at $14.09373585. No new Jev calls are planned.
+- Implementation commit `8081e11` added a source inventory, earlier cross-contract exploration, structured attack assessments, exact source-quote checks and retained rejected leads. It is the implementation evaluated by the completed experiment.
+- The fresh Sonnet run is complete and negative: final reference coverage is missed for all three, versus partial matches for Socket and Euler in the baseline. Euler raised an unresolved donation-related lead in a truncated response but lost it during recovery. See the [retained assessment](../../benchmarks/discovery/results/source-claims-2026-09-21/assessment.md).
+- The existing discovery prompt is restored as the default. The research prompt requires `--experimental-claims`; source checks remain mechanical evidence checks, not exploit verification.
+- The original $15 generation authorization remains the aggregate limit. Prior generation cost $2.09373585; this run cost $4.75173630, totaling $6.84547215. Remaining generation allowance is $8.15452785 for the approved scope. No new Jev calls or quality-selected generation retries were made.
 - Trusted DeFiHackLabs PoCs remain outside discovery inputs. We are not rerunning those PoCs or waiting for human reviewers.
 
-## 1. Finish the current comparison
+## 1. Preserve the completed comparison
 
 Preserve every consecutive attempt, including failures. Compare the original and revised generator on identical historical source scopes and the same model configuration. Do not retry merely because a report is disappointing.
 
@@ -26,7 +27,7 @@ Assess these specific mechanisms against the trusted PoCs and source:
 
 Record full, partial, missed or unresolved mechanism coverage; raw/final findings; rejected leads; source-citation failures; reasoning defects; actual cost and latency. Fewer findings alone is not success. Preserve original reports rather than rewriting them to match the reference.
 
-**Deliverable:** a before/after assessment with file-level evidence, billing and all raw outputs. The evaluation rules are frozen in [protocol.json](../../benchmarks/discovery/results/source-claims-2026-09-21/protocol.json).
+**Completed:** a [before/after assessment](../../benchmarks/discovery/results/source-claims-2026-09-21/assessment.md) with file-level evidence, billing, all raw outputs and delivery diagnostics. The evaluation rules are frozen in [protocol.json](../../benchmarks/discovery/results/source-claims-2026-09-21/protocol.json).
 
 ## 2. Review the attack reasoning, beyond citation matching
 
@@ -43,6 +44,12 @@ Exact quotes establish that the cited text exists. They do not prove the interpr
 **Deliverable:** an evidence-backed disposition for each new finding, with unresolved cases and known limitations retained.
 
 ## 3. Fix only failures the new run demonstrates
+
+**First priority: output delivery.** Sentiment returned a tail fragment and triggered fresh analysis. Euler repeatedly hit the output limit and lost a relevant donation/solvency lead. Preserve candidates incrementally, bound individual outputs and reconcile candidate identities after recovery. Add a deterministic truncation/recovery regression before another paid study. A parseable smaller report must not silently count as a complete transfer of the original analysis.
+
+**Second priority: required source inspection.** The recorded Sentiment calls never requested the supplied BasePool, PoolBalances or AssetTransfersHandler implementations. Euler listed Liquidation.sol as missing even though it was supplied. Track which implementation dependencies were actually inspected, and retain explicit gaps when the producer, callback or consumer path is incomplete.
+
+**Third priority: guard scope and rejected candidates.** Socket dismissed a known ERC20 allowance theft using an ETH balance argument. Check which asset and state each guard constrains; test zero values, construction prerequisites and outer-transaction rollback. The negative result shows that adding a generic checklist alone did not fix this reasoning.
 
 If the model still misses a mechanism, inspect the missing source reads and boundary traversal before adding more generic prompt text. If evidence is present but reasoning is wrong, target that reasoning failure. If citation checks fail, distinguish wrong paths/ranges from an unsupported claim.
 
@@ -64,7 +71,7 @@ For claims not settled by trusted reference evidence, identify a concrete falsif
 
 Where feasible, run the same assertion against a narrowly repaired version as a control. A build failure, RPC failure, empty symbolic search or unreachable test is not a security verdict. Preserve commands, environment, assertions and outcomes. Do not rerun trusted incident PoCs merely as a process requirement.
 
-**Deliverable:** executable evidence for specific claims, or a precise statement of why they remain unresolved. This is separate from the currently running source-only discovery experiment.
+**Deliverable:** executable evidence for specific claims, or a precise statement of why they remain unresolved. This is separate from the completed source-only discovery experiment.
 
 ## 6. Ship with the evidence and limitations
 

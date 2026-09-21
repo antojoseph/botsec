@@ -1,0 +1,319 @@
+{
+  "contractType": "lending",
+  "actors": [
+    {
+      "name": "borrower",
+      "type": "user",
+      "capabilities": [
+        "borrow",
+        "repay",
+        "deposit",
+        "withdraw",
+        "flashLoan",
+        "deferLiquidityCheck"
+      ]
+    },
+    {
+      "name": "depositor",
+      "type": "user",
+      "capabilities": [
+        "deposit",
+        "withdraw",
+        "wrap",
+        "unwrap"
+      ]
+    },
+    {
+      "name": "liquidator",
+      "type": "user",
+      "capabilities": [
+        "liquidate"
+      ]
+    },
+    {
+      "name": "euler_admin",
+      "type": "admin",
+      "capabilities": [
+        "setGovernance",
+        "installModule"
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "name": "underlying ERC-20 tokens in lending pools",
+      "type": "funds",
+      "location": "EToken/DToken module storage"
+    },
+    {
+      "name": "PToken wrapped collateral",
+      "type": "funds",
+      "location": "PToken.balances / PToken.totalBalances"
+    }
+  ],
+  "trustBoundaries": [
+    {
+      "name": "PToken.claimSurplus public entry",
+      "description": "Public function with no caller restriction that credits arbitrary address with surplus tokens",
+      "crossedBy": [
+        "contracts/PToken.sol:claimSurplus"
+      ]
+    },
+    {
+      "name": "DToken.flashLoan callback",
+      "description": "onFlashLoan callback fires while reentrancyLock is set; reentrantOK functions remain callable",
+      "crossedBy": [
+        "contracts/modules/DToken.sol:flashLoan"
+      ]
+    },
+    {
+      "name": "Exec.deferLiquidityCheck account parameter",
+      "description": "account param is not restricted to msg.sender, allowing caller to defer any account's liquidity check",
+      "crossedBy": [
+        "contracts/modules/Exec.sol:deferLiquidityCheck"
+      ]
+    }
+  ],
+  "threats": [
+    {
+      "id": "T-01",
+      "category": "front-running",
+      "title": "PToken.claimSurplus has no access control — attacker can claim tokens sent directly to PToken for themselves",
+      "description": "claimSurplus(address who) is public with no caller restriction. Any surplus tokens held by the contract (underlying balance above totalBalances) are credited to the caller-supplied `who` address. A user who sends underlying tokens to PToken without using wrap() loses those tokens to whoever calls claimSurplus first.",
+      "affectedCode": [
+        "contracts/PToken.sol:123"
+      ],
+      "severity": "Medium",
+      "confidence": "high",
+      "priority": 1,
+      "suggestedProperties": [
+        "claimSurplus_only_credits_msg_sender_or_authorized_address"
+      ],
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "contracts/PToken.sol:104-107",
+            "finding": "wrap() calls safeTransferFrom then claimSurplus(msg.sender) atomically — safe path"
+          },
+          {
+            "action": "Read",
+            "target": "contracts/PToken.sol:123-132",
+            "finding": "claimSurplus is public, takes arbitrary `who`, checks currBalance > totalBalances and credits surplus to `who` — any caller can supply any beneficiary"
+          },
+          {
+            "action": "Assess",
+            "target": "attack scenario",
+            "finding": "User directly transfers underlying to PToken contract; attacker front-runs by calling claimSurplus(attacker) in same or subsequent block"
+          }
+        ]
+      },
+      "claimAssessment": {
+        "conclusion": "supported",
+        "executionContext": "Attacker is an external EOA. PToken is a standalone contract (not module-based). msg.sender unrestricted. Victim's tokens are already in the contract.",
+        "sourceReferences": [
+          {
+            "id": "SR-01",
+            "path": "contracts/PToken.sol",
+            "startLine": 123,
+            "endLine": 132,
+            "quote": "function claimSurplus(address who) public {\n        uint currBalance = IERC20(underlyingToken).balanceOf(address(this));\n        require(currBalance > totalBalances, \"no surplus balance to claim\");\n\n        uint amount = currBalance - totalBalances;\n\n        totalBalances += amount;\n        balances[who] += amount;\n        emit Transfer(address(0), who, amount);\n    }"
+          },
+          {
+            "id": "SR-02",
+            "path": "contracts/PToken.sol",
+            "startLine": 104,
+            "endLine": 107,
+            "quote": "function wrap(uint amount) external {\n        Utils.safeTransferFrom(underlyingToken, msg.sender, address(this), amount);\n        claimSurplus(msg.sender);\n    }"
+          }
+        ],
+        "steps": [
+          {
+            "action": "Verify no access control on claimSurplus",
+            "expectedResult": "Any caller can pass arbitrary `who` and claim all surplus",
+            "citationIds": [
+              "SR-01"
+            ]
+          },
+          {
+            "action": "Confirm wrap() is the only intended path and is atomic",
+            "expectedResult": "wrap() is atomic so no window exists for direct-wrap callers, but direct token transfers remain exploitable",
+            "citationIds": [
+              "SR-02"
+            ]
+          },
+          {
+            "action": "Identify victim path",
+            "expectedResult": "Victim who sends tokens directly to PToken without calling wrap() loses tokens to front-runner calling claimSurplus(attacker_address)",
+            "citationIds": [
+              "SR-01"
+            ]
+          }
+        ],
+        "checks": [
+          {
+            "kind": "reachability",
+            "result": "supported",
+            "reason": "claimSurplus is public, no modifier, callable by any external account",
+            "citationIds": [
+              "SR-01"
+            ]
+          },
+          {
+            "kind": "guards-and-rollback",
+            "result": "supported",
+            "reason": "No access control check whatsoever on the caller or the `who` parameter; only requires currBalance > totalBalances",
+            "citationIds": [
+              "SR-01"
+            ]
+          },
+          {
+            "kind": "callback-state",
+            "result": "not-applicable",
+            "reason": "claimSurplus makes no external calls after state writes; no reentrancy path",
+            "citationIds": [
+              "SR-01"
+            ]
+          },
+          {
+            "kind": "profit-and-loss",
+            "result": "supported",
+            "reason": "Attacker pays zero; receives balances[who] += amount credit worth underlying tokens redeemable via unwrap(). Victim funded the surplus.",
+            "citationIds": [
+              "SR-01"
+            ]
+          }
+        ],
+        "missingEvidence": []
+      }
+    },
+    {
+      "id": "T-02",
+      "category": "logic-error",
+      "title": "Exec.deferLiquidityCheck accepts arbitrary account — attacker can freeze any account's deferLiquidityStatus to block liquidation",
+      "description": "deferLiquidityCheck takes an unconstrained `account` address. An attacker can set any victim account's deferLiquidityStatus to DEFERLIQUIDITY__CLEAN, occupying it for the duration of the callback, potentially blocking a concurrent liquidation that checks this flag.",
+      "affectedCode": [
+        "contracts/modules/Exec.sol:89"
+      ],
+      "severity": "Low",
+      "confidence": "medium",
+      "priority": 2,
+      "suggestedProperties": [
+        "deferLiquidityCheck_account_must_be_subaccount_of_msgSender"
+      ],
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "contracts/modules/Exec.sol:89-101",
+            "finding": "deferLiquidityCheck takes `account` with no restriction; sets accountLookup[account].deferLiquidityStatus = DEFERLIQUIDITY__CLEAN before callback"
+          },
+          {
+            "action": "Check",
+            "target": "contracts/modules/Liquidation.sol",
+            "finding": "Need to verify if liquidation reads deferLiquidityStatus — unresolved without reading liquidation code"
+          },
+          {
+            "action": "Assess",
+            "target": "worst-case",
+            "finding": "Even without blocking liquidation, attacker can pointlessly defer any account; if liquidation respects the defer flag, griefing is feasible"
+          }
+        ]
+      },
+      "claimAssessment": {
+        "conclusion": "unresolved",
+        "executionContext": "Attacker is external EOA. account param is any address. Callback executes on msg.sender (attacker contract).",
+        "sourceReferences": [
+          {
+            "id": "SR-03",
+            "path": "contracts/modules/Exec.sol",
+            "startLine": 89,
+            "endLine": 101,
+            "quote": "function deferLiquidityCheck(address account, bytes memory data) external reentrantOK {\n        address msgSender = unpackTrailingParamMsgSender();\n\n        require(accountLookup[account].deferLiquidityStatus == DEFERLIQUIDITY__NONE, \"e/defer/reentrancy\");\n        accountLookup[account].deferLiquidityStatus = DEFERLIQUIDITY__CLEAN;\n\n        IDeferredLiquidityCheck(msgSender).onDeferredLiquidityCheck(data);\n\n        uint8 status = accountLookup[account].deferLiquidityStatus;\n        accountLookup[account].deferLiquidityStatus = DEFERLIQUIDITY__NONE;\n\n        if (status == DEFERLIQUIDITY__DIRTY) checkLiquidity(account);\n    }"
+          }
+        ],
+        "steps": [
+          {
+            "action": "Confirm account param is unconstrained",
+            "expectedResult": "Attacker supplies victim address as account",
+            "citationIds": [
+              "SR-03"
+            ]
+          },
+          {
+            "action": "Check if Liquidation.sol reads deferLiquidityStatus before proceeding",
+            "expectedResult": "If yes, liquidation reverts while victim is deferred; if no, griefing is limited",
+            "citationIds": [
+              "SR-03"
+            ]
+          }
+        ],
+        "checks": [
+          {
+            "kind": "reachability",
+            "result": "supported",
+            "reason": "deferLiquidityCheck is external reentrantOK with no restriction on account param",
+            "citationIds": [
+              "SR-03"
+            ]
+          },
+          {
+            "kind": "guards-and-rollback",
+            "result": "unresolved",
+            "reason": "Only guard is deferLiquidityStatus != NONE (reentrancy guard for the same account). No guard requiring account == msg.sender. Whether liquidation.sol checks this flag is not confirmed without reading that file.",
+            "citationIds": [
+              "SR-03"
+            ]
+          },
+          {
+            "kind": "callback-state",
+            "result": "unresolved",
+            "reason": "Callback fires on attacker-controlled contract. nonReentrant functions (borrow, withdraw) cannot be called because reentrancyLock is already set by an outer call if any; but deferLiquidityCheck is reentrantOK so lock state depends on call path. Missing: Liquidation.sol source.",
+            "citationIds": [
+              "SR-03"
+            ]
+          },
+          {
+            "kind": "profit-and-loss",
+            "result": "unresolved",
+            "reason": "If liquidation is blocked, victim remains undercollateralized and protocol accrues bad debt. Attacker profit unclear.",
+            "citationIds": [
+              "SR-03"
+            ]
+          }
+        ],
+        "missingEvidence": [
+          "Liquidation.sol source to verify whether liquidate() checks deferLiquidityStatus before proceeding"
+        ]
+      }
+    }
+  ],
+  "dismissedCandidates": [
+    {
+      "title": "DToken.borrow pushes tokens before checkLiquidity (CEI violation)",
+      "reason": "The nonReentrant modifier (Base.sol:44-50) sets a global reentrancyLock at Euler storage level before pushTokens executes. Because all modules delegatecall into Euler's storage, the lock prevents any reentrant call into borrow or other nonReentrant functions during the safeTransfer. The liquidity check at line 119 fires at the end of the same transaction with no exploitable window.",
+      "sourceReferences": [
+        {
+          "id": "DR-01",
+          "path": "contracts/Base.sol",
+          "startLine": 44,
+          "endLine": 50,
+          "quote": "modifier nonReentrant() {\n        require(reentrancyLock == REENTRANCYLOCK__UNLOCKED, \"e/reentrancy\");\n\n        reentrancyLock = REENTRANCYLOCK__LOCKED;\n        _;\n        reentrancyLock = REENTRANCYLOCK__UNLOCKED;\n    }"
+        }
+      ]
+    },
+    {
+      "title": "DToken.flashLoan allows reentrantOK functions during callback to bypass protections",
+      "reason": "During the flashLoan callback, reentrancyLock is LOCKED. Any nonReentrant function (borrow, repay, deposit, withdraw) reverts. reentrantOK functions like deferLiquidityCheck and batchDispatch are callable, but deferLiquidityCheck only defers a liquidity check and does not itself transfer assets. The require at flashLoan:163 enforces origBalance repayment, so the final balance check catches any net shortfall.",
+      "sourceReferences": [
+        {
+          "id": "DR-02",
+          "path": "contracts/modules/DToken.sol",
+          "startLine": 154,
+          "endLine": 164,
+          "quote": "function flashLoan(uint amount, bytes calldata data) external nonReentrant {\n        (address underlying,,, address msgSender) = CALLER();\n\n        uint origBalance = IERC20(underlying).balanceOf(address(this));\n\n        Utils.safeTransfer(underlying, msgSender, amount);\n\n        IFlashLoan(msgSender).onFlashLoan(data);\n\n        require(IERC20(underlying).balanceOf(address(this)) >= origBalance, \"e/flash-loan-not-repaid\");\n    }"
+        }
+      ]
+    }
+  ]
+}

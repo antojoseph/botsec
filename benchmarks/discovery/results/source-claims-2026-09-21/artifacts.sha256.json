@@ -1,0 +1,169 @@
+{
+  "version": 1,
+  "algorithm": "sha256",
+  "excludes": [
+    "artifacts.sha256.json"
+  ],
+  "files": [
+    {
+      "path": "assessment.md",
+      "sha256": "146b5940cf36b78a95a853262c32199fdb8a927c905549130dd7b7733f74b2d2"
+    },
+    {
+      "path": "baseline-assessment.json",
+      "sha256": "a924619c1b6e4dc3e6a99feab87640b5c4836d39d73f93bd747d8409b18859b2"
+    },
+    {
+      "path": "collection/collection.json",
+      "sha256": "24ac608b111746b61386612339c4cc1652848c0258e5cf44b3b401e002db2dc8"
+    },
+    {
+      "path": "collection/generation-billing.jsonl",
+      "sha256": "69fef55881b99ce843676cc9b9d5642da1c43f5bb51cb6b9a32f4856b5913962"
+    },
+    {
+      "path": "collection/project-01/threat-model-2026-09-21-07-09-40-6wDqKm/blueprint.json",
+      "sha256": "18383bcde66bf489ab0b3dedda91b3cf1bd03fe9fb279116080941f83ac47116"
+    },
+    {
+      "path": "collection/project-01/threat-model-2026-09-21-07-09-40-6wDqKm/claim-reviews.json",
+      "sha256": "87c75440a12f34ee0fbf15ee81d36104389b944e818727a9a401cab0533428d6"
+    },
+    {
+      "path": "collection/project-01/threat-model-2026-09-21-07-09-40-6wDqKm/generation-config.json",
+      "sha256": "26dfca43442f04019fe755e64cdcc4696040cc388f0f2855b399e6bc3da963b0"
+    },
+    {
+      "path": "collection/project-01/threat-model-2026-09-21-07-09-40-6wDqKm/generation-result.json",
+      "sha256": "27fe52357689c0958a67a2c0bc2f9c298df47f42346cb2a2ca49bae46e6bc6a0"
+    },
+    {
+      "path": "collection/project-01/threat-model-2026-09-21-07-09-40-6wDqKm/pre-synthesis.json",
+      "sha256": "cd013b51d78f6ee64f108adf7fed2b94877e64b9206dfded236eb220941ab801"
+    },
+    {
+      "path": "collection/project-01/threat-model-2026-09-21-07-09-40-6wDqKm/raw-agent-output.json",
+      "sha256": "268edbf46bd2419f4efa3061ff02673bcb56061437607f1d9810dd4670ade5cd"
+    },
+    {
+      "path": "collection/project-01/threat-model-2026-09-21-07-09-40-6wDqKm/raw-findings.json",
+      "sha256": "268edbf46bd2419f4efa3061ff02673bcb56061437607f1d9810dd4670ade5cd"
+    },
+    {
+      "path": "collection/project-01/threat-model-2026-09-21-07-09-40-6wDqKm/synthesis-stages.jsonl",
+      "sha256": "7ea2b20128bf0c0687a26fa355eb579a1b6fa105c92106af9648f8fb08fb2b7a"
+    },
+    {
+      "path": "collection/project-01/threat-model-2026-09-21-07-09-40-6wDqKm/threat-model.json",
+      "sha256": "9431c64fca11510f6c9dba7a61515d5c3590912833da11a93a6075c1087f5df5"
+    },
+    {
+      "path": "collection/project-02/threat-model-2026-09-21-07-17-25-okuiza/blueprint.json",
+      "sha256": "0217b941be9b64866f52c6dd826269a91aaf26cc14e2877a00455a0b13389cc0"
+    },
+    {
+      "path": "collection/project-02/threat-model-2026-09-21-07-17-25-okuiza/claim-reviews.json",
+      "sha256": "821232a9248113afc4e1389acab289e12a64e63153189d87306e14980bee14a9"
+    },
+    {
+      "path": "collection/project-02/threat-model-2026-09-21-07-17-25-okuiza/generation-config.json",
+      "sha256": "968203d171f3bdda1fcecf8847594eb6b75bd9b73ad7efd9199e62b10ae40e02"
+    },
+    {
+      "path": "collection/project-02/threat-model-2026-09-21-07-17-25-okuiza/generation-result.json",
+      "sha256": "e80b29528e0408fabbaa3ebc23ebc059422f24650f036bd49ff798265afc7535"
+    },
+    {
+      "path": "collection/project-02/threat-model-2026-09-21-07-17-25-okuiza/pre-synthesis.json",
+      "sha256": "0e39405b559446beb7f0337574f85c005b5b0abe81fd64cf887d01deefa495ce"
+    },
+    {
+      "path": "collection/project-02/threat-model-2026-09-21-07-17-25-okuiza/raw-agent-output.json",
+      "sha256": "067be1ca71e9f2b2c9621aa2609b8e1cb7290255429f6932ea991cec3e430a8f"
+    },
+    {
+      "path": "collection/project-02/threat-model-2026-09-21-07-17-25-okuiza/raw-findings.json",
+      "sha256": "067be1ca71e9f2b2c9621aa2609b8e1cb7290255429f6932ea991cec3e430a8f"
+    },
+    {
+      "path": "collection/project-02/threat-model-2026-09-21-07-17-25-okuiza/synthesis-stages.jsonl",
+      "sha256": "4ccdd065d59def2360ec121d58573c243ce1c14e04e3a1c1e4fbd7f04c5020b2"
+    },
+    {
+      "path": "collection/project-02/threat-model-2026-09-21-07-17-25-okuiza/threat-model.json",
+      "sha256": "e4060a5ffa02cc1b89ea5dc48cb84584799cd82f95bd9c0f4b5c7a0578cb8e51"
+    },
+    {
+      "path": "collection/project-03/threat-model-2026-09-21-07-29-10-vfin2C/blueprint.json",
+      "sha256": "157d39d618872340ffd9e221b475008799b361c9504721a42c3f891ade273406"
+    },
+    {
+      "path": "collection/project-03/threat-model-2026-09-21-07-29-10-vfin2C/claim-reviews.json",
+      "sha256": "ba5524ede8cf5835d97e6693c1bd03e8d15bc81953a3fcb7200631371458efef"
+    },
+    {
+      "path": "collection/project-03/threat-model-2026-09-21-07-29-10-vfin2C/generation-config.json",
+      "sha256": "3db9427f08e281726d46c45802962a57a452a2b271223ff076d157a3858e3405"
+    },
+    {
+      "path": "collection/project-03/threat-model-2026-09-21-07-29-10-vfin2C/generation-result.json",
+      "sha256": "5448eb20b53127b2c32573720524613af2561d44fe6702e2f55e5605327ce4a4"
+    },
+    {
+      "path": "collection/project-03/threat-model-2026-09-21-07-29-10-vfin2C/pre-synthesis.json",
+      "sha256": "0c01b30389e1c4e72996c83864eaf22c004ed2a7731ebd369a3732d072b07dc8"
+    },
+    {
+      "path": "collection/project-03/threat-model-2026-09-21-07-29-10-vfin2C/raw-agent-output.json",
+      "sha256": "13f0635fff6347f81dccf2661c6480acf928123fff51c2fd5ba7dac3cc1cd47f"
+    },
+    {
+      "path": "collection/project-03/threat-model-2026-09-21-07-29-10-vfin2C/raw-findings.json",
+      "sha256": "13f0635fff6347f81dccf2661c6480acf928123fff51c2fd5ba7dac3cc1cd47f"
+    },
+    {
+      "path": "collection/project-03/threat-model-2026-09-21-07-29-10-vfin2C/synthesis-stages.jsonl",
+      "sha256": "42c6b197f28727c96a3bbf1f3b2ca2343b34eab962d82254da9a1c10b9df185e"
+    },
+    {
+      "path": "collection/project-03/threat-model-2026-09-21-07-29-10-vfin2C/threat-model.json",
+      "sha256": "71fc7ed569ee083cb0c53fa7c839f1ffcdf4a871295cf999610f6fc5ad294488"
+    },
+    {
+      "path": "delivery-diagnostics.json",
+      "sha256": "0ba5de5e1e9fd5e86b713e63f1b753d08ecf1a0faa6ed8e5b1131105cea544ee"
+    },
+    {
+      "path": "dismissal-reviews.json",
+      "sha256": "b2f1edfa6b336f1a80091a2551517dce249a82f5cab08adb0798db20966a1924"
+    },
+    {
+      "path": "euler-assessment.json",
+      "sha256": "c1c3d75edf037c4695c0e00c6355405b5deeb382ab187f21d22a824006acba14"
+    },
+    {
+      "path": "protocol.json",
+      "sha256": "39ea08e8af23e9211fa93580bbf164d5479458a339486252b046c287984acc39"
+    },
+    {
+      "path": "reference-evidence.json",
+      "sha256": "726f20788fd080eab6d8348fd99bea2a875f8c7c64b0527a478861093b64203d"
+    },
+    {
+      "path": "run-provenance.json",
+      "sha256": "b688885f2a65009f63523aac6db18b3bd65d5e0842cd2cf75a5226399c341779"
+    },
+    {
+      "path": "sentiment-assessment.json",
+      "sha256": "4abfaf0e32471212227ef68bf42d8617b01c7ceaca944fd0f8321bf62114ffa7"
+    },
+    {
+      "path": "socket-assessment.json",
+      "sha256": "b0c61665dcb5081508dac78bc3f3c8d4a70fe1aa92469c2e4302ead211773d87"
+    },
+    {
+      "path": "summary.json",
+      "sha256": "86979b0ef63185b0c7bb3511f635680567178962f61d0b839a0c1c114cbf7912"
+    }
+  ]
+}

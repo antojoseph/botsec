@@ -1,0 +1,54 @@
+[
+  {
+    "id": "T-001",
+    "review": {
+      "status": "needs-review",
+      "executionVerified": false,
+      "issues": [
+        "Generator recorded missing evidence"
+      ],
+      "sourceReferences": [
+        {
+          "id": "R1",
+          "path": "context/unit-1/src/SocketGateway.sol",
+          "quoteMatches": true,
+          "fileSha256": "a053183175a7d158bfd6ba4a2caf2581dc61586ac5f6b34cc41c1be6cc088956"
+        },
+        {
+          "id": "R2",
+          "path": "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol",
+          "quoteMatches": true,
+          "fileSha256": "cc40579a1f0f1180b6fb912a6716e861ad4248efa9c67405632e2e2f1194590e"
+        },
+        {
+          "id": "R3",
+          "path": "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol",
+          "quoteMatches": true,
+          "fileSha256": "cc40579a1f0f1180b6fb912a6716e861ad4248efa9c67405632e2e2f1194590e"
+        }
+      ]
+    }
+  },
+  {
+    "id": "T-002",
+    "review": {
+      "status": "citations-checked",
+      "executionVerified": false,
+      "issues": [],
+      "sourceReferences": [
+        {
+          "id": "R4",
+          "path": "context/unit-1/src/SocketGateway.sol",
+          "quoteMatches": true,
+          "fileSha256": "a053183175a7d158bfd6ba4a2caf2581dc61586ac5f6b34cc41c1be6cc088956"
+        },
+        {
+          "id": "R5",
+          "path": "context/unit-1/src/SocketGateway.sol",
+          "quoteMatches": true,
+          "fileSha256": "a053183175a7d158bfd6ba4a2caf2581dc61586ac5f6b34cc41c1be6cc088956"
+        }
+      ]
+    }
+  }
+]

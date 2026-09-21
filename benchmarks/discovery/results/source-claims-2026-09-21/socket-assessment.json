@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "reviewer": {
+    "kind": "assistant",
+    "independent": false
+  },
+  "family": "socket",
+  "sourceRun": "project-01/threat-model-2026-09-21-07-09-40-6wDqKm",
+  "coverage": {
+    "grade": "missed",
+    "reason": "The retained native-to-wrapped ETH-drain allegation is a different path. The known wrapped-to-native zero-amount victim ERC20 transferFrom mechanism is explicitly rejected in dismissedCandidates[1] based on an ETH-only cash-flow argument.",
+    "evidence": [
+      "socket-gateway",
+      "socket-arbitrary-call",
+      "reference Socket PoC"
+    ]
+  },
+  "findings": [
+    {
+      "id": "T-001",
+      "disposition": "conditional source-supported candidate; not incident coverage or executed proof",
+      "reason": "The native call can spend pre-existing gateway ETH and attacker-controlled token balance reads can reflect state changed by the intervening call. This depends on gateway ETH holdings. The report lists missing evidence despite calling its conclusion supported, and the checker correctly marks needs-review. This is not the reference ERC20 allowance attack."
+    },
+    {
+      "id": "T-002",
+      "disposition": "source-supported missing-increment defect; stated gas-loss impact overbroad",
+      "reason": "The gateway first loop omits index increment. With normal ratios it cannot finish and exhausts gas. Extremely large ratios can instead trigger checked-addition overflow early, so losing all supplied gas on every input is not established. This is a separate defect outside the reference incident."
+    }
+  ],
+  "dismissals": [
+    {
+      "ordinal": 2,
+      "disposition": "incorrect rejection of known exploit mechanism",
+      "reason": "The ETH balance guard constrains ETH only. With amount zero, the guard can pass while caller-selected calldata invokes transferFrom on an ERC20 against a victim who approved the gateway. No positive ETH delta or attacker funding is required. The rejection misses both zero and the asset/allowance boundary.",
+      "evidence": [
+        "socket-arbitrary-call",
+        "socket-gateway",
+        "reference Socket PoC"
+      ]
+    }
+  ],
+  "limitations": "One development run; no local exploit execution. Candidate claims beyond the trusted reference remain conditional. Source quote checks do not establish semantic correctness."
+}

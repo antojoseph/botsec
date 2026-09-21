@@ -1,0 +1,46 @@
+[
+  {
+    "id": "T-01",
+    "review": {
+      "status": "citations-checked",
+      "executionVerified": false,
+      "issues": [],
+      "sourceReferences": [
+        {
+          "id": "SR-01",
+          "path": "contracts/PToken.sol",
+          "quoteMatches": true,
+          "fileSha256": "053db23fcac0fab8cf1a02d72f9fc0a80a5fe813320bae7ec8108524f475e15c"
+        },
+        {
+          "id": "SR-02",
+          "path": "contracts/PToken.sol",
+          "quoteMatches": true,
+          "fileSha256": "053db23fcac0fab8cf1a02d72f9fc0a80a5fe813320bae7ec8108524f475e15c"
+        }
+      ]
+    }
+  },
+  {
+    "id": "T-02",
+    "review": {
+      "status": "needs-review",
+      "executionVerified": false,
+      "issues": [
+        "Generator did not conclude the current-code attack is supported",
+        "Generator recorded missing evidence",
+        "guards-and-rollback is unresolved",
+        "callback-state is unresolved",
+        "profit-and-loss is unresolved"
+      ],
+      "sourceReferences": [
+        {
+          "id": "SR-03",
+          "path": "contracts/modules/Exec.sol",
+          "quoteMatches": true,
+          "fileSha256": "c5f5cd02165cc31082f17c5408f478e7332073d8690c4ce91307dbb41b65b3c4"
+        }
+      ]
+    }
+  }
+]

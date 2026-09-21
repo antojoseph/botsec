@@ -1,0 +1,464 @@
+{
+  "contractType": "oracle",
+  "actors": [
+    {
+      "name": "anyCallerOfGetPrice",
+      "type": "user",
+      "capabilities": [
+        "call getPrice(address token) with an arbitrary LP token address"
+      ]
+    },
+    {
+      "name": "riskEngine",
+      "type": "protocol-internal",
+      "capabilities": [
+        "call getPrice to price LP collateral for borrow/liquidation/withdrawal checks"
+      ]
+    },
+    {
+      "name": "admin",
+      "type": "admin",
+      "capabilities": [
+        "set vault and oracleFacade at construction; toggleCollateralStatus in AccountManager"
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "name": "LP token collateral value",
+      "type": "oracle-derived-value",
+      "location": "WeightedBalancerLPOracle.getPrice return value consumed by riskEngine"
+    },
+    {
+      "name": "Borrower/liquidation oracle availability",
+      "type": "liveness",
+      "location": "WeightedBalancerLPOracle.getPrice must not revert for risk checks to function"
+    }
+  ],
+  "trustBoundaries": [
+    {
+      "name": "Balancer vault token list",
+      "description": "vault.getPoolTokens returns token addresses that are then called for decimals(); these are trusted insofar as the vault itself is trusted, but the oracle normalises balances based on decimals values returned by those tokens",
+      "crossedBy": [
+        "src/balancer/WeightedBalancerLPOracle.sol:getPrice"
+      ]
+    },
+    {
+      "name": "oracleFacade underlying prices",
+      "description": "oracleFacade.getPrice(poolTokens[i]) is called for each constituent token; the security of the LP price depends entirely on the manipulation-resistance of these sub-oracle calls",
+      "crossedBy": [
+        "src/balancer/WeightedBalancerLPOracle.sol:getPrice"
+      ]
+    }
+  ],
+  "threats": [
+    {
+      "id": "T-001",
+      "category": "arithmetic",
+      "title": "Panic revert when any constituent pool token has decimals > 18, permanently blocking oracle for that LP token",
+      "description": "Inside getPrice, the expression `balances[i] * 10 ** (18 - IERC20(poolTokens[i]).decimals())` uses checked arithmetic in Solidity ^0.8.17. The sub-expression `18 - IERC20(poolTokens[i]).decimals()` is computed as uint256 minus uint8; when decimals() returns a value greater than 18, the subtraction underflows and triggers a Panic(0x11) revert. This causes every call to getPrice for that LP token to revert unconditionally. Because the risk engine calls this oracle to evaluate collateral health before every borrow, withdrawal, and liquidation, the revert permanently blocks those operations for any account holding that LP token as collateral. An attacker who can deposit such an LP token (if the admin whitelists one) can brick liquidations, preventing protocol bad-debt recovery.",
+      "affectedCode": [
+        "src/balancer/WeightedBalancerLPOracle.sol:60"
+      ],
+      "assets": [
+        "LP token collateral value",
+        "Borrower/liquidation oracle availability"
+      ],
+      "severity": "Medium",
+      "confidence": "high",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/balancer/WeightedBalancerLPOracle.sol:54-63",
+            "finding": "Loop body at line 60: `balances[i] * 10 ** (18 - IERC20(poolTokens[i]).decimals())` -- no guard on decimals value"
+          },
+          {
+            "action": "Read",
+            "target": "src/utils/IERC20.sol:5",
+            "finding": "`function decimals() external view returns (uint8)` -- return type is uint8, max 255"
+          },
+          {
+            "action": "Reason",
+            "target": "arithmetic type rule in Solidity 0.8+",
+            "finding": "18 - uint8(X) where X > 18: Solidity 0.8 wraps literal 18 to uint256; uint256(18) - uint256(X) where X = 19..255 underflows with checked arithmetic, emitting Panic(0x11)"
+          },
+          {
+            "action": "Read",
+            "target": "context/unit-1/src/core/AccountManager.sol:238",
+            "finding": "`if (!riskEngine.isAccountHealthy(account)) revert Errors.RiskThresholdBreached();` -- every borrow calls this check which chains to getPrice"
+          },
+          {
+            "action": "Read",
+            "target": "context/unit-1/src/core/AccountManager.sol:265-270",
+            "finding": "`liquidate` calls `riskEngine.isAccountHealthy(account)` -- revert here blocks liquidation of all accounts holding this LP token"
+          }
+        ]
+      },
+      "attackScenario": "1. Admin whitelists a Balancer weighted pool LP token whose constituent token (e.g. a rebasing or non-standard token) returns decimals() == 20.\n2. Attacker (or legitimate user) deposits that LP token as collateral and borrows up to the limit.\n3. Every subsequent call to riskEngine.isAccountHealthy() for that account chains to getPrice(), which panics at line 60.\n4. borrow(), withdraw(), and liquidate() all revert for any account holding this LP token.\n5. The attacker's account cannot be liquidated even if it becomes undercollateralised, accumulating bad debt.",
+      "suggestedProperties": [
+        "check_getPrice_never_reverts_for_registered_lp_tokens",
+        "check_constituent_token_decimals_le_18"
+      ],
+      "priority": 1,
+      "claimAssessment": {
+        "conclusion": "supported",
+        "executionContext": "caller: any address (getPrice is external with no auth guard); in practice called by riskEngine during health checks. storageAddressOf: WeightedBalancerLPOracle. deploymentAssumptions: A Balancer weighted pool is registered with a constituent token that returns decimals() > 18 and the pool LP token has been whitelisted as collateral.",
+        "sourceReferences": [
+          {
+            "id": "R1",
+            "path": "src/balancer/WeightedBalancerLPOracle.sol",
+            "startLine": 54,
+            "endLine": 63,
+            "quote": "for(uint i; i < length; i++) {\n            temp = temp.mulDown(\n                (oracleFacade.getPrice(poolTokens[i]).divDown(weights[i]))\n                .powDown(weights[i])\n            );\n            invariant = invariant.mulDown(\n                (balances[i] * 10 ** (18 - IERC20(poolTokens[i]).decimals()))\n                .powDown(weights[i])\n            );\n        }"
+          },
+          {
+            "id": "R2",
+            "path": "src/utils/IERC20.sol",
+            "startLine": 4,
+            "endLine": 7,
+            "quote": "interface IERC20 {\n    function decimals() external view returns (uint8);\n    function balanceOf(address) external view returns (uint);\n}"
+          },
+          {
+            "id": "R3",
+            "path": "context/unit-1/src/core/AccountManager.sol",
+            "startLine": 265,
+            "endLine": 270,
+            "quote": "function liquidate(address account) external nonReentrant {\n        if (riskEngine.isAccountHealthy(account))\n            revert Errors.AccountNotLiquidatable();\n        _liquidate(account);\n        emit AccountLiquidated(account, registry.ownerFor(account));\n    }"
+          },
+          {
+            "id": "R4",
+            "path": "context/unit-1/src/core/AccountManager.sol",
+            "startLine": 236,
+            "endLine": 240,
+            "quote": "if (ILToken(registry.LTokenFor(token)).lendTo(account, amt))\n            IAccount(account).addBorrow(token);\n        if (!riskEngine.isAccountHealthy(account))\n            revert Errors.RiskThresholdBreached();\n        emit Borrow(account, msg.sender, token, amt);"
+          }
+        ],
+        "steps": [
+          {
+            "action": "Attacker or user opens account and deposits LP token (with >18 decimal constituent) as collateral",
+            "expectedResult": "Deposit succeeds; collateral is registered on the account",
+            "citationIds": [
+              "R3"
+            ]
+          },
+          {
+            "action": "Any risk-engine call (borrow/withdraw/liquidate) invokes riskEngine.isAccountHealthy() -> oracleFacade.getPrice(lpToken) -> WeightedBalancerLPOracle.getPrice(lpToken)",
+            "expectedResult": "getPrice enters the loop and reaches line 60",
+            "citationIds": [
+              "R1"
+            ]
+          },
+          {
+            "action": "IERC20(poolTokens[i]).decimals() returns a value > 18 (e.g. 20); Solidity 0.8 checked arithmetic evaluates `18 - 20` as uint256 underflow",
+            "expectedResult": "Panic(0x11) revert propagates through the call stack; entire transaction reverts",
+            "citationIds": [
+              "R1",
+              "R2"
+            ]
+          },
+          {
+            "action": "liquidate(account) is called for an undercollateralised account; it also reaches getPrice and reverts",
+            "expectedResult": "Liquidation permanently blocked; bad debt accrues to the protocol",
+            "citationIds": [
+              "R3"
+            ]
+          }
+        ],
+        "checks": [
+          {
+            "kind": "reachability",
+            "result": "supported",
+            "reason": "getPrice is external with no access control and is called by riskEngine on every health check. The panic path is reached on line 60 whenever decimals() > 18.",
+            "citationIds": [
+              "R1",
+              "R2"
+            ]
+          },
+          {
+            "kind": "guards-and-rollback",
+            "result": "supported",
+            "reason": "There is no bounds check on `decimals()` before the subtraction. The FixedPoint library's own guards (MUL_OVERFLOW, ZERO_DIVISION) are never reached because the panic occurs first in the exponentiation base computation. The entire transaction rolls back, which means liquidation cannot complete.",
+            "citationIds": [
+              "R1"
+            ]
+          },
+          {
+            "kind": "callback-state",
+            "result": "not-applicable",
+            "reason": "getPrice is a view function; no state changes occur and no callbacks are made that could commit a state change. The threat is a DoS revert, not a reentrancy path.",
+            "citationIds": []
+          },
+          {
+            "kind": "profit-and-loss",
+            "result": "supported",
+            "reason": "Attacker profit: borrows against LP token collateral up to the health-check limit just before the oracle breaks. After the oracle is broken (e.g. due to pool token with >18 decimals being added or whitelisted), the account cannot be liquidated, so the attacker retains borrowed assets while the protocol cannot recover its collateral. Protocol loss: borrowed assets become unrecoverable bad debt.",
+            "citationIds": [
+              "R3",
+              "R4"
+            ]
+          }
+        ],
+        "missingEvidence": [
+          "Whether the admin can whitelist a Balancer LP token with a >18 decimal constituent token (depends on off-chain governance and available Balancer pools)",
+          "Whether the riskEngine oracle facade routing for LP tokens goes through WeightedBalancerLPOracle specifically (the IRiskEngine interface is present but its implementation is not in the compilation units provided)"
+        ]
+      },
+      "claimReview": {
+        "status": "needs-review",
+        "executionVerified": false,
+        "issues": [
+          "Generator recorded missing evidence"
+        ],
+        "sourceReferences": [
+          {
+            "id": "R1",
+            "path": "src/balancer/WeightedBalancerLPOracle.sol",
+            "quoteMatches": true,
+            "fileSha256": "3121ec22b720104545dd56feb729cb9769b2a567b48d2e46e2c45e722277afa0"
+          },
+          {
+            "id": "R2",
+            "path": "src/utils/IERC20.sol",
+            "quoteMatches": true,
+            "fileSha256": "72600f1a8be063889ddff32d6d191c7ad70bc9030fac0512ee707f8694f0aba8"
+          },
+          {
+            "id": "R3",
+            "path": "context/unit-1/src/core/AccountManager.sol",
+            "quoteMatches": true,
+            "fileSha256": "e306ea775c250ad7ee8c3ecf9423405bfe7bfa1e3a7fe9e54115aece6cb072ed"
+          },
+          {
+            "id": "R4",
+            "path": "context/unit-1/src/core/AccountManager.sol",
+            "quoteMatches": true,
+            "fileSha256": "e306ea775c250ad7ee8c3ecf9423405bfe7bfa1e3a7fe9e54115aece6cb072ed"
+          }
+        ]
+      }
+    },
+    {
+      "id": "T-002",
+      "category": "oracle-manipulation",
+      "title": "LP oracle price fully dependent on spot prices from oracleFacade; flash-loan manipulation possible if oracleFacade routes to any spot-price oracle",
+      "description": "WeightedBalancerLPOracle.getPrice computes LP token value as `invariant * temp / totalSupply`, where `temp = prod((oracleFacade.getPrice(poolTokens[i]) / weights[i])^weights[i])`. The invariant component is computed from spot Balancer pool balances, which are manipulation-resistant because the weighted pool invariant product is preserved by swaps. However, the `temp` factor is fully determined by the return values of `oracleFacade.getPrice` for each constituent token. If `oracleFacade` resolves any constituent token's price through a spot-price mechanism (e.g. Uniswap V2 spot, Balancer spot, or any non-TWAP feed), an attacker can flash-loan to move that spot price within a single transaction, then call borrow() or manipulate a liquidation before the transaction ends. The oracleFacade implementation is not present in the provided compilation units, leaving this path unresolved.",
+      "affectedCode": [
+        "src/balancer/WeightedBalancerLPOracle.sol:55-57"
+      ],
+      "assets": [
+        "LP token collateral value"
+      ],
+      "severity": "High",
+      "confidence": "low",
+      "trace": {
+        "steps": [
+          {
+            "action": "Read",
+            "target": "src/balancer/WeightedBalancerLPOracle.sol:55-57",
+            "finding": "`oracleFacade.getPrice(poolTokens[i])` is called inside the loop; its return value directly scales the LP price"
+          },
+          {
+            "action": "Read",
+            "target": "src/balancer/WeightedBalancerLPOracle.sol:37-40",
+            "finding": "`oracleFacade` is set at construction and is an immutable IOracle; its implementation is not in scope"
+          },
+          {
+            "action": "Read",
+            "target": "context/unit-1/src/interface/core/IRiskEngine.sol:14",
+            "finding": "`function oracle() external view returns (IOracle)` -- riskEngine stores an oracle reference; the oracle facade routes to per-token oracles whose implementation is unknown"
+          },
+          {
+            "action": "Reason",
+            "target": "invariant-preservation property of Balancer weighted pools",
+            "finding": "A Balancer swap preserves prod(balance_i^weight_i). Therefore the `invariant` variable computed from spot balances is stable under swap manipulation. The vulnerability vector is exclusively through `oracleFacade.getPrice` manipulation."
+          }
+        ]
+      },
+      "attackScenario": "1. Attacker identifies that oracleFacade routes token X's price through a Uniswap V2 spot oracle.\n2. Attacker flash-loans a large amount of token X.\n3. Attacker swaps into the Uniswap V2 pool, inflating token X's spot price.\n4. In the same transaction, attacker calls AccountManager.borrow() with an LP token containing token X as collateral.\n5. riskEngine.isAccountHealthy calls getPrice, which calls oracleFacade.getPrice(X) and receives the inflated price, overstating LP collateral value.\n6. Borrow succeeds with undercollateralised position.\n7. Attacker repays flash loan; borrow remains.",
+      "suggestedProperties": [
+        "check_lp_price_resistant_to_single_block_price_movement",
+        "check_oracleFacade_uses_twap_for_all_constituent_tokens"
+      ],
+      "priority": 2,
+      "claimAssessment": {
+        "conclusion": "unresolved",
+        "executionContext": "caller: any address via AccountManager.borrow() -> riskEngine.isAccountHealthy() -> WeightedBalancerLPOracle.getPrice(). storageAddressOf: WeightedBalancerLPOracle (immutable oracleFacade), AccountManager. tokenOwner: attacker controls flash-loaned tokens. deploymentAssumptions: oracleFacade routes at least one constituent token's price through a spot-price mechanism.",
+        "sourceReferences": [
+          {
+            "id": "R5",
+            "path": "src/balancer/WeightedBalancerLPOracle.sol",
+            "startLine": 43,
+            "endLine": 67,
+            "quote": "function getPrice(address token) external view returns (uint) {\n        (\n            address[] memory poolTokens,\n            uint256[] memory balances,\n        ) = vault.getPoolTokens(IPool(token).getPoolId());\n\n        uint256[] memory weights = IPool(token).getNormalizedWeights();\n\n        uint length = weights.length;\n        uint temp = 1e18;\n        uint invariant = 1e18;\n        for(uint i; i < length; i++) {\n            temp = temp.mulDown(\n                (oracleFacade.getPrice(poolTokens[i]).divDown(weights[i]))\n                .powDown(weights[i])\n            );\n            invariant = invariant.mulDown(\n                (balances[i] * 10 ** (18 - IERC20(poolTokens[i]).decimals()))\n                .powDown(weights[i])\n            );\n        }\n        return invariant\n            .mulDown(temp)\n            .divDown(IPool(token).totalSupply());\n    }"
+          },
+          {
+            "id": "R6",
+            "path": "src/core/IOracle.sol",
+            "startLine": 1,
+            "endLine": 12,
+            "quote": "interface IOracle {\n\n    /**\n        @notice Fetches price of a given token in terms of ETH\n        @param token Address of token\n        @return price Price of token in terms of ETH\n    */\n    function getPrice(address token) external view returns (uint);\n}"
+          },
+          {
+            "id": "R7",
+            "path": "context/unit-1/src/interface/core/IRiskEngine.sol",
+            "startLine": 1,
+            "endLine": 15,
+            "quote": "interface IRiskEngine {\n    function initDep() external;\n    function getBorrows(address account) external view returns (uint);\n    function getBalance(address account) external view returns (uint);\n    function isAccountHealthy(address account) external view returns (bool);\n    function isBorrowAllowed(address account, address token, uint amt)\n        external view returns (bool);\n    function isWithdrawAllowed(address account, address token, uint amt)\n        external view returns (bool);\n    function oracle() external view returns (IOracle);\n}"
+          }
+        ],
+        "steps": [
+          {
+            "action": "Attacker opens account, deposits LP token collateral",
+            "expectedResult": "Account is healthy with LP collateral",
+            "citationIds": [
+              "R5"
+            ]
+          },
+          {
+            "action": "Within a flash-loan transaction, attacker manipulates spot price of a constituent token via its underlying oracle market",
+            "expectedResult": "oracleFacade.getPrice(poolTokens[i]) returns an inflated value",
+            "citationIds": [
+              "R5",
+              "R6"
+            ]
+          },
+          {
+            "action": "Attacker calls AccountManager.borrow(); riskEngine.isAccountHealthy() routes to getPrice which multiplies by inflated temp factor",
+            "expectedResult": "LP price is overstated; borrow allowed beyond true collateral value",
+            "citationIds": [
+              "R5",
+              "R7"
+            ]
+          }
+        ],
+        "checks": [
+          {
+            "kind": "reachability",
+            "result": "supported",
+            "reason": "getPrice is external with no auth guard. AccountManager.borrow() calls riskEngine.isAccountHealthy() after issuing the loan. The oracleFacade.getPrice call inside getPrice is reached on every invocation.",
+            "citationIds": [
+              "R5",
+              "R4"
+            ]
+          },
+          {
+            "kind": "guards-and-rollback",
+            "result": "unresolved",
+            "reason": "No guard exists within WeightedBalancerLPOracle to detect a manipulated oracleFacade price. Whether the transaction as a whole rolls back depends on whether oracleFacade itself has TWAP protections. The oracleFacade implementation is not provided; it may or may not use TWAP. If oracleFacade uses Chainlink or a robust TWAP, the attack is blocked.",
+            "citationIds": [
+              "R5",
+              "R6"
+            ]
+          },
+          {
+            "kind": "callback-state",
+            "result": "not-applicable",
+            "reason": "getPrice is a view function. The concern is the accuracy of its return value influencing a subsequent state change (borrow), not a reentrancy callback pattern.",
+            "citationIds": []
+          },
+          {
+            "kind": "profit-and-loss",
+            "result": "unresolved",
+            "reason": "If oracleFacade is spot-based, attacker profit = overborrowed assets minus flash-loan fees minus repaid principal. Protocol loss = under-collateralised debt. Profit is only realised if oracleFacade is manipulable; that implementation is missing.",
+            "citationIds": [
+              "R5",
+              "R7"
+            ]
+          }
+        ],
+        "missingEvidence": [
+          "Implementation of oracleFacade (IOracle) -- specifically whether it uses TWAP or spot prices for the constituent tokens of Balancer LP tokens",
+          "Whether the RiskEngine oracle facade performs any additional sanity checks (min/max price bounds, deviation guards) before propagating prices"
+        ]
+      },
+      "claimReview": {
+        "status": "needs-review",
+        "executionVerified": false,
+        "issues": [
+          "Generator did not conclude the current-code attack is supported",
+          "Generator recorded missing evidence",
+          "Source quote does not match its line range: R6",
+          "Source quote does not match its line range: R7",
+          "Incomplete reachability check",
+          "guards-and-rollback is unresolved",
+          "profit-and-loss is unresolved"
+        ],
+        "sourceReferences": [
+          {
+            "id": "R5",
+            "path": "src/balancer/WeightedBalancerLPOracle.sol",
+            "quoteMatches": true,
+            "fileSha256": "3121ec22b720104545dd56feb729cb9769b2a567b48d2e46e2c45e722277afa0"
+          },
+          {
+            "id": "R6",
+            "path": "src/core/IOracle.sol",
+            "quoteMatches": false,
+            "fileSha256": "768eda8cdf750e7188c6ef7dd057a5ed8af1a702beceb123c8be08bd302b8ab0"
+          },
+          {
+            "id": "R7",
+            "path": "context/unit-1/src/interface/core/IRiskEngine.sol",
+            "quoteMatches": false,
+            "fileSha256": "fc6ad0fd64eab702423e668fb232837a8bf59df7f00ef672d30b5d8ceeb87b99"
+          }
+        ]
+      }
+    }
+  ],
+  "dismissedCandidates": [
+    {
+      "title": "Flash loan manipulation of Balancer pool spot balances to inflate the computed invariant",
+      "reason": "The `invariant` variable in getPrice computes `prod(balance_i^weight_i)`, which is exactly the Balancer weighted pool invariant. By design, any Balancer swap preserves this product (up to rounding and fees that can only increase it). Therefore, a swap-based flash loan attack that moves tokens into the pool changes individual balances but leaves `prod(balance_i^weight_i)` constant, so the `invariant` variable is unchanged and the LP price is not elevated. Swaps cannot inflate the invariant product; only non-proportional joins can, but those mint proportional new BPT, leaving price per BPT stable. Direct pool balance manipulation as a vector for inflating LP price via this oracle is blocked by the mathematical invariant-preservation property.",
+      "sourceReferences": [
+        {
+          "id": "R5",
+          "path": "src/balancer/WeightedBalancerLPOracle.sol",
+          "startLine": 59,
+          "endLine": 63,
+          "quote": "invariant = invariant.mulDown(\n                (balances[i] * 10 ** (18 - IERC20(poolTokens[i]).decimals()))\n                .powDown(weights[i])\n            );"
+        }
+      ]
+    },
+    {
+      "title": "Stale price data: oracle caches a stale value that can be exploited",
+      "reason": "WeightedBalancerLPOracle stores no price state. It is a pure view function that reads live Balancer vault balances, calls live getNormalizedWeights, calls live totalSupply, and calls oracleFacade.getPrice on each invocation. There is no cached price variable, no timestamp, and no heartbeat concept. Every call produces a freshly computed result. Staleness of the returned price depends entirely on the staleness of the oracleFacade sub-oracles, which is outside this contract's scope.",
+      "sourceReferences": [
+        {
+          "id": "R5",
+          "path": "src/balancer/WeightedBalancerLPOracle.sol",
+          "startLine": 43,
+          "endLine": 67,
+          "quote": "function getPrice(address token) external view returns (uint) {\n        (\n            address[] memory poolTokens,\n            uint256[] memory balances,\n        ) = vault.getPoolTokens(IPool(token).getPoolId());\n\n        uint256[] memory weights = IPool(token).getNormalizedWeights();\n\n        uint length = weights.length;\n        uint temp = 1e18;\n        uint invariant = 1e18;\n        for(uint i; i < length; i++) {\n            temp = temp.mulDown(\n                (oracleFacade.getPrice(poolTokens[i]).divDown(weights[i]))\n                .powDown(weights[i])\n            );\n            invariant = invariant.mulDown(\n                (balances[i] * 10 ** (18 - IERC20(poolTokens[i]).decimals()))\n                .powDown(weights[i])\n            );\n        }\n        return invariant\n            .mulDown(temp)\n            .divDown(IPool(token).totalSupply());\n    }"
+        }
+      ]
+    },
+    {
+      "title": "Array out-of-bounds: weights.length > poolTokens.length causing index overflow",
+      "reason": "The loop iterates `weights.length` times and accesses `poolTokens[i]` and `balances[i]`. In all standard Balancer weighted pools, the number of normalized weights equals the number of pool tokens by construction, enforced at pool creation by Balancer's BasePool.sol. A mismatch would require a malformed or custom pool contract, not a standard deployed pool. If a mismatch did occur, the result would be a revert (index out of bounds, Solidity 0.8+ panic), which is a DoS not an exploit for financial gain. No standard attack path creates this mismatch for registered pools.",
+      "sourceReferences": [
+        {
+          "id": "R5",
+          "path": "src/balancer/WeightedBalancerLPOracle.sol",
+          "startLine": 49,
+          "endLine": 54,
+          "quote": "uint256[] memory weights = IPool(token).getNormalizedWeights();\n\n        uint length = weights.length;\n        uint temp = 1e18;\n        uint invariant = 1e18;\n        for(uint i; i < length; i++) {"
+        }
+      ]
+    },
+    {
+      "title": "Division by zero when pool totalSupply is zero",
+      "reason": "If `IPool(token).totalSupply()` returns 0, the final `divDown(..., IPool(token).totalSupply())` call in FixedPoint will hit the `ZERO_DIVISION` guard at FixedPoint.sol:75 and revert. However, a Balancer weighted pool with zero BPT supply would mean no liquidity exists and no LP tokens are held as collateral. An attacker cannot force totalSupply to zero on a live pool (they would need to be the sole LP and exit all liquidity). If the pool is empty, no account could hold its LP tokens as collateral, so no borrow or liquidation depends on this oracle path. The revert is a harmless edge-case guard, not an exploitable condition.",
+      "sourceReferences": [
+        {
+          "id": "R5",
+          "path": "src/balancer/WeightedBalancerLPOracle.sol",
+          "startLine": 64,
+          "endLine": 67,
+          "quote": "return invariant\n            .mulDown(temp)\n            .divDown(IPool(token).totalSupply());"
+        }
+      ]
+    }
+  ]
+}

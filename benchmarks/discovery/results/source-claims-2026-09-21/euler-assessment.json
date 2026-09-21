@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "reviewer": { "kind": "assistant", "independent": false },
+  "family": "euler",
+  "sourceRun": "project-03/threat-model-2026-09-21-07-29-10-vfin2C",
+  "coverage": {
+    "grade": "missed",
+    "reason": "Neither final finding identifies donateToReserves reducing collateral without a solvency check. An intermediate truncated response did raise this as an unresolved lead, but it did not survive into the completed report.",
+    "evidence": ["euler-donation", "euler-health", "euler-deferred", "reference Euler PoC"]
+  },
+  "findings": [
+    {
+      "id": "T-01",
+      "disposition": "source-supported behavior with conditional impact; not incident coverage",
+      "reason": "Public claimSurplus can credit a caller-selected recipient with underlying tokens sent outside the normal wrapping flow. The allegation depends on such surplus existing and on expectations about its ownership. Matching the code does not establish an exploit against normally accounted deposits or the reference donation/liquidation mechanism."
+    },
+    {
+      "id": "T-02",
+      "disposition": "unresolved claim whose concurrent-transaction freeze explanation is unsupported",
+      "reason": "deferLiquidityCheck marks an account during its callback and resets the marker before returning. Independent EVM transactions do not interleave inside that callback, so blocking a concurrent liquidation transaction is not a demonstrated persistent freeze. An adversarial same-transaction integration would need its own concrete path. The report lists Liquidation.sol as missing, although contracts/modules/Liquidation.sol is present in the prepared scope.",
+      "evidence": ["euler-deferred", "euler-health"]
+    }
+  ],
+  "deliveryAndInspection": {
+    "diagnostics": "delivery-diagnostics.json",
+    "projectId": "project-03",
+    "truncatedReportFragments": 7,
+    "importantFragment": {
+      "time": "2026-09-21T07:50:54.241Z",
+      "agent": "a7f0820f456735aff",
+      "findingId": "T-005",
+      "title": "mint() followed by donateToReserves() silently creates undercollateralized position without triggering liquidity failure",
+      "interpretation": "A relevant unresolved lead, not a successfully delivered or verified exploit. Its trace explicitly asks whether donateToReserves calls checkLiquidity and its attack is conditional on the absence of that check. Other narrative assertions about exchange-rate accounting are confused. The response truncates during claimAssessment and later recovery omits this candidate entirely."
+    },
+    "consequence": "Final parse success hides a material loss of candidate coverage during generation recovery, before the existing synthesis filters. Preserve partial responses, bound report size and reconcile candidate identities before spending on broader prompt experiments."
+  },
+  "limitations": "One development run, assistant assessment, no local exploit execution. The truncated candidate is diagnostic evidence only; it is not stitched into an invented completed report or counted as final reference coverage."
+}

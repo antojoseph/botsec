@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "reviewer": { "kind": "assistant", "independent": false },
+  "family": "sentiment",
+  "sourceRun": "project-02/threat-model-2026-09-21-07-17-25-okuiza",
+  "coverage": {
+    "grade": "missed",
+    "reason": "Neither final finding identifies the pool-exit callback between share burning and Vault balance updates, or borrowing against the resulting transient LP valuation.",
+    "evidence": ["sentiment-pool-hook", "sentiment-vault-update", "sentiment-transfer", "sentiment-eth-callback", "sentiment-burn", "sentiment-price", "sentiment-consumer", "reference Sentiment PoC"]
+  },
+  "findings": [
+    {
+      "id": "T-001",
+      "disposition": "stated normal-pool attack blocked by construction prerequisite",
+      "reason": "The oracle expression reverts for decimals above 18, but the proposed attack assumes a normal pool containing a fixed 20-decimal token. BasePool construction already computes each scaling factor and rejects that token. The report does not establish a mutable-decimal token or different pool implementation that bypasses this prerequisite. Its narrative also needs to explain how debt is first acquired when the same oracle already reverts. The concrete RiskEngine implementation is absent, so the exact consumer impact is not established.",
+      "evidence": ["sentiment-decimals-construction", "sentiment-decimals-restriction", "sentiment-consumer"]
+    },
+    {
+      "id": "T-002",
+      "disposition": "explicitly unresolved external-oracle candidate; not incident coverage",
+      "reason": "The conditional spot-feed attack depends on the missing OracleFacade implementation and routing. The report appropriately records that uncertainty and distinguishes ordinary reserve swaps from manipulation of upstream prices, but it does not find the callback-time supply/balance mismatch.",
+      "evidence": ["sentiment-price", "sentiment-vault-update", "sentiment-burn"]
+    }
+  ],
+  "deliveryAndInspection": {
+    "diagnostics": "delivery-diagnostics.json",
+    "projectId": "project-02",
+    "observations": [
+      "A report hit the output limit and subsequent recovery produced a different final report; preserve the fragment separately from completed-report metrics.",
+      "Recorded source-tool calls inspect AccountManager and some pool/Vault dependencies, but contain no Read or Grep request for BasePool.sol, PoolBalances.sol or AssetTransfersHandler.sol. Those supplied implementations contain the construction constraint and callback ordering needed to resolve the main claims. Reading the inventory did not ensure traversal to the relevant implementation."
+    ]
+  },
+  "limitations": "One development run, assistant assessment, no local exploit execution. Missing concrete OracleFacade and RiskEngine implementations constrain conclusions beyond the trusted reference mechanism. Citation matches do not establish the claimed attack."
+}

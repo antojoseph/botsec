@@ -15,6 +15,8 @@ Preparation checks retained compiler-input hashes, copies only Solidity source a
 
 The collector uses Sonnet 4.6 through OpenRouter with the existing Haiku classification call. It records one consecutive attempt per project. Default overall generation budget is $15, including classification; each SDK run has a $4 guard and 60-turn limit. `--budget` can lower the overall budget, and `--only project-01` can select a prepared project. It never overwrites an earlier collection. Partial/failed attempts stay in the evidence and are excluded from completed-run datasets; any infrastructure retry must be separately recorded, not silently substituted.
 
+`--experimental-claims` opts into the research discovery prompt and structured claim assessments. It is disabled by default after a negative three-project [development experiment](../../discovery/results/source-claims-2026-09-21/assessment.md). The capture configuration records the choice. A parsed report can still omit candidates lost during model output recovery; completion status is not a measure of discovery quality.
+
 The local gateway reserves a conservative upper-bound request cost before forwarding a call. It settles using the API's returned `usage.cost`, with a generation-record lookup fallback. Unknown bills retain their full reservation. It allows only the two selected models and up to 8,192 output tokens per call. The gateway preserves usage, billing, timing and response IDs, without saving credentials or arbitrary server errors. SDK-reported cost is also retained but is not treated as the complete bill: the separate classifier is included in the gateway ledger.
 
 The generator's new options can also be used directly:

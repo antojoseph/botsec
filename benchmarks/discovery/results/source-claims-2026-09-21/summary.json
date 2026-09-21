@@ -1,0 +1,277 @@
+{
+  "version": 1,
+  "collectionSha256": "cb5b27c452bccf4590df7eba284c3aab704038baa94e55f9b54db1a46a61ade5",
+  "completedAt": "2026-09-21T07:56:58.826Z",
+  "interpretation": "Mechanical source-quote checks and generator judgments, not vulnerability accuracy. Reference-mechanism assessment is retained separately. No exploit execution is claimed.",
+  "generationRequests": 66,
+  "billedCostUsd": 4.751736299999999,
+  "unknownBills": 0,
+  "budgetChargedUsd": 4.751736299999999,
+  "runs": [
+    {
+      "projectId": "project-01",
+      "family": "socket",
+      "status": "complete",
+      "directory": "project-01/threat-model-2026-09-21-07-09-40-6wDqKm",
+      "rawFindingCount": 2,
+      "finalFindingCount": 2,
+      "dismissedCandidateCount": 3,
+      "generatorConclusions": {
+        "supported": 2
+      },
+      "mechanicalReviewStatus": {
+        "needs-review": 1,
+        "citations-checked": 1
+      },
+      "citations": {
+        "total": 5,
+        "quoteMatches": 5,
+        "failed": 0
+      },
+      "findingReviews": [
+        {
+          "id": "T-001",
+          "ordinal": 1,
+          "title": "SocketGateway ETH balance drained via attacker-controlled toToken in performAction Native-to-Wrapped path",
+          "claimedConclusion": "supported",
+          "review": {
+            "status": "needs-review",
+            "executionVerified": false,
+            "issues": [
+              "Generator recorded missing evidence"
+            ],
+            "sourceReferences": [
+              {
+                "id": "R1",
+                "path": "context/unit-1/src/SocketGateway.sol",
+                "quoteMatches": true,
+                "fileSha256": "a053183175a7d158bfd6ba4a2caf2581dc61586ac5f6b34cc41c1be6cc088956"
+              },
+              {
+                "id": "R2",
+                "path": "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol",
+                "quoteMatches": true,
+                "fileSha256": "cc40579a1f0f1180b6fb912a6716e861ad4248efa9c67405632e2e2f1194590e"
+              },
+              {
+                "id": "R3",
+                "path": "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol",
+                "quoteMatches": true,
+                "fileSha256": "cc40579a1f0f1180b6fb912a6716e861ad4248efa9c67405632e2e2f1194590e"
+              }
+            ]
+          }
+        },
+        {
+          "id": "T-002",
+          "ordinal": 2,
+          "title": "Infinite loop in swapAndMultiBridge burns all caller gas and makes function permanently unusable",
+          "claimedConclusion": "supported",
+          "review": {
+            "status": "citations-checked",
+            "executionVerified": false,
+            "issues": [],
+            "sourceReferences": [
+              {
+                "id": "R4",
+                "path": "context/unit-1/src/SocketGateway.sol",
+                "quoteMatches": true,
+                "fileSha256": "a053183175a7d158bfd6ba4a2caf2581dc61586ac5f6b34cc41c1be6cc088956"
+              },
+              {
+                "id": "R5",
+                "path": "context/unit-1/src/SocketGateway.sol",
+                "quoteMatches": true,
+                "fileSha256": "a053183175a7d158bfd6ba4a2caf2581dc61586ac5f6b34cc41c1be6cc088956"
+              }
+            ]
+          }
+        }
+      ],
+      "sdkDurationMs": 463651,
+      "sdkReportedCostUsd": 0.7956543,
+      "completionStatus": "success"
+    },
+    {
+      "projectId": "project-02",
+      "family": "sentiment",
+      "status": "complete",
+      "directory": "project-02/threat-model-2026-09-21-07-17-25-okuiza",
+      "rawFindingCount": 2,
+      "finalFindingCount": 2,
+      "dismissedCandidateCount": 4,
+      "generatorConclusions": {
+        "supported": 1,
+        "unresolved": 1
+      },
+      "mechanicalReviewStatus": {
+        "needs-review": 2
+      },
+      "citations": {
+        "total": 7,
+        "quoteMatches": 5,
+        "failed": 2
+      },
+      "findingReviews": [
+        {
+          "id": "T-001",
+          "ordinal": 1,
+          "title": "Panic revert when any constituent pool token has decimals > 18, permanently blocking oracle for that LP token",
+          "claimedConclusion": "supported",
+          "review": {
+            "status": "needs-review",
+            "executionVerified": false,
+            "issues": [
+              "Generator recorded missing evidence"
+            ],
+            "sourceReferences": [
+              {
+                "id": "R1",
+                "path": "src/balancer/WeightedBalancerLPOracle.sol",
+                "quoteMatches": true,
+                "fileSha256": "3121ec22b720104545dd56feb729cb9769b2a567b48d2e46e2c45e722277afa0"
+              },
+              {
+                "id": "R2",
+                "path": "src/utils/IERC20.sol",
+                "quoteMatches": true,
+                "fileSha256": "72600f1a8be063889ddff32d6d191c7ad70bc9030fac0512ee707f8694f0aba8"
+              },
+              {
+                "id": "R3",
+                "path": "context/unit-1/src/core/AccountManager.sol",
+                "quoteMatches": true,
+                "fileSha256": "e306ea775c250ad7ee8c3ecf9423405bfe7bfa1e3a7fe9e54115aece6cb072ed"
+              },
+              {
+                "id": "R4",
+                "path": "context/unit-1/src/core/AccountManager.sol",
+                "quoteMatches": true,
+                "fileSha256": "e306ea775c250ad7ee8c3ecf9423405bfe7bfa1e3a7fe9e54115aece6cb072ed"
+              }
+            ]
+          }
+        },
+        {
+          "id": "T-002",
+          "ordinal": 2,
+          "title": "LP oracle price fully dependent on spot prices from oracleFacade; flash-loan manipulation possible if oracleFacade routes to any spot-price oracle",
+          "claimedConclusion": "unresolved",
+          "review": {
+            "status": "needs-review",
+            "executionVerified": false,
+            "issues": [
+              "Generator did not conclude the current-code attack is supported",
+              "Generator recorded missing evidence",
+              "Source quote does not match its line range: R6",
+              "Source quote does not match its line range: R7",
+              "Incomplete reachability check",
+              "guards-and-rollback is unresolved",
+              "profit-and-loss is unresolved"
+            ],
+            "sourceReferences": [
+              {
+                "id": "R5",
+                "path": "src/balancer/WeightedBalancerLPOracle.sol",
+                "quoteMatches": true,
+                "fileSha256": "3121ec22b720104545dd56feb729cb9769b2a567b48d2e46e2c45e722277afa0"
+              },
+              {
+                "id": "R6",
+                "path": "src/core/IOracle.sol",
+                "quoteMatches": false,
+                "fileSha256": "768eda8cdf750e7188c6ef7dd057a5ed8af1a702beceb123c8be08bd302b8ab0"
+              },
+              {
+                "id": "R7",
+                "path": "context/unit-1/src/interface/core/IRiskEngine.sol",
+                "quoteMatches": false,
+                "fileSha256": "fc6ad0fd64eab702423e668fb232837a8bf59df7f00ef672d30b5d8ceeb87b99"
+              }
+            ]
+          }
+        }
+      ],
+      "sdkDurationMs": 701747,
+      "sdkReportedCostUsd": 1.10608605,
+      "completionStatus": "success"
+    },
+    {
+      "projectId": "project-03",
+      "family": "euler",
+      "status": "complete",
+      "directory": "project-03/threat-model-2026-09-21-07-29-10-vfin2C",
+      "rawFindingCount": 2,
+      "finalFindingCount": 2,
+      "dismissedCandidateCount": 2,
+      "generatorConclusions": {
+        "supported": 1,
+        "unresolved": 1
+      },
+      "mechanicalReviewStatus": {
+        "citations-checked": 1,
+        "needs-review": 1
+      },
+      "citations": {
+        "total": 3,
+        "quoteMatches": 3,
+        "failed": 0
+      },
+      "findingReviews": [
+        {
+          "id": "T-01",
+          "ordinal": 1,
+          "title": "PToken.claimSurplus has no access control — attacker can claim tokens sent directly to PToken for themselves",
+          "claimedConclusion": "supported",
+          "review": {
+            "status": "citations-checked",
+            "executionVerified": false,
+            "issues": [],
+            "sourceReferences": [
+              {
+                "id": "SR-01",
+                "path": "contracts/PToken.sol",
+                "quoteMatches": true,
+                "fileSha256": "053db23fcac0fab8cf1a02d72f9fc0a80a5fe813320bae7ec8108524f475e15c"
+              },
+              {
+                "id": "SR-02",
+                "path": "contracts/PToken.sol",
+                "quoteMatches": true,
+                "fileSha256": "053db23fcac0fab8cf1a02d72f9fc0a80a5fe813320bae7ec8108524f475e15c"
+              }
+            ]
+          }
+        },
+        {
+          "id": "T-02",
+          "ordinal": 2,
+          "title": "Exec.deferLiquidityCheck accepts arbitrary account — attacker can freeze any account's deferLiquidityStatus to block liquidation",
+          "claimedConclusion": "unresolved",
+          "review": {
+            "status": "needs-review",
+            "executionVerified": false,
+            "issues": [
+              "Generator did not conclude the current-code attack is supported",
+              "Generator recorded missing evidence",
+              "guards-and-rollback is unresolved",
+              "callback-state is unresolved",
+              "profit-and-loss is unresolved"
+            ],
+            "sourceReferences": [
+              {
+                "id": "SR-03",
+                "path": "contracts/modules/Exec.sol",
+                "quoteMatches": true,
+                "fileSha256": "c5f5cd02165cc31082f17c5408f478e7332073d8690c4ce91307dbb41b65b3c4"
+              }
+            ]
+          }
+        }
+      ],
+      "sdkDurationMs": 1663248,
+      "sdkReportedCostUsd": 2.8473889499999996,
+      "completionStatus": "success"
+    }
+  ]
+}

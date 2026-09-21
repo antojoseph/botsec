@@ -12,11 +12,12 @@ import { query } from "@anthropic-ai/claude-agent-sdk";
 import { writeFileSync, mkdirSync, readFileSync, mkdtempSync } from "fs";
 import { captureJson, captureStage, sourceInventory } from "./capture.js";
 import { sourceOnlyHook } from "./source-only.js";
-import { claimAssessmentSchema, sourceCitationSchema, reviewClaim } from "./claim-review.js";
+import { claimAssessmentSchema, sourceCitationSchema, reviewClaim, reviewSourceCitations } from "./claim-review.js";
 import type { Options } from "@anthropic-ai/claude-agent-sdk";
 import { join } from "path";
 
 import { threatModelerAgent } from "../agents/threat-modeler.js";
+import { experimentalThreatModelerAgent } from "../agents/experimental-threat-modeler.js";
 import { precomputeAnalysis } from "./precompute.js";
 import type {
   ThreatModel,
@@ -55,6 +56,8 @@ export interface ThreatModelOptions {
   captureRaw?: boolean;
   /** Restrict model tools to reads inside a prepared source workspace. */
   sourceOnly?: boolean;
+  /** Opt into the research discovery/claim prompt; not validated for default use. */
+  experimentalClaims?: boolean;
 }
 
 export async function generateThreatModel(
@@ -167,19 +170,21 @@ export async function generateThreatModel(
     .map((r) => r.agentPromptSection)
     .join("\n\n");
 
-  const agentDef = threatModelerAgent(precomputed, {
+  const agentOpts = {
     blueprintPath,
     codemapPath,
-    sourceIndexPath,
     extraDataSections: extraDataSections || undefined,
-  });
+  };
+  const agentDef = opts.experimentalClaims
+    ? experimentalThreatModelerAgent(precomputed, { ...agentOpts, sourceIndexPath })
+    : threatModelerAgent(precomputed, agentOpts);
   if (opts.sourceOnly) {
     agentDef.tools = ["Read", "Grep", "Glob"];
     agentDef.prompt += "\nSource-only collection: use only Read, Grep, and Glob inside this workspace. If context/ exists, it contains additional contract source in separate compilation units; consult it to resolve cross-contract behavior. No incident history, web access, shell commands, or external files are available.";
   }
   const agents = { "threat-modeler": agentDef };
 
-  const orchestratorPrompt = buildOrchestratorPrompt(precomputed, sourceIndexPath);
+  const orchestratorPrompt = buildOrchestratorPrompt(precomputed, sourceIndexPath, !!opts.experimentalClaims);
 
   let rawModel: any = null;
   let costUsd = 0;
@@ -255,25 +260,26 @@ export async function generateThreatModel(
                 },
                 suggestedProperties: { type: "array", items: { type: "string" } },
                 attackScenario: { type: "string" },
-                claimAssessment: claimAssessmentSchema,
+                ...(opts.experimentalClaims ? { claimAssessment: claimAssessmentSchema } : {}),
                 priority: { type: "number" },
               },
               required: [
                 "id", "category", "title", "description", "affectedCode",
-                "severity", "confidence", "trace", "suggestedProperties", "priority", "claimAssessment",
+                "severity", "confidence", "trace", "suggestedProperties", "priority",
+                ...(opts.experimentalClaims ? ["claimAssessment"] : []),
               ],
             },
           },
-          dismissedCandidates: {
+          ...(opts.experimentalClaims ? { dismissedCandidates: {
             type: "array", items: {
               type: "object", properties: {
                 title: { type: "string" }, reason: { type: "string" },
                 sourceReferences: { type: "array", items: sourceCitationSchema },
               }, required: ["title", "reason", "sourceReferences"],
             },
-          },
+          } } : {}),
         },
-        required: ["contractType", "threats", "dismissedCandidates"],
+        required: ["contractType", "threats", ...(opts.experimentalClaims ? ["dismissedCandidates"] : [])],
       },
     },
   };
@@ -284,7 +290,7 @@ export async function generateThreatModel(
     sdkOptions.hooks = { PreToolUse: [{ hooks: [sourceOnlyHook(precomputed.projectDir)] }] };
   }
   if (opts.captureRaw) captureJson(runDir, "generation-config.json", {
-    version: 1, sourceOnly: !!opts.sourceOnly, sourceInventory: inventory,
+    version: 1, sourceOnly: !!opts.sourceOnly, experimentalClaims: !!opts.experimentalClaims, sourceInventory: inventory,
     providers: active.map(p => ({ id: p.id, phase: p.phase })),
     prompt: orchestratorPrompt, agent: agentDef, outputFormat: sdkOptions.outputFormat,
     requestedModel: sdkOptions.model, maxBudgetUsd: sdkOptions.maxBudgetUsd, maxTurns: sdkOptions.maxTurns,
@@ -360,6 +366,11 @@ export async function generateThreatModel(
     threat.claimReview = reviewClaim(precomputed.projectDir, threat.claimAssessment);
   }
   if (opts.captureRaw) captureJson(runDir, "claim-reviews.json", rawModel.threats.map((t: Threat) => ({ id: t.id, review: t.claimReview })));
+  rawModel.dismissedCandidates = Array.isArray(rawModel.dismissedCandidates) ? rawModel.dismissedCandidates : [];
+  for (const candidate of rawModel.dismissedCandidates) {
+    candidate.citationReview = reviewSourceCitations(precomputed.projectDir, candidate.sourceReferences);
+  }
+  if (opts.captureRaw) captureJson(runDir, "dismissal-reviews.json", rawModel.dismissedCandidates.map((c: { title: string; citationReview: unknown }) => ({ title: c.title, review: c.citationReview })));
 
   // Phase 2: Synthesis
   console.log("\n  Phase 2: Synthesis & enrichment...");
@@ -481,7 +492,33 @@ function resolveSrcDir(projectDir: string): string {
   }
 }
 
-function buildOrchestratorPrompt(pre: PrecomputedAnalysis, sourceIndexPath: string): string {
+function buildLegacyOrchestratorPrompt(pre: PrecomputedAnalysis): string {
+  const srcDir = resolveSrcDir(pre.projectDir);
+  return `You are Forge Proof's threat modeling orchestrator.
+
+Your job is to delegate to the **threat-modeler** agent, which will deeply explore the smart contracts in ${pre.projectDir}/${srcDir}/ and produce a structured threat model as JSON.
+
+## Instructions
+
+1. Delegate to the **threat-modeler** agent with this brief:
+   "Analyze all smart contracts in ${pre.projectDir}/${srcDir}/. Produce a complete threat model as JSON following your output format instructions. Use the pre-computed code map and on-chain data to guide your exploration. Every threat must include a TRACE."
+
+2. When the threat-modeler returns its JSON output, present it as your final response.
+
+3. Do NOT modify the JSON. Do NOT add commentary. Just output the raw JSON the agent produced.
+
+Important: The threat-modeler agent has all the context it needs (AST structural data, Etherscan data, analysis patterns). Just delegate and return the result.
+
+The Task tool is SYNCHRONOUS: it does not return until the agent has completely
+finished, and what it returns IS the agent's full output. Nothing runs in the
+background and there is nothing to wait for or poll. Never say the agent "is
+running" or that you will "wait for it" — by then it has already finished and
+you are holding its result. Never end your turn straight after a Task call;
+pass the returned JSON to the StructuredOutput tool.`;
+}
+
+function buildOrchestratorPrompt(pre: PrecomputedAnalysis, sourceIndexPath: string, experimentalClaims: boolean): string {
+  if (!experimentalClaims) return buildLegacyOrchestratorPrompt(pre);
   const srcDir = resolveSrcDir(pre.projectDir);
   return `You are Forge Proof's threat modeling orchestrator.
 

@@ -1,0 +1,638 @@
+{
+  "version": 1,
+  "sourceOnly": true,
+  "sourceInventory": [
+    {
+      "path": "context/unit-1/lib/solmate/src/tokens/ERC20.sol",
+      "sha256": "a3a7e839f42762ef24623581542a916e838f3c7c0bef647963d1fdad0f9d208a"
+    },
+    {
+      "path": "context/unit-1/lib/solmate/src/utils/SafeTransferLib.sol",
+      "sha256": "cb02c2a5b1b1c66b8ba3d700a47b400684483d96d93606ed71d0e63c0b6100bf"
+    },
+    {
+      "path": "context/unit-1/src/SocketGateway.sol",
+      "sha256": "a053183175a7d158bfd6ba4a2caf2581dc61586ac5f6b34cc41c1be6cc088956"
+    },
+    {
+      "path": "context/unit-1/src/SocketGatewayDeployment.sol",
+      "sha256": "38ba4559aea907dcbddc9f6d943d81fdba2776dfc44d36230220e578d7fe538c"
+    },
+    {
+      "path": "context/unit-1/src/bridges/BridgeImplBase.sol",
+      "sha256": "f4b6331bf534bfc3585be3c29e7774c25475a2bf6060a33a43295d6494fdac02"
+    },
+    {
+      "path": "context/unit-1/src/bridges/across/Across.sol",
+      "sha256": "ee653fcafe6ba1b212166c06c75cbe6ca93df1ffc085b98c8f3008f61fcf419b"
+    },
+    {
+      "path": "context/unit-1/src/bridges/across/interfaces/across.sol",
+      "sha256": "17e2c40fac991552536d1aa1a6647a03c5728be77a0ae094821587e2499e2f60"
+    },
+    {
+      "path": "context/unit-1/src/bridges/anyswap-router-v4/l1/Anyswap.sol",
+      "sha256": "cc2c4f8904bcc3be5cdd21f070dfa587b006c91b9a935b5e23da68e37820c885"
+    },
+    {
+      "path": "context/unit-1/src/bridges/anyswap-router-v4/l2/Anyswap.sol",
+      "sha256": "fe2d740cd4e7dd2e7933c97f1d69b7a2b55565f5c918c9a2487c5210706d6572"
+    },
+    {
+      "path": "context/unit-1/src/bridges/arbitrum/interfaces/arbitrum.sol",
+      "sha256": "a46d9a86669624820af0d00d08d924a2b7d2ead37f67a990c7a85cedda3abd39"
+    },
+    {
+      "path": "context/unit-1/src/bridges/arbitrum/l1/NativeArbitrum.sol",
+      "sha256": "aa3a9c2522b6d9666e32f25b4fdbe5a9fce257fec9e95a405813da45627ddbd4"
+    },
+    {
+      "path": "context/unit-1/src/bridges/cbridge/CelerImpl.sol",
+      "sha256": "b90e933005668cd9b6b4ebe9f9daa9db6a8676ad75f609139ae4fee408aeb6ab"
+    },
+    {
+      "path": "context/unit-1/src/bridges/cbridge/CelerStorageWrapper.sol",
+      "sha256": "bc1605bf66e4f3e851d4cef31a9d07638197576eafb9010c9adaf2b23837838d"
+    },
+    {
+      "path": "context/unit-1/src/bridges/cbridge/interfaces/ICelerStorageWrapper.sol",
+      "sha256": "e1bdc367f1a86d06b7c1f32fe2d1ccd6887ade8d57fb3863b4158debdcd7945a"
+    },
+    {
+      "path": "context/unit-1/src/bridges/cbridge/interfaces/cbridge.sol",
+      "sha256": "052293912c1577ca02e727c3cb9e816bf06b3f53fb38d8680d7cdf1507bd8376"
+    },
+    {
+      "path": "context/unit-1/src/bridges/hop/interfaces/IHopL1Bridge.sol",
+      "sha256": "655d8a21590cc32d5e7de5bc6f0ac374c58f30a752c0e84080451ddd175a16e2"
+    },
+    {
+      "path": "context/unit-1/src/bridges/hop/interfaces/amm.sol",
+      "sha256": "aa38575ab541557fd42ad42c8a482945cc10d29e8594e7f44c88dbe1d1b6b4b7"
+    },
+    {
+      "path": "context/unit-1/src/bridges/hop/l1/HopImplL1.sol",
+      "sha256": "a0f38000628b882e8d95cd5519ed48160af8cb87cbd8f3629310bb3658aaf2ee"
+    },
+    {
+      "path": "context/unit-1/src/bridges/hop/l2/HopImplL2.sol",
+      "sha256": "fa2fd7588de9d06691fe602a5c1b2cfea7d863aa39710ce620e5eafe5aa8480d"
+    },
+    {
+      "path": "context/unit-1/src/bridges/hyphen/Hyphen.sol",
+      "sha256": "e913bd287dc3f7d83ef40c71f5591be4d46fee9b1ffc2b76dccd4d270ad30f01"
+    },
+    {
+      "path": "context/unit-1/src/bridges/hyphen/interfaces/hyphen.sol",
+      "sha256": "75fc74ade5b162b2aa27ce9a153c4cf4f797ae025afa81e367983ae1471ea21a"
+    },
+    {
+      "path": "context/unit-1/src/bridges/optimism/interfaces/optimism.sol",
+      "sha256": "a77d6123dfef6fa99c6777472851208b7de22de9f09a9f3ce84e07d325e4ecb1"
+    },
+    {
+      "path": "context/unit-1/src/bridges/optimism/l1/NativeOptimism.sol",
+      "sha256": "62b7ff3ed2c6268e98c1772a8cf742b7d383db19285d5955fc7b5ea75f58ab99"
+    },
+    {
+      "path": "context/unit-1/src/bridges/polygon/NativePolygon.sol",
+      "sha256": "29d1eef5c8d800a2e9909aac0e01b2fc6f1802d558c35445177fcf8143cff28e"
+    },
+    {
+      "path": "context/unit-1/src/bridges/polygon/interfaces/polygon.sol",
+      "sha256": "fea2b5a21ed323a918d68d435e1eef81676766b3ea94616807d7625c285114c2"
+    },
+    {
+      "path": "context/unit-1/src/bridges/refuel/interfaces/refuel.sol",
+      "sha256": "88bee52f379388ac8191c38d0dccb8e383d2ca20ee683ca10cc20d8f5d688a62"
+    },
+    {
+      "path": "context/unit-1/src/bridges/refuel/refuel.sol",
+      "sha256": "8cf2c7473f31778996f7c592c8b7574d41a3844598310647b93fce4cde70cacb"
+    },
+    {
+      "path": "context/unit-1/src/bridges/stargate/interfaces/stargate.sol",
+      "sha256": "18494ae35280538921eb7a793e20f0d0ea6bd2a0b8ccc16e6bf343d3c4640cc7"
+    },
+    {
+      "path": "context/unit-1/src/bridges/stargate/l1/Stargate.sol",
+      "sha256": "22ce877cd5b321fec6ad27f9ac26655891e1945284be2e25f589b9571db55be5"
+    },
+    {
+      "path": "context/unit-1/src/bridges/stargate/l2/Stargate.sol",
+      "sha256": "c5ed966197d133cf164686c331cdca243f3ca4628d7d01042533df9ba381e40a"
+    },
+    {
+      "path": "context/unit-1/src/controllers/BaseController.sol",
+      "sha256": "d90cd21103c92f2459cdbac52a2dea41a53de34c93ad11f0ad469d717cbd1a26"
+    },
+    {
+      "path": "context/unit-1/src/controllers/FeesTakerController.sol",
+      "sha256": "a49a30f8b24eb1a671bbffdea6e59e460023532b2c0d27f371eae66013a87402"
+    },
+    {
+      "path": "context/unit-1/src/controllers/RefuelSwapAndBridgeController.sol",
+      "sha256": "44c0023171a1518b6c6b6c218e9bd7fb1812f59acf7230b9e670dead492bcbb7"
+    },
+    {
+      "path": "context/unit-1/src/deployFactory/DisabledSocketRoute.sol",
+      "sha256": "54edd12802d5cd758586f6d7821646c3e075700eeb2423e1e2ce4fd6dc542491"
+    },
+    {
+      "path": "context/unit-1/src/deployFactory/SocketDeployFactory.sol",
+      "sha256": "fcd820c716cfb384438c4d8f95c494bf0e2c6903ba7476f67a5e86fa75b49174"
+    },
+    {
+      "path": "context/unit-1/src/errors/SocketErrors.sol",
+      "sha256": "0f982d9359dccc466ec3f18557945156638ae2b9c2951153c7a4ea85df174666"
+    },
+    {
+      "path": "context/unit-1/src/interfaces/ISocketBridgeBase.sol",
+      "sha256": "ba0f7069c02689bef5b9b75a52bfd1397b8ae3e83294de798b13bd327de546d3"
+    },
+    {
+      "path": "context/unit-1/src/interfaces/ISocketController.sol",
+      "sha256": "4c1f82a7b0587a1f957f92d2a974e4fb856afb4826c001f51938ac360dc04ed2"
+    },
+    {
+      "path": "context/unit-1/src/interfaces/ISocketGateway.sol",
+      "sha256": "23281b89d266f4f9e6cffe006ead2e343afe4463985c217c2573a347a033ac11"
+    },
+    {
+      "path": "context/unit-1/src/interfaces/ISocketRequest.sol",
+      "sha256": "a2904b948d17ba3e45bb8f36fb164ab7f5d9c075ff7ea7745d8929d7d683d348"
+    },
+    {
+      "path": "context/unit-1/src/interfaces/ISocketRoute.sol",
+      "sha256": "b6478b56b9c5dabb01ef54b1374ba95f8ae37776b67b6a81a594944f02c3aedd"
+    },
+    {
+      "path": "context/unit-1/src/libraries/LibBytes.sol",
+      "sha256": "55d3676c43ae6900826f63c531537cf0d4088b8c2858b2adb0f9bf5183819c75"
+    },
+    {
+      "path": "context/unit-1/src/libraries/LibUtil.sol",
+      "sha256": "3d750d5ab8b099d4e41c614fd02bb101b7a6247c75e9d96c928ebe7709571454"
+    },
+    {
+      "path": "context/unit-1/src/libraries/Pb.sol",
+      "sha256": "68ce9a39d33d8167c35dd8425484ebf1ef8120ce3590b1aafbd81e87399a3a61"
+    },
+    {
+      "path": "context/unit-1/src/static/RouteIdentifiers.sol",
+      "sha256": "d4ea1fb57ec4ae4549a2986561082577ee4728c09370b0ef1f4d403d66a4a84e"
+    },
+    {
+      "path": "context/unit-1/src/swap/SwapImplBase.sol",
+      "sha256": "33a7f5118f99d91223e11c6a87c8be69e566acee5e087de0a3754b085d0a0d6a"
+    },
+    {
+      "path": "context/unit-1/src/swap/oneinch/OneInchImpl.sol",
+      "sha256": "c537fd8580002635d70720454fae8c7b22fa39895c69bab3979b5770d3a927ef"
+    },
+    {
+      "path": "context/unit-1/src/swap/rainbow/Rainbow.sol",
+      "sha256": "f98eae9b0da3973de9bf4e1dca366b79c15626e62815ed2c97d4fce0c67e1659"
+    },
+    {
+      "path": "context/unit-1/src/swap/zerox/ZeroXSwapImpl.sol",
+      "sha256": "e774991b72345d31ede49d548717566080b0f1d5d8341c2b9ce80595963ee0b6"
+    },
+    {
+      "path": "context/unit-1/src/utils/Ownable.sol",
+      "sha256": "92fc5bb45a851a3c4a393fa54524bac0735d784b9e666ddffd7c9ff4f3879139"
+    },
+    {
+      "path": "foundry.toml",
+      "sha256": "3007405c196e0cd3e55effde00db238276da3fb8653121437a8f51d82c57b0ff"
+    },
+    {
+      "path": "lib/solmate/src/tokens/ERC20.sol",
+      "sha256": "a3a7e839f42762ef24623581542a916e838f3c7c0bef647963d1fdad0f9d208a"
+    },
+    {
+      "path": "lib/solmate/src/utils/SafeTransferLib.sol",
+      "sha256": "cb02c2a5b1b1c66b8ba3d700a47b400684483d96d93606ed71d0e63c0b6100bf"
+    },
+    {
+      "path": "src/errors/SocketErrors.sol",
+      "sha256": "32d88d96154ac3ce4e042fbbf7d2768c026d07a59e5d6fbc328ef220d7e3cef6"
+    },
+    {
+      "path": "src/interfaces/ISocketGateway.sol",
+      "sha256": "23281b89d266f4f9e6cffe006ead2e343afe4463985c217c2573a347a033ac11"
+    },
+    {
+      "path": "src/swap/SwapImplBase.sol",
+      "sha256": "a7d5ef4b68eb8e80a40734150326df5eabddfa8b28058ab4466cb7f52058b799"
+    },
+    {
+      "path": "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol",
+      "sha256": "cc40579a1f0f1180b6fb912a6716e861ad4248efa9c67405632e2e2f1194590e"
+    }
+  ],
+  "providers": [
+    {
+      "id": "ast",
+      "phase": "precompute"
+    },
+    {
+      "id": "inspect",
+      "phase": "precompute"
+    },
+    {
+      "id": "blueprint",
+      "phase": "precompute"
+    },
+    {
+      "id": "anti-slop",
+      "phase": "synthesis-filter"
+    },
+    {
+      "id": "self-contradiction",
+      "phase": "synthesis-filter"
+    },
+    {
+      "id": "dedup",
+      "phase": "synthesis-filter"
+    },
+    {
+      "id": "ranking",
+      "phase": "synthesis-filter"
+    }
+  ],
+  "prompt": "You are Forge Proof's threat modeling orchestrator.\n\nYour job is to delegate to the **threat-modeler** agent, which will explore the primary contracts in /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-abjiaS/project-01/src/ AND their producers, consumers and dependency implementations, and produce a structured threat model as JSON. The source inventory is /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-abjiaS/project-01/.forge-proof/source-index.json; additional context/ units may be outside the primary AST.\n\n## Instructions\n\n1. Delegate to the **threat-modeler** agent with this brief:\n   \"Analyze the primary smart contracts and trace cross-contract trust boundaries using the source inventory, including any context/ units. Do not stop at the primary AST or interface declarations. Produce JSON with threats, structured claimAssessment for each threat, and dismissedCandidates with reasons. Use the code map as leads, not proof. Check guards, transaction rollback, transient callback state and net attacker economics before maintaining an attack. Every threat must include a TRACE and exact source quotes.\"\n\n2. When the threat-modeler returns its JSON output, present it as your final response.\n\n3. Do NOT modify the JSON. Do NOT add commentary. Just output the raw JSON the agent produced.\n\nImportant: The threat-modeler agent has all the context it needs (AST structural data, Etherscan data, analysis patterns). Just delegate and return the result.\n\nThe Task tool is SYNCHRONOUS: it does not return until the agent has completely\nfinished, and what it returns IS the agent's full output. Nothing runs in the\nbackground and there is nothing to wait for or poll. Never say the agent \"is\nrunning\" or that you will \"wait for it\" — by then it has already finished and\nyou are holding its result. Never end your turn straight after a Task call;\npass the returned JSON to the StructuredOutput tool.",
+  "agent": {
+    "description": "Deep code exploration specialist for smart contract threat modeling. Reads pre-computed structural data from disk (blueprint + code map) and uses Read/Grep/Glob tools to trace call graphs, build CEI timelines, follow inheritance chains, and resolve interface implementations. Every threat includes the exact code trace that found it.",
+    "prompt": "You are a smart contract security researcher performing SYSTEMATIC THREAT MODELING through deep code exploration.\n\nCRITICAL RULE: Every threat MUST include a TRACE and structured claimAssessment using exact source quotes you actually read. A populated trace is not proof of exploitability. Challenge the attack against the code; do not turn a structural warning into a confirmed exploit.\n\nFOCUS RULE: Concentrate ALL analysis on threats from UNTRUSTED actors (external users, depositors, withdrawers, arbitrary callers). Do NOT spend time on threats that require a trusted or semi-trusted actor to be malicious or compromised (owner, admin, strategist, rate updater, solver). Governance/admin misconfiguration is out of scope — assume privileged roles act honestly. The goal is to find vulnerabilities that an unprivileged attacker can exploit.\n\nYour working directory is: /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-abjiaS/project-01\nThe primary source directory is: /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-abjiaS/project-01/src/\nRead /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-abjiaS/project-01/.forge-proof/source-index.json to locate additional source. Separate context/ compilation units may contain actual callers, dependencies and implementations missing from the primary AST.\n\n## Your Task\n\nProduce a structured threat model as JSON. You must:\n1. Read the blueprint file first to get the contract classification and investigation questions\n2. Identify actors, assets, and trust boundaries\n3. Map cross-contract producers, consumers and callback boundaries BEFORE spending the entire budget on local blueprint leads\n4. Work through blueprint questions as leads to confirm or refute, and trace at least one complete external-input-to-impact path\n5. For each maintained candidate, include a trace and claimAssessment; preserve rejected leads in dismissedCandidates rather than inventing attacks to fill the report\n\n## Pre-Computed Structural Data (on disk — read when needed)\n\nAnalysis data has been written to disk. Use your Read, Grep, and Glob tools to access it:\n\n**Blueprint** (start here):\n- Read /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-abjiaS/project-01/.forge-proof/blueprint.json — classification, investigation questions, attack surface scores, invariants, CEI violations, pattern findings\n\n**Code Map** (per-contract files for fast lookup):\n- Glob /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-abjiaS/project-01/.forge-proof/codemap/*.json to list available contract files\n- Read /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-abjiaS/project-01/.forge-proof/codemap/<ContractName>.json for a specific contract's function summaries, auth checks, guards, operation ordering, storage layout\n- Read /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-abjiaS/project-01/.forge-proof/codemap/_inheritance.json for all inheritance relationships\n- Read /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-abjiaS/project-01/.forge-proof/codemap/_callGraph.json for all call graph edges\n- Read /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-abjiaS/project-01/.forge-proof/codemap/_stateVarMap.json for all state variable read/write maps\n- Read /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-abjiaS/project-01/.forge-proof/codemap/_dataDependency.json for transitive data dependencies and taint tracking\n- Use Grep to search across all code map files: Grep pattern /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-abjiaS/project-01/.forge-proof/codemap/\n\n**START by reading the blueprint file** — it contains your prioritized investigation questions.\n\nIMPORTANT: Read generated analysis data only from the paths above. This restriction does NOT exclude Solidity source elsewhere in this workspace. Do NOT read forge-proof-output/ or other saved reports; they may contain stale conclusions.\n\n## No On-Chain Data\nNo on-chain address was provided. Analyze based on code alone.\n\n## How to Work\n\n1. **Orient with the blueprint and source inventory**, then trace dependencies. The blueprint covers its compilation inputs, not necessarily the entire system. Its rankings are hints, not a completeness guarantee.\n\n2. **Trace a full cross-contract path early:**\n   - For important external reads, locate who WRITES the returned state and who CONSUMES the value. Read implementation bodies, not only interfaces. Resolve dependencies in context/ when present and retain their distinct paths/versions.\n   - For prices, share conversions or solvency ratios, identify every numerator/denominator update. Follow mint, burn, join, exit, transfer and callback ordering in the producer. Can another contract read an intermediate combination and commit a borrow, liquidation or withdrawal before the update finishes?\n   - A view call cannot itself write state, but another state-changing contract can act on its return value. A producer's reentrancy lock does not automatically protect its views or another contract's consuming operation. Conversely, a CEI warning is not exploitable if the complete path is blocked.\n   - For routers/proxies, follow CALL versus DELEGATECALL: address(this), storage, msg.sender, token ownership and spender allowances may belong to different contracts. Check zero amounts and exact permitted calldata against downstream balance checks.\n   - If an implementation or consumer is unavailable, record the missing evidence; do not invent its behavior.\n\n3. **Investigate blueprint leads** by reading actual source, modifiers and inherited implementations. Validate inferred invariants rather than accepting structural patterns as security verdicts. Read code maps for call graphs, shared state, operation ordering and authorization; do not stop at their summaries.\n\n4. **Check arithmetic and economics:** a swap changing individual reserves does not prove it changes their invariant product. Work through the expression, rounding and fees. A short TWAP still needs a time-based manipulation argument, not an unsupported same-transaction spot-price assertion.\n\n5. **Try to disprove each attack before reporting it:**\n   - Trace access control, registration constraints, locks and end-of-operation/deferred solvency checks through all calls.\n   - A reverting outer transaction rolls back nested transfers and approvals. Explain why the entire transaction commits; an intermediate state change alone is not a successful exploit.\n   - For theft/profit, list what the attacker funds, repays, loses and receives, including fees and ownership of collateral. Gross tokens received are not net profit. Separate protocol bad debt or griefing from attacker profit.\n   - Supported means a current-code path with supported prerequisites. Hypothetical future changes, accidental gifts, unsupported token configurations and benign debt transfers are not automatically current exploits. Preserve blocked leads under dismissedCandidates. Keep material unknowns explicit in unresolved candidates.\n\n6. **Check uncovered paths:** callbacks, paired state writes, callers of sensitive functions, interface assumptions, unguarded mutators and value flows from external input to loss. Do this before exhausting the budget on repeated local warnings.\n\n## Output Format\n\nOutput ONLY valid JSON. Every threat requires a compact **claimAssessment** object with:\n- conclusion: \"supported\", \"unresolved\", or \"contradicted\" (your source reasoning, NEVER a claim of executed verification).\n- executionContext: caller, storage/address(this), token owner/spender and deployment assumptions.\n- sourceReferences: an array of {id, path, startLine, endLine, quote}. Use workspace-relative .sol paths and exact source for the complete 1-based line range, at most 40 lines each. Use short ranges; reuse citation IDs. Read actual lines, do not guess numbers or copy example locations.\n- steps: an array of {action, expectedResult, citationIds}, tracing entry through impact and final checks. Each step needs source references.\n- checks: exactly one {kind, result, reason, citationIds} for each kind: \"reachability\", \"guards-and-rollback\", \"callback-state\", \"profit-and-loss\". result is \"supported\", \"unresolved\", \"blocked\", or \"not-applicable\". Reachability and guards cannot be not-applicable. Explain not-applicable for other checks. Supported or blocked checks require source references; unresolved checks should reference the known portion and name missing evidence.\n- missingEvidence: an array of specific unknowns, empty only when none remain. Do not label an attack supported if a check is blocked or materially unresolved.\n\nThe top-level dismissedCandidates array contains {title, reason, sourceReferences} for investigated leads rejected by current-code counterevidence. An empty threats array is valid. Keep the output concise; do not repeat a citation when its ID suffices. Mechanical quote matching will be checked separately; it does not prove your interpretation or execute the exploit.\n\n```json\n{\n  \"contractType\": \"vault\",\n  \"actors\": [\n    {\"name\": \"depositor\", \"type\": \"user\", \"capabilities\": [\"deposit\", \"withdraw\"]},\n    {\"name\": \"admin\", \"type\": \"admin\", \"capabilities\": [\"pause\", \"setFee\"]}\n  ],\n  \"assets\": [\n    {\"name\": \"ETH deposits\", \"type\": \"funds\", \"location\": \"VaultContract:balances\"}\n  ],\n  \"trustBoundaries\": [\n    {\"name\": \"User callback\", \"description\": \"msg.sender.call sends ETH to user-controlled address\", \"crossedBy\": [\"src/Vault.sol:withdraw\"]}\n  ],\n  \"dismissedCandidates\": [],\n  \"threats\": [\n    {\n      \"id\": \"T-001\",\n      \"category\": \"reentrancy\",\n      \"title\": \"CEI violation in withdraw() allows reentrancy drain\",\n      \"description\": \"withdraw() makes an external call to msg.sender before updating state\",\n      \"affectedCode\": [\"src/Vault.sol:withdraw:34\"],\n      \"assets\": [\"ETH deposits\"],\n      \"severity\": \"Critical\",\n      \"confidence\": \"high\",\n      \"trace\": {\n        \"steps\": [\n          {\"action\": \"Blueprint\", \"target\": \"ceiViolations\", \"finding\": \"withdraw() flagged: state-write after external-call, no reentrancy guard\"},\n          {\"action\": \"Read\", \"target\": \"src/Vault.sol:30-42\", \"finding\": \"msg.sender.call{value: amount} at line 34, balances update at line 38\"},\n          {\"action\": \"Grep\", \"target\": \"balances in Vault.sol\", \"finding\": \"balances[msg.sender] -= amount at line 38, AFTER call at 34\"},\n          {\"action\": \"Read\", \"target\": \"src/Vault.sol:38-39\", \"finding\": \"Confirmed: state write happens after external call with no guard\"}\n        ]\n      },\n      \"attackScenario\": \"1. Attacker deposits 1 ETH\\n2. Calls withdraw(1 ETH)\\n3. Vault sends ETH via call\\n4. receive() re-enters withdraw\\n5. Repeat until drained\",\n      \"suggestedProperties\": [\"check_withdraw_cannot_exceed_balance\", \"check_vault_solvency\"],\n      \"priority\": 1\n    }\n  ]\n}\n```\n\nThe illustrative threat above omits claimAssessment for brevity; your actual threats MUST include it with all four checks and real citations. Do not copy the example as evidence.\n\nANTI-SLOP RULE: Use REAL locations you actually read. If evidence is missing, mark the candidate unresolved and identify what would settle it. If the complete current-code path is blocked, preserve the rejected lead in dismissedCandidates with its counterevidence. Never describe a source-only inspection as an executed or verified exploit.\n\nNow read the blueprint file and begin analyzing the contracts in /var/folders/0p/fbbjthbd1hsggq41sk394hcm0000gn/T/jev-collection-abjiaS/project-01/src/.\nSource-only collection: use only Read, Grep, and Glob inside this workspace. If context/ exists, it contains additional contract source in separate compilation units; consult it to resolve cross-contract behavior. No incident history, web access, shell commands, or external files are available.",
+    "tools": [
+      "Read",
+      "Grep",
+      "Glob"
+    ],
+    "model": "opus",
+    "omitClaudeMd": true
+  },
+  "outputFormat": {
+    "type": "json_schema",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "contractType": {
+          "type": "string",
+          "enum": [
+            "vault",
+            "dex",
+            "lending",
+            "token",
+            "governance",
+            "bridge",
+            "staking",
+            "nft",
+            "oracle",
+            "proxy",
+            "other"
+          ]
+        },
+        "actors": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "assets": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "trustBoundaries": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "threats": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "category": {
+                "type": "string",
+                "enum": [
+                  "access-control",
+                  "reentrancy",
+                  "oracle-manipulation",
+                  "flash-loan",
+                  "arithmetic",
+                  "denial-of-service",
+                  "front-running",
+                  "token-handling",
+                  "upgradeability",
+                  "cross-contract",
+                  "governance",
+                  "randomness",
+                  "unchecked-calls",
+                  "logic-error"
+                ]
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "affectedCode": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "assets": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "severity": {
+                "type": "string",
+                "enum": [
+                  "Critical",
+                  "High",
+                  "Medium",
+                  "Low"
+                ]
+              },
+              "confidence": {
+                "type": "string",
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "trace": {
+                "type": "object",
+                "properties": {
+                  "steps": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "action": {
+                          "type": "string"
+                        },
+                        "target": {
+                          "type": "string"
+                        },
+                        "finding": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "action",
+                        "target",
+                        "finding"
+                      ]
+                    }
+                  },
+                  "ceiTimeline": {
+                    "type": "object"
+                  },
+                  "dataFlow": {
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "steps"
+                ]
+              },
+              "suggestedProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "attackScenario": {
+                "type": "string"
+              },
+              "claimAssessment": {
+                "type": "object",
+                "properties": {
+                  "conclusion": {
+                    "type": "string",
+                    "enum": [
+                      "supported",
+                      "unresolved",
+                      "contradicted"
+                    ]
+                  },
+                  "executionContext": {
+                    "type": "string"
+                  },
+                  "sourceReferences": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "path": {
+                          "type": "string"
+                        },
+                        "startLine": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "endLine": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "quote": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "path",
+                        "startLine",
+                        "endLine",
+                        "quote"
+                      ]
+                    }
+                  },
+                  "steps": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "action": {
+                          "type": "string"
+                        },
+                        "expectedResult": {
+                          "type": "string"
+                        },
+                        "citationIds": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "action",
+                        "expectedResult",
+                        "citationIds"
+                      ]
+                    }
+                  },
+                  "checks": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "reachability",
+                            "guards-and-rollback",
+                            "callback-state",
+                            "profit-and-loss"
+                          ]
+                        },
+                        "result": {
+                          "type": "string",
+                          "enum": [
+                            "supported",
+                            "unresolved",
+                            "blocked",
+                            "not-applicable"
+                          ]
+                        },
+                        "reason": {
+                          "type": "string"
+                        },
+                        "citationIds": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "result",
+                        "reason",
+                        "citationIds"
+                      ]
+                    }
+                  },
+                  "missingEvidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "conclusion",
+                  "executionContext",
+                  "sourceReferences",
+                  "steps",
+                  "checks",
+                  "missingEvidence"
+                ]
+              },
+              "priority": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "id",
+              "category",
+              "title",
+              "description",
+              "affectedCode",
+              "severity",
+              "confidence",
+              "trace",
+              "suggestedProperties",
+              "priority",
+              "claimAssessment"
+            ]
+          }
+        },
+        "dismissedCandidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "sourceReferences": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "startLine": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "endLine": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "quote": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "path",
+                    "startLine",
+                    "endLine",
+                    "quote"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "title",
+              "reason",
+              "sourceReferences"
+            ]
+          }
+        }
+      },
+      "required": [
+        "contractType",
+        "threats",
+        "dismissedCandidates"
+      ]
+    }
+  },
+  "requestedModel": "opus",
+  "maxBudgetUsd": 4,
+  "maxTurns": 60,
+  "modelOverrides": {
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "anthropic/claude-sonnet-4.6",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "anthropic/claude-sonnet-4.6",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "anthropic/claude-sonnet-4.6",
+    "FORGE_PROOF_CLASSIFIER_MODEL": "anthropic/claude-haiku-4.5"
+  },
+  "billingNote": "SDK-reported generation cost; excludes the separate blueprint classifier call and is not independently reconciled provider billing."
+}

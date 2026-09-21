@@ -37,18 +37,12 @@ export const claimAssessmentSchema = {
   required: ["conclusion", "executionContext", "sourceReferences", "steps", "checks", "missingEvidence"],
 };
 
-/** Read citations only within the project, including resolving symlinks before reading. */
-export function reviewClaim(projectDir: string, assessment: unknown): ClaimReview {
+/** Mechanical checks apply to counterevidence as well as maintained claims. */
+export function reviewSourceCitations(projectDir: string, sourceReferences: unknown): ClaimReview {
   const review: ClaimReview = { status: "needs-review", executionVerified: false, issues: [], sourceReferences: [] };
-  if (!object(assessment)) return { ...review, status: "not-assessed", issues: ["No structured claim assessment supplied"] };
   const root = realpathSync(projectDir), ids = new Set<string>();
   const issue = (message: string) => review.issues.push(message);
-  if (!["supported", "unresolved", "contradicted"].includes(assessment.conclusion)) issue("Invalid claim conclusion");
-  if (assessment.conclusion !== "supported") issue("Generator did not conclude the current-code attack is supported");
-  if (!text(assessment.executionContext)) issue("Missing execution context");
-  if (!strings(assessment.missingEvidence)) issue("Invalid missing-evidence list");
-  else if (assessment.missingEvidence.length) issue("Generator recorded missing evidence");
-  const citations = Array.isArray(assessment.sourceReferences) ? assessment.sourceReferences : [];
+  const citations = Array.isArray(sourceReferences) ? sourceReferences : [];
   if (!citations.length) issue("No source citations");
   for (const c of citations) {
     if (!object(c) || !text(c.id) || !text(c.path)) { issue("Malformed source citation"); continue; }
@@ -67,6 +61,22 @@ export function reviewClaim(projectDir: string, assessment: unknown): ClaimRevie
       if (!result.quoteMatches) issue(`Source quote does not match its line range: ${c.id}`);
     } catch { issue(`Invalid or unavailable source citation: ${c.id}`); }
   }
+  if (!review.issues.length) review.status = "citations-checked";
+  return review;
+}
+
+/** A quote match does not establish whether the generator's interpretation is true. */
+export function reviewClaim(projectDir: string, assessment: unknown): ClaimReview {
+  if (!object(assessment)) return { status: "not-assessed", executionVerified: false, issues: ["No structured claim assessment supplied"], sourceReferences: [] };
+  const review = reviewSourceCitations(projectDir, assessment.sourceReferences);
+  review.status = "needs-review";
+  const ids = new Set(review.sourceReferences.map(r => r.id));
+  const issue = (message: string) => review.issues.push(message);
+  if (!["supported", "unresolved", "contradicted"].includes(assessment.conclusion)) issue("Invalid claim conclusion");
+  if (assessment.conclusion !== "supported") issue("Generator did not conclude the current-code attack is supported");
+  if (!text(assessment.executionContext)) issue("Missing execution context");
+  if (!strings(assessment.missingEvidence)) issue("Invalid missing-evidence list");
+  else if (assessment.missingEvidence.length) issue("Generator recorded missing evidence");
   const validRefs = (refs: unknown, required: boolean) => strings(refs) && (!required || refs.length > 0) && refs.every(id => ids.has(id));
   const steps = Array.isArray(assessment.steps) ? assessment.steps : [];
   if (!steps.length) issue("No attack steps");

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { reviewClaim, CLAIM_CHECKS } from '../dist/threat-model/claim-review.js';
+import { reviewClaim, reviewSourceCitations, CLAIM_CHECKS } from '../dist/threat-model/claim-review.js';
 import { dedupProvider } from '../dist/threat-model/providers/filters/dedup.js';
 function fixture(t) {
   const dir = mkdtempSync(join(tmpdir(), 'claim-evidence-'));
@@ -27,8 +27,12 @@ test('matching source citations are hashed but never called an executed proof', 
 });
 test('invented quotes, unavailable ranges, external paths and symlinks fail without losing findings', t => {
   const { dir, claim } = fixture(t);
-  symlinkSync('/etc', join(dir, 'outside'));
-  for (const change of [{ quote: 'require(false);' }, { startLine: 200, endLine: 200 }, { startLine: 1.5 }, { path: '/etc/passwd' }, { path: '../C.sol' }, { path: 'outside/passwd.sol' }, { path: 'absent.sol' }]) {
+  const external = mkdtempSync(join(tmpdir(), 'outside-evidence-'));
+  t.after(() => rmSync(external, { recursive: true, force: true }));
+  writeFileSync(join(external, 'C.sol'), 'contract C {\n  uint public balance;\n}\n');
+  symlinkSync(join(external, 'C.sol'), join(dir, 'escape.sol'));
+  symlinkSync(external, join(dir, 'outside'));
+  for (const change of [{ quote: 'require(false);' }, { startLine: 200, endLine: 200 }, { startLine: 1.5 }, { path: '/etc/passwd' }, { path: '../C.sol' }, { path: 'outside/C.sol' }, { path: 'escape.sol' }, { path: 'absent.sol' }]) {
     const c = structuredClone(claim); Object.assign(c.sourceReferences[0], change);
     assert.equal(reviewClaim(dir, c).status, 'needs-review');
   }
@@ -43,6 +47,14 @@ test('source quotes cannot override blocked guards or incomplete assessments', t
   }
   for (const input of [undefined, null, [], 'not an assessment']) assert.equal(reviewClaim(dir, input).status, 'not-assessed');
   for (const input of [{}, { sourceReferences: [null], steps: [null], checks: [null] }]) assert.equal(reviewClaim(dir, input).status, 'needs-review');
+});
+test('dismissal counterevidence is checked without inventing an attack or accepting a paraphrase as a quote', t => {
+  const { dir, claim } = fixture(t);
+  const good = reviewSourceCitations(dir, claim.sourceReferences);
+  assert.equal(good.status, 'citations-checked'); assert.equal(good.executionVerified, false);
+  claim.sourceReferences[0].quote = 'There is a public balance.';
+  assert.equal(reviewSourceCitations(dir, claim.sourceReferences).status, 'needs-review');
+  assert.equal(reviewSourceCitations(dir, []).status, 'needs-review');
 });
 test('merging findings preserves original assessments and invalidates aggregate citation assurance', t => {
   const { dir, claim } = fixture(t);

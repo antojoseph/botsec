@@ -230,7 +230,7 @@ export interface ThreatModel {
   trustBoundaries: TrustBoundary[];
   threats: Threat[];
   /** Preserve rejected leads so a smaller report does not hide what was investigated. */
-  dismissedCandidates?: Array<{ title: string; reason: string; sourceReferences: SourceCitation[] }>;
+  dismissedCandidates?: Array<{ title: string; reason: string; sourceReferences: SourceCitation[]; citationReview?: ClaimReview }>;
   onChainProfile?: OnChainProfile;
   precomputed: {
     astAnalysisAvailable: boolean;

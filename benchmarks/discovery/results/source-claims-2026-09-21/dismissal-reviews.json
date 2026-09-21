@@ -1,0 +1,190 @@
+{
+  "version": 1,
+  "collectionSha256": "cb5b27c452bccf4590df7eba284c3aab704038baa94e55f9b54db1a46a61ade5",
+  "checkerSha256": "f15dcab4efacf458bc7bcfd702563c85ad164b266e1110e9d00259367fde25d9",
+  "interpretation": "Post-generation mechanical checks of dismissal citations; retained separately from original evidence. Exact quote matching does not establish that a rejection is correct.",
+  "projects": [
+    {
+      "family": "socket",
+      "projectId": "project-01",
+      "rawSha256": "268edbf46bd2419f4efa3061ff02673bcb56061437607f1d9810dd4670ade5cd",
+      "candidates": [
+        {
+          "ordinal": 1,
+          "title": "Admin-only function bypass (rescueFunds, rescueEther, killme)",
+          "review": {
+            "status": "needs-review",
+            "executionVerified": false,
+            "issues": [
+              "Source quote does not match its line range: C1"
+            ],
+            "sourceReferences": [
+              {
+                "id": "C1",
+                "path": "src/swap/SwapImplBase.sol",
+                "quoteMatches": false,
+                "fileSha256": "a7d5ef4b68eb8e80a40734150326df5eabddfa8b28058ab4466cb7f52058b799"
+              }
+            ]
+          }
+        },
+        {
+          "ordinal": 2,
+          "title": "Wrapped-to-Native path arbitrary call profit (fromToken.call(swapExtraData))",
+          "review": {
+            "status": "needs-review",
+            "executionVerified": false,
+            "issues": [
+              "Source quote does not match its line range: C2"
+            ],
+            "sourceReferences": [
+              {
+                "id": "C2",
+                "path": "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol",
+                "quoteMatches": false,
+                "fileSha256": "cc40579a1f0f1180b6fb912a6716e861ad4248efa9c67405632e2e2f1194590e"
+              }
+            ]
+          }
+        },
+        {
+          "ordinal": 3,
+          "title": "Price manipulation / flash loan / constant-product invariant violation",
+          "review": {
+            "status": "citations-checked",
+            "executionVerified": false,
+            "issues": [],
+            "sourceReferences": [
+              {
+                "id": "C3",
+                "path": "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol",
+                "quoteMatches": true,
+                "fileSha256": "cc40579a1f0f1180b6fb912a6716e861ad4248efa9c67405632e2e2f1194590e"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "sentiment",
+      "projectId": "project-02",
+      "rawSha256": "067be1ca71e9f2b2c9621aa2609b8e1cb7290255429f6932ea991cec3e430a8f",
+      "candidates": [
+        {
+          "ordinal": 1,
+          "title": "Flash loan manipulation of Balancer pool spot balances to inflate the computed invariant",
+          "review": {
+            "status": "needs-review",
+            "executionVerified": false,
+            "issues": [
+              "Source quote does not match its line range: R5"
+            ],
+            "sourceReferences": [
+              {
+                "id": "R5",
+                "path": "src/balancer/WeightedBalancerLPOracle.sol",
+                "quoteMatches": false,
+                "fileSha256": "3121ec22b720104545dd56feb729cb9769b2a567b48d2e46e2c45e722277afa0"
+              }
+            ]
+          }
+        },
+        {
+          "ordinal": 2,
+          "title": "Stale price data: oracle caches a stale value that can be exploited",
+          "review": {
+            "status": "citations-checked",
+            "executionVerified": false,
+            "issues": [],
+            "sourceReferences": [
+              {
+                "id": "R5",
+                "path": "src/balancer/WeightedBalancerLPOracle.sol",
+                "quoteMatches": true,
+                "fileSha256": "3121ec22b720104545dd56feb729cb9769b2a567b48d2e46e2c45e722277afa0"
+              }
+            ]
+          }
+        },
+        {
+          "ordinal": 3,
+          "title": "Array out-of-bounds: weights.length > poolTokens.length causing index overflow",
+          "review": {
+            "status": "citations-checked",
+            "executionVerified": false,
+            "issues": [],
+            "sourceReferences": [
+              {
+                "id": "R5",
+                "path": "src/balancer/WeightedBalancerLPOracle.sol",
+                "quoteMatches": true,
+                "fileSha256": "3121ec22b720104545dd56feb729cb9769b2a567b48d2e46e2c45e722277afa0"
+              }
+            ]
+          }
+        },
+        {
+          "ordinal": 4,
+          "title": "Division by zero when pool totalSupply is zero",
+          "review": {
+            "status": "needs-review",
+            "executionVerified": false,
+            "issues": [
+              "Source quote does not match its line range: R5"
+            ],
+            "sourceReferences": [
+              {
+                "id": "R5",
+                "path": "src/balancer/WeightedBalancerLPOracle.sol",
+                "quoteMatches": false,
+                "fileSha256": "3121ec22b720104545dd56feb729cb9769b2a567b48d2e46e2c45e722277afa0"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "euler",
+      "projectId": "project-03",
+      "rawSha256": "13f0635fff6347f81dccf2661c6480acf928123fff51c2fd5ba7dac3cc1cd47f",
+      "candidates": [
+        {
+          "ordinal": 1,
+          "title": "DToken.borrow pushes tokens before checkLiquidity (CEI violation)",
+          "review": {
+            "status": "citations-checked",
+            "executionVerified": false,
+            "issues": [],
+            "sourceReferences": [
+              {
+                "id": "DR-01",
+                "path": "contracts/Base.sol",
+                "quoteMatches": true,
+                "fileSha256": "2b43c8045558447a2af79dd0f0b2780786376a8a401e20891864a10b9e811d6c"
+              }
+            ]
+          }
+        },
+        {
+          "ordinal": 2,
+          "title": "DToken.flashLoan allows reentrantOK functions during callback to bypass protections",
+          "review": {
+            "status": "citations-checked",
+            "executionVerified": false,
+            "issues": [],
+            "sourceReferences": [
+              {
+                "id": "DR-02",
+                "path": "contracts/modules/DToken.sol",
+                "quoteMatches": true,
+                "fileSha256": "b40980464806de37b4c877fc10d7f56091dacce7ee511f257e08c92873013e59"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

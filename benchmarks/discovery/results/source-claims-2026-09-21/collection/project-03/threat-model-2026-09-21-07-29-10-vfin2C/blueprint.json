@@ -1,0 +1,1853 @@
+{
+  "classification": {
+    "type": "lending",
+    "confidence": "high",
+    "signals": [
+      "DToken contract for debt/borrow positions with borrow() and repay() functions",
+      "EToken contract for collateral/lending positions with deposit() and withdraw() functions",
+      "PToken for underlying asset management",
+      "Liquidation contract for handling undercollateralized positions",
+      "RiskManager for computing liquidity, collateral requirements, and asset risk parameters",
+      "Markets contract for managing multiple lending markets and asset configurations",
+      "BaseIRM for computing interest rates on borrowed assets",
+      "Exec contract for coordinated operations including liquidity checks across positions"
+    ],
+    "knownVulnerabilityClasses": [
+      "Oracle price manipulation for undercollateralized borrow",
+      "Liquidation threshold manipulation",
+      "Flash loan borrow without proper collateral check",
+      "Interest rate calculation rounding",
+      "Bad debt accumulation (insolvency)",
+      "Re-entrancy in liquidation flow"
+    ]
+  },
+  "attackSurface": [
+    {
+      "function": "PToken.claimSurplus",
+      "score": 40,
+      "factors": [
+        "public visibility",
+        "2 external call(s): external.balanceOf, IERC20.IERC20",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": true
+    },
+    {
+      "function": "PToken.wrap",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "1 external call(s): external.safeTransferFrom",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "DToken.flashLoan",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "5 external call(s): external.balanceOf, IERC20.IERC20, external.safeTransfer, external.onFlashLoan, IFlashLoan.IFlashLoan",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.pTokenWrap",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "5 external call(s): external.balanceOf, IERC20.IERC20, external.safeTransferFrom, external.claimSurplus, PToken.PToken",
+        "handles token transfers"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.doStaticCall",
+      "score": 35,
+      "factors": [
+        "external visibility",
+        "1 external call(s): low_level.staticcall",
+        "uses low-level call"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "RiskManager.constructor",
+      "score": 30,
+      "factors": [
+        "public visibility",
+        "no access control but writes state",
+        "writes 3 state vars"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "PToken.constructor",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "PToken.name",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "3 external call(s): external.encodePacked, external.name, IERC20.IERC20"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "PToken.symbol",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "3 external call(s): external.encodePacked, external.symbol, IERC20.IERC20"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "PToken.decimals",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.decimals, IERC20.IERC20"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "Proxy.constructor",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "DToken.name",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "3 external call(s): external.encodePacked, external.name, IERC20.IERC20"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "DToken.symbol",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "3 external call(s): external.encodePacked, external.symbol, IERC20.IERC20"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.name",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "3 external call(s): external.encodePacked, external.name, IERC20.IERC20"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.symbol",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "3 external call(s): external.encodePacked, external.symbol, IERC20.IERC20"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.liquidity",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.encodeWithSelector, external.decode"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.detailedLiquidity",
+      "score": 25,
+      "factors": [
+        "public visibility",
+        "2 external call(s): external.encodeWithSelector, external.decode"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.getPrice",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.encodeWithSelector, external.decode"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.getPriceFull",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.encodeWithSelector, external.decode"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.deferLiquidityCheck",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.onDeferredLiquidityCheck, IDeferredLiquidityCheck.IDeferredLiquidityCheck"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.pTokenUnWrap",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.forceUnwrap, PToken.PToken"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.usePermit",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.permit, IERC20Permit.IERC20Permit"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.usePermitAllowed",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.permit, IERC20Permit.IERC20Permit"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.usePermitPacked",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.permit, IERC20Permit.IERC20Permit"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.activatePToken",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "no access control but writes state"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": true
+    },
+    {
+      "function": "RiskManager.getNewMarketParameters",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "6 external call(s): external.getPool, IUniswapV3Factory.IUniswapV3Factory, external.liquidity, IUniswapV3Pool.IUniswapV3Pool, external.encodePacked, external.increaseObservationCardinalityNext"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "RiskManager.getPriceFull",
+      "score": 25,
+      "factors": [
+        "external visibility",
+        "2 external call(s): external.slot0, IUniswapV3Pool.IUniswapV3Pool"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": true,
+      "unguarded": false
+    },
+    {
+      "function": "BaseIRM.computeInterestRate",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "BaseIRM.reset",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "PToken.underlying",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "PToken.balanceOf",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "PToken.totalSupply",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "PToken.allowance",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "PToken.transfer",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "PToken.transferFrom",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "PToken.approve",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "PToken.unwrap",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "PToken.forceUnwrap",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Proxy.fallback",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "DToken.constructor",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "DToken.decimals",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "DToken.underlyingAsset",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "DToken.totalSupply",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "DToken.totalSupplyExact",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "DToken.balanceOf",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "DToken.balanceOfExact",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "DToken.borrow",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "DToken.repay",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "DToken.approveDebt",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "DToken.debtAllowance",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "DToken.transfer",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "DToken.transferFrom",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.constructor",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.decimals",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.underlyingAsset",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.totalSupply",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.totalSupplyUnderlying",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.balanceOf",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.balanceOfUnderlying",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.reserveBalance",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.reserveBalanceUnderlying",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.convertBalanceToUnderlying",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.convertUnderlyingToBalance",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.touch",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.deposit",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.withdraw",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.mint",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.burn",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.approve",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.approveSubAccount",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.allowance",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.transfer",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.transferFromMax",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.transferFrom",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "EToken.donateToReserves",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.constructor",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.batchDispatch",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.batchDispatchSimulate",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.trackAverageLiquidity",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.unTrackAverageLiquidity",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.getAverageLiquidity",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.getAverageLiquidityWithDelegate",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Exec.getAverageLiquidityDelegateAccount",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Liquidation.constructor",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Liquidation.checkLiquidation",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Liquidation.liquidate",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.constructor",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.activateMarket",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.underlyingToEToken",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.underlyingToDToken",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.underlyingToPToken",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.underlyingToAssetConfig",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.underlyingToAssetConfigUnresolved",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.eTokenToUnderlying",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.dTokenToUnderlying",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.eTokenToDToken",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.interestRateModel",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.interestRate",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.interestAccumulator",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.reserveFee",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.getPricingConfig",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.getChainlinkPriceFeedConfig",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.getEnteredMarkets",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.enterMarket",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "Markets.exitMarket",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "RiskManager.getPriceInternal",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "RiskManager.getPrice",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "RiskManager.computeLiquidity",
+      "score": 10,
+      "factors": [
+        "public visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "RiskManager.computeAssetLiquidities",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    },
+    {
+      "function": "RiskManager.requireLiquidity",
+      "score": 10,
+      "factors": [
+        "external visibility"
+      ],
+      "receivesValue": false,
+      "makesExternalCalls": false,
+      "unguarded": false
+    }
+  ],
+  "inferredInvariants": [
+    {
+      "description": "PToken.totalBalances should equal the sum of all PToken.balances entries",
+      "kind": "conservation",
+      "stateVars": [
+        "PToken.totalBalances",
+        "PToken.balances"
+      ],
+      "threatenedBy": [
+        "PToken.transferFrom"
+      ],
+      "assertion": "assert(totalBalances == sum(balances[*]))",
+      "confidence": "medium"
+    },
+    {
+      "description": "Contract's actual token/ETH balance should always be >= totalBalances",
+      "kind": "solvency",
+      "stateVars": [
+        "PToken.totalBalances"
+      ],
+      "threatenedBy": [
+        "PToken.claimSurplus",
+        "PToken.doUnwrap"
+      ],
+      "assertion": "assert(token.balanceOf(address(this)) >= totalBalances)",
+      "confidence": "high"
+    },
+    {
+      "description": "Admin-only functions (transferFrom, forceUnwrap) should revert when called by non-admin",
+      "kind": "access",
+      "stateVars": [],
+      "threatenedBy": [
+        "PToken.transferFrom",
+        "PToken.forceUnwrap"
+      ],
+      "assertion": "assert(msg.sender != admin implies revert)",
+      "confidence": "high"
+    },
+    {
+      "description": "An immediate deposit-then-withdraw cycle should not yield profit for the depositor",
+      "kind": "no-profit",
+      "stateVars": [],
+      "threatenedBy": [
+        "BaseLogic.withdrawAmounts",
+        "EToken.deposit",
+        "EToken.withdraw"
+      ],
+      "assertion": "assert(balance_after_withdraw <= balance_before_deposit)",
+      "confidence": "medium"
+    }
+  ],
+  "patternFindings": {
+    "externalCallReceivers": [
+      {
+        "function": "Base.callInternalModule",
+        "call": "low_level.delegatecall",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "BaseLogic.initAssetCache",
+        "call": "external.rpow",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "BaseLogic.callBalanceOf",
+        "call": "low_level.staticcall",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "BaseLogic.callBalanceOf",
+        "call": "external.encodeWithSelector",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "BaseLogic.callBalanceOf",
+        "call": "external.decode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "BaseLogic.updateInterestRate",
+        "call": "external.encodeWithSelector",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "BaseLogic.updateInterestRate",
+        "call": "external.decode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "BaseLogic.pullTokens",
+        "call": "external.safeTransferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "BaseLogic.pushTokens",
+        "call": "external.safeTransfer",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "BaseLogic.getAssetPrice",
+        "call": "external.encodeWithSelector",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "BaseLogic.getAssetPrice",
+        "call": "external.decode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "BaseLogic.getAccountLiquidity",
+        "call": "external.encodeWithSelector",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "BaseLogic.getAccountLiquidity",
+        "call": "external.decode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "BaseLogic.checkLiquidity",
+        "call": "external.encodeWithSelector",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "BaseModule.emitViaProxy_Transfer",
+        "call": "low_level.call",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "BaseModule.emitViaProxy_Transfer",
+        "call": "external.encodePacked",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "BaseModule.emitViaProxy_Approval",
+        "call": "low_level.call",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "BaseModule.emitViaProxy_Approval",
+        "call": "external.encodePacked",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PToken.name",
+        "call": "external.encodePacked",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PToken.name",
+        "call": "external.name",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PToken.name",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PToken.symbol",
+        "call": "external.encodePacked",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PToken.symbol",
+        "call": "external.symbol",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PToken.symbol",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PToken.decimals",
+        "call": "external.decimals",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PToken.decimals",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PToken.wrap",
+        "call": "external.safeTransferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PToken.claimSurplus",
+        "call": "external.balanceOf",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      },
+      {
+        "function": "PToken.claimSurplus",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "PToken.doUnwrap",
+        "call": "external.safeTransfer",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "DToken.name",
+        "call": "external.encodePacked",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "DToken.name",
+        "call": "external.name",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "DToken.name",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "DToken.symbol",
+        "call": "external.encodePacked",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "DToken.symbol",
+        "call": "external.symbol",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "DToken.symbol",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "DToken.flashLoan",
+        "call": "external.balanceOf",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      },
+      {
+        "function": "DToken.flashLoan",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "DToken.flashLoan",
+        "call": "external.safeTransfer",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "DToken.flashLoan",
+        "call": "external.onFlashLoan",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "DToken.flashLoan",
+        "call": "IFlashLoan.IFlashLoan",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "EToken.name",
+        "call": "external.encodePacked",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "EToken.name",
+        "call": "external.name",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "EToken.name",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "EToken.symbol",
+        "call": "external.encodePacked",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "EToken.symbol",
+        "call": "external.symbol",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "EToken.symbol",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.liquidity",
+        "call": "external.encodeWithSelector",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.liquidity",
+        "call": "external.decode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.detailedLiquidity",
+        "call": "external.encodeWithSelector",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.detailedLiquidity",
+        "call": "external.decode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.getPrice",
+        "call": "external.encodeWithSelector",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.getPrice",
+        "call": "external.decode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.getPriceFull",
+        "call": "external.encodeWithSelector",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.getPriceFull",
+        "call": "external.decode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.deferLiquidityCheck",
+        "call": "external.onDeferredLiquidityCheck",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.deferLiquidityCheck",
+        "call": "IDeferredLiquidityCheck.IDeferredLiquidityCheck",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.pTokenWrap",
+        "call": "external.balanceOf",
+        "receiverType": "state-var",
+        "callbackRisk": "none"
+      },
+      {
+        "function": "Exec.pTokenWrap",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.pTokenWrap",
+        "call": "external.safeTransferFrom",
+        "receiverType": "state-var",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.pTokenWrap",
+        "call": "external.claimSurplus",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.pTokenWrap",
+        "call": "PToken.PToken",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.pTokenUnWrap",
+        "call": "external.forceUnwrap",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.pTokenUnWrap",
+        "call": "PToken.PToken",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.usePermit",
+        "call": "external.permit",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.usePermit",
+        "call": "IERC20Permit.IERC20Permit",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.usePermitAllowed",
+        "call": "external.permit",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.usePermitAllowed",
+        "call": "IERC20Permit.IERC20Permit",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.usePermitPacked",
+        "call": "external.permit",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.usePermitPacked",
+        "call": "IERC20Permit.IERC20Permit",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.doStaticCall",
+        "call": "low_level.staticcall",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "Exec.doBatchDispatch",
+        "call": "external.encodePacked",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Exec.doBatchDispatch",
+        "call": "low_level.delegatecall",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "Markets.doActivateMarket",
+        "call": "external.decimals",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Markets.doActivateMarket",
+        "call": "IERC20.IERC20",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Markets.doActivateMarket",
+        "call": "external.encodeWithSelector",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "Markets.doActivateMarket",
+        "call": "external.decode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.getNewMarketParameters",
+        "call": "external.getPool",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.getNewMarketParameters",
+        "call": "IUniswapV3Factory.IUniswapV3Factory",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.getNewMarketParameters",
+        "call": "external.liquidity",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.getNewMarketParameters",
+        "call": "IUniswapV3Pool.IUniswapV3Pool",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.getNewMarketParameters",
+        "call": "external.encodePacked",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.getNewMarketParameters",
+        "call": "external.increaseObservationCardinalityNext",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.computeUniswapPoolAddress",
+        "call": "external.encodePacked",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.computeUniswapPoolAddress",
+        "call": "external.encode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.decodeSqrtPriceX96",
+        "call": "external.mulDiv",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.callUniswapObserve",
+        "call": "low_level.staticcall",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "RiskManager.callUniswapObserve",
+        "call": "external.encodeWithSelector",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.callUniswapObserve",
+        "call": "external.encodeWithSignature",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.callUniswapObserve",
+        "call": "external.slot0",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.callUniswapObserve",
+        "call": "IUniswapV3Pool.IUniswapV3Pool",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.callUniswapObserve",
+        "call": "external.observations",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.callUniswapObserve",
+        "call": "external.decode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.callUniswapObserve",
+        "call": "external.getSqrtRatioAtTick",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.callChainlinkLatestAnswer",
+        "call": "low_level.staticcall",
+        "receiverType": "msg-sender",
+        "callbackRisk": "high"
+      },
+      {
+        "function": "RiskManager.callChainlinkLatestAnswer",
+        "call": "external.encodeWithSelector",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.callChainlinkLatestAnswer",
+        "call": "external.decode",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.getPriceFull",
+        "call": "external.slot0",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      },
+      {
+        "function": "RiskManager.getPriceFull",
+        "call": "IUniswapV3Pool.IUniswapV3Pool",
+        "receiverType": "unknown",
+        "callbackRisk": "medium"
+      }
+    ],
+    "ceiViolations": [],
+    "stateVarPairings": [
+      {
+        "aggregate": "PToken.totalBalances",
+        "individual": "PToken.balances",
+        "mismatchedUpdates": [
+          "PToken.transferFrom"
+        ],
+        "relationship": "totalBalances == sum(balances)"
+      }
+    ],
+    "interfaceAssumptions": [],
+    "privilegeSurface": {
+      "adminFunctions": [
+        "PToken.transferFrom",
+        "PToken.forceUnwrap"
+      ],
+      "unguardedStateMutators": [
+        "PToken.constructor",
+        "PToken.claimSurplus",
+        "Proxy.constructor",
+        "Markets.activatePToken",
+        "RiskManager.constructor"
+      ],
+      "guardedBy": {
+        "PToken.transferFrom": [
+          "require: require"
+        ],
+        "PToken.forceUnwrap": [
+          "require: msg.sender == euler"
+        ]
+      }
+    },
+    "valueFlowPaths": []
+  },
+  "investigationQuestions": [
+    "Invariant [conservation]: PToken.totalBalances should equal the sum of all PToken.balances entries. Assertion: assert(totalBalances == sum(balances[*])). Threatened by: transferFrom. Read the code to verify this holds and identify any violation path.",
+    "Invariant [solvency]: Contract's actual token/ETH balance should always be >= totalBalances. Assertion: assert(token.balanceOf(address(this)) >= totalBalances). Threatened by: claimSurplus, doUnwrap. Read the code to verify this holds and identify any violation path.",
+    "Invariant [access]: Admin-only functions (transferFrom, forceUnwrap) should revert when called by non-admin. Assertion: assert(msg.sender != admin implies revert). Threatened by: transferFrom, forceUnwrap. Read the code to verify this holds and identify any violation path.",
+    "Invariant [no-profit]: An immediate deposit-then-withdraw cycle should not yield profit for the depositor. Assertion: assert(balance_after_withdraw <= balance_before_deposit). Threatened by: withdrawAmounts, deposit, withdraw. Read the code to verify this holds and identify any violation path.",
+    "PToken.claimSurplus writes state but has no access control. What prevents a malicious caller from abusing this? Factors: public visibility, 2 external call(s): external.balanceOf, IERC20.IERC20, no access control but writes state",
+    "Conservation risk: totalBalances and balances are updated together in some functions but not in: transferFrom. Can these diverge?",
+    "Known lending vulnerability: \"Oracle price manipulation for undercollateralized borrow\". Trace the relevant code path to confirm or rule out.",
+    "Known lending vulnerability: \"Liquidation threshold manipulation\". Trace the relevant code path to confirm or rule out.",
+    "Known lending vulnerability: \"Flash loan borrow without proper collateral check\". Trace the relevant code path to confirm or rule out."
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "reviewer": {
+    "kind": "assistant",
+    "independent": false
+  },
+  "source": "benchmarks/jev/results/real-source-2026-09-21",
+  "coverage": [
+    {
+      "family": "socket",
+      "grade": "partial-mechanism",
+      "findingOrdinals": [
+        1
+      ],
+      "reason": "Unrestricted target/calldata is identified, but the report does not give the gateway/delegatecall zero-amount victim-transferFrom path. Its transfer example reverts and its alternative approval path depends on an unexplained passing balance check.",
+      "evidence": [
+        "socket-gateway",
+        "socket-arbitrary-call",
+        "reference Socket PoC"
+      ]
+    },
+    {
+      "family": "sentiment",
+      "grade": "missed",
+      "findingOrdinals": [],
+      "reason": "None of the five reports identifies the exit callback supply/balance mismatch and borrowing during that window.",
+      "evidence": [
+        "sentiment-pool-hook",
+        "sentiment-vault-update",
+        "sentiment-burn",
+        "sentiment-price",
+        "sentiment-consumer",
+        "reference Sentiment PoC"
+      ]
+    },
+    {
+      "family": "euler",
+      "grade": "partial-mechanism",
+      "findingOrdinals": [
+        1,
+        6
+      ],
+      "reason": "The missing donation solvency check is identified. The profitable example in f001 says the dirty deferred check passes and then liquidates a still-healthy account, contrary to the liquidation guard. f006 relies on the same donation defect after calling ordinary debt transfer benign.",
+      "evidence": [
+        "euler-donation",
+        "euler-deferred",
+        "euler-health",
+        "euler-debt-transfer",
+        "reference Euler PoC"
+      ]
+    }
+  ],
+  "specificReasoningIssues": [
+    {
+      "family": "socket",
+      "findingOrdinal": 1,
+      "issue": "An intermediate arbitrary call is not by itself a committed theft: the stated transfer path rolls back. The alternative approval claim does not establish why the final balance check passes.",
+      "evidence": [
+        "socket-arbitrary-call"
+      ]
+    },
+    {
+      "family": "socket",
+      "findingOrdinal": 3,
+      "issue": "The claimed positive profit does not follow from the report: attacker-funded amount equals amount received, before fees. Separate harm to a funded route is not the asserted net profit.",
+      "evidence": [
+        "socket-arbitrary-call"
+      ],
+      "calculation": "net stated cash flow = received amount - funded amount = 0, before gas"
+    },
+    {
+      "family": "socket",
+      "findingOrdinal": 4,
+      "issue": "A pre-transaction donation adds equally to initial and final balances, so the report itself shows the delta remains amount. It then changes the allegation to non-1:1 token compatibility.",
+      "evidence": [
+        "socket-native-output-delta"
+      ],
+      "calculation": "(initial + donation + output) - (initial + donation) = output"
+    },
+    {
+      "family": "sentiment",
+      "findingOrdinal": 4,
+      "issue": "The report assumes creation of a normal pool containing a fixed 20-decimal token. The supplied BasePool constructor rejects that scaling factor. Mutable-decimal or different-pool behavior was not its stated attack.",
+      "evidence": [
+        "sentiment-decimals-construction",
+        "sentiment-decimals-restriction"
+      ]
+    },
+    {
+      "family": "sentiment",
+      "findingOrdinal": 5,
+      "issue": "The report does not establish attacker-triggered zero supply in an initialized pool. Locked minimum shares contradict ordinary lifecycle depletion; an uninitialized-pool integration remains a distinct unproven prerequisite.",
+      "evidence": [
+        "sentiment-minimum-supply"
+      ]
+    },
+    {
+      "family": "euler",
+      "findingOrdinal": 1,
+      "issue": "Passing a dirty final solvency check and then liquidating that still-healthy account is not a demonstrated profitable path. The direct donation missing-check root cause remains real under the trusted reference.",
+      "evidence": [
+        "euler-deferred",
+        "euler-check",
+        "euler-health",
+        "euler-donation"
+      ]
+    }
+  ],
+  "limitations": "Selected source-backed reasoning defects, not an exhaustive truth label for all 15 findings. References anchor known mechanisms; no local exploit execution or independent human adjudication."
+}
