@@ -1,0 +1,1176 @@
+{
+  "methodology": "Compare retained incident-block runtime with pinned-solc compilation. Record all compiler-declared immutable values. Permit a separately disclosed IPFS metadata digest difference only in the recognized 53-byte Solidity trailer. No exploit execution.",
+  "results": [
+    {
+      "id": "euler-core",
+      "address": "0x27182842E098f60e3D576794A5bFFb0777E025d3",
+      "chainId": 1,
+      "blockNumber": 16817995,
+      "blockHash": "0x9218163f892b710003a56169af6f1a109f5f97eda093fedebb84901babb3527d",
+      "contractName": "Euler",
+      "compilerVersion": "0.8.10+commit.fc410830.Emscripten.clang",
+      "compilerInputSha256": "c4f83c0116a352a75a99b4ac150a43966c886f41ce7c5f39c8bb030547fd6b2d",
+      "historicalRuntimeSha256": "f0492f376493cf80fcb38de4ffeaab80dc246d94b493b0367672d6cab251bb37",
+      "sourceCount": 6,
+      "exactMatch": true,
+      "matchExceptCompilerDeclaredImmutables": true,
+      "matchExceptImmutablesAndMetadataDigest": true,
+      "metadataDigestOnlyDifference": false,
+      "compiledRuntimeBytes": 907,
+      "historicalRuntimeBytes": 907,
+      "immutableValues": []
+    },
+    {
+      "id": "euler-installer",
+      "address": "0xec29b4c2cacae5df1a491f084e5ec7c62a7edab5",
+      "chainId": 1,
+      "blockNumber": 16817995,
+      "blockHash": "0x9218163f892b710003a56169af6f1a109f5f97eda093fedebb84901babb3527d",
+      "contractName": "Installer",
+      "compilerVersion": "0.8.10+commit.fc410830.Emscripten.clang",
+      "compilerInputSha256": "12fbf534ce6ccdfdb8bb4d50ef214c03b53f38fb218cebe5a03f7c785572d80f",
+      "historicalRuntimeSha256": "6a8a541ec09d067d2c788dccd7893c7b540d1034b9274d5bc57aa3a20348acec",
+      "sourceCount": 7,
+      "exactMatch": false,
+      "matchExceptCompilerDeclaredImmutables": true,
+      "matchExceptImmutablesAndMetadataDigest": true,
+      "metadataDigestOnlyDifference": false,
+      "compiledRuntimeBytes": 3594,
+      "historicalRuntimeBytes": 3594,
+      "immutableValues": [
+        {
+          "astId": "172",
+          "start": 222,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000001",
+          "name": "moduleId"
+        },
+        {
+          "astId": "174",
+          "start": 124,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000c6fda952dcd00cd90ff42981c1976f9b3566520a",
+          "name": "moduleGitCommit"
+        }
+      ]
+    },
+    {
+      "id": "euler-markets",
+      "address": "0x1e21cac3eb590a5f5482e1cce07174dcdb7f7fce",
+      "chainId": 1,
+      "blockNumber": 16817995,
+      "blockHash": "0x9218163f892b710003a56169af6f1a109f5f97eda093fedebb84901babb3527d",
+      "contractName": "Markets",
+      "compilerVersion": "0.8.10+commit.fc410830.Emscripten.clang",
+      "compilerInputSha256": "1e4b6ced74a2ac0876f545d9c6baf8c66d002a40182cce5ec5efac44ae365b7b",
+      "historicalRuntimeSha256": "81d9c156ecaa88b5d01e294c0f7abc55b023bcfafa8f8ba3795f7e9f0bb243f8",
+      "sourceCount": 14,
+      "exactMatch": false,
+      "matchExceptCompilerDeclaredImmutables": true,
+      "matchExceptImmutablesAndMetadataDigest": true,
+      "metadataDigestOnlyDifference": false,
+      "compiledRuntimeBytes": 20012,
+      "historicalRuntimeBytes": 20012,
+      "immutableValues": [
+        {
+          "astId": "3004",
+          "start": 1063,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000002",
+          "name": "moduleId"
+        },
+        {
+          "astId": "3006",
+          "start": 796,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000d7f62927eb58592d82302c87205490c26cccca7c",
+          "name": "moduleGitCommit"
+        }
+      ]
+    },
+    {
+      "id": "euler-liquidation",
+      "address": "0xd737ee2bb39f49c62a436002a77f2710cc45ed98",
+      "chainId": 1,
+      "blockNumber": 16817995,
+      "blockHash": "0x9218163f892b710003a56169af6f1a109f5f97eda093fedebb84901babb3527d",
+      "contractName": "Liquidation",
+      "compilerVersion": "0.8.10+commit.fc410830.Emscripten.clang",
+      "compilerInputSha256": "e49df413606f156664c555dcebbaedea960229b5605eab4c4341b17648c6ac99",
+      "historicalRuntimeSha256": "87cb08e01de1baabfbbeade14338782a7198b29233da41b1aa03698e54d08b85",
+      "sourceCount": 13,
+      "exactMatch": false,
+      "matchExceptCompilerDeclaredImmutables": true,
+      "matchExceptImmutablesAndMetadataDigest": true,
+      "metadataDigestOnlyDifference": false,
+      "compiledRuntimeBytes": 14981,
+      "historicalRuntimeBytes": 14981,
+      "immutableValues": [
+        {
+          "astId": "3004",
+          "start": 395,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000003",
+          "name": "moduleId"
+        },
+        {
+          "astId": "3006",
+          "start": 320,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000d7f62927eb58592d82302c87205490c26cccca7c",
+          "name": "moduleGitCommit"
+        }
+      ]
+    },
+    {
+      "id": "euler-governance",
+      "address": "0xe83b69edfd12e477fe47152c0e1d65576b91a1cf",
+      "chainId": 1,
+      "blockNumber": 16817995,
+      "blockHash": "0x9218163f892b710003a56169af6f1a109f5f97eda093fedebb84901babb3527d",
+      "contractName": "Governance",
+      "compilerVersion": "0.8.10+commit.fc410830.Emscripten.clang",
+      "compilerInputSha256": "8e39ff7cda70f38c63e7d2ef8958e43f4627c899e70302c43b152bf1d6f24a73",
+      "historicalRuntimeSha256": "bc970e3f04b8cf1e4339237c2e128d1deb209fc6b337d1a75f03013b100e2886",
+      "sourceCount": 13,
+      "exactMatch": false,
+      "matchExceptCompilerDeclaredImmutables": true,
+      "matchExceptImmutablesAndMetadataDigest": true,
+      "metadataDigestOnlyDifference": false,
+      "compiledRuntimeBytes": 12814,
+      "historicalRuntimeBytes": 12814,
+      "immutableValues": [
+        {
+          "astId": "3025",
+          "start": 368,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000004",
+          "name": "moduleId"
+        },
+        {
+          "astId": "3027",
+          "start": 251,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000fa9398728165676a5666939d8c34a7578d8e1919",
+          "name": "moduleGitCommit"
+        }
+      ]
+    },
+    {
+      "id": "euler-exec",
+      "address": "0x0bf04952a5b3ef6bad343c2218f584a7413bb44d",
+      "chainId": 1,
+      "blockNumber": 16817995,
+      "blockHash": "0x9218163f892b710003a56169af6f1a109f5f97eda093fedebb84901babb3527d",
+      "contractName": "Exec",
+      "compilerVersion": "0.8.10+commit.fc410830.Emscripten.clang",
+      "compilerInputSha256": "46e34fa05dd028c998b21d1a83ba108902589ee3a8def27c011e8e7a2de304ac",
+      "historicalRuntimeSha256": "0333b12c654ff94bd021b0fd5ced3df7318c072e156f4fe1b440220d765a0d01",
+      "sourceCount": 14,
+      "exactMatch": false,
+      "matchExceptCompilerDeclaredImmutables": true,
+      "matchExceptImmutablesAndMetadataDigest": true,
+      "metadataDigestOnlyDifference": false,
+      "compiledRuntimeBytes": 12599,
+      "historicalRuntimeBytes": 12599,
+      "immutableValues": [
+        {
+          "astId": "3004",
+          "start": 666,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000005",
+          "name": "moduleId"
+        },
+        {
+          "astId": "3006",
+          "start": 543,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000d7f62927eb58592d82302c87205490c26cccca7c",
+          "name": "moduleGitCommit"
+        }
+      ]
+    },
+    {
+      "id": "euler-etoken",
+      "address": "0xbb0d4bb654a21054af95456a3b29c63e8d1f4c0a",
+      "chainId": 1,
+      "blockNumber": 16817995,
+      "blockHash": "0x9218163f892b710003a56169af6f1a109f5f97eda093fedebb84901babb3527d",
+      "contractName": "EToken",
+      "compilerVersion": "0.8.10+commit.fc410830.Emscripten.clang",
+      "compilerInputSha256": "ced8120d055d9030370f206caeca4f8401725207b5b9d7c552c1712817dd1a56",
+      "historicalRuntimeSha256": "de569d8dec2f5decb6da5207a2b595a6ef7c0bdb8be7cbeff156de91dbeedd05",
+      "sourceCount": 13,
+      "exactMatch": false,
+      "matchExceptCompilerDeclaredImmutables": true,
+      "matchExceptImmutablesAndMetadataDigest": true,
+      "metadataDigestOnlyDifference": false,
+      "compiledRuntimeBytes": 18712,
+      "historicalRuntimeBytes": 18712,
+      "immutableValues": [
+        {
+          "astId": "3004",
+          "start": 811,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000000000000000000000000000000000000007a120",
+          "name": "moduleId"
+        },
+        {
+          "astId": "3006",
+          "start": 692,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000d7f62927eb58592d82302c87205490c26cccca7c",
+          "name": "moduleGitCommit"
+        }
+      ]
+    },
+    {
+      "id": "euler-dtoken",
+      "address": "0x29daddfda3442693c21a50351a2b4820ddbbff79",
+      "chainId": 1,
+      "blockNumber": 16817995,
+      "blockHash": "0x9218163f892b710003a56169af6f1a109f5f97eda093fedebb84901babb3527d",
+      "contractName": "DToken",
+      "compilerVersion": "0.8.10+commit.fc410830.Emscripten.clang",
+      "compilerInputSha256": "49a1540d939fe1474c3174f73f6f74abf73786b5817982c35e6da883c1d16153",
+      "historicalRuntimeSha256": "17365335ef66752a27112ea41f8f3215225cc8dd3e4b6f1c56d5b679acfa66c2",
+      "sourceCount": 13,
+      "exactMatch": false,
+      "matchExceptCompilerDeclaredImmutables": true,
+      "matchExceptImmutablesAndMetadataDigest": true,
+      "metadataDigestOnlyDifference": false,
+      "compiledRuntimeBytes": 16247,
+      "historicalRuntimeBytes": 16247,
+      "immutableValues": [
+        {
+          "astId": "3004",
+          "start": 622,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000000000000000000000000000000000000007a121",
+          "name": "moduleId"
+        },
+        {
+          "astId": "3006",
+          "start": 492,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000d7f62927eb58592d82302c87205490c26cccca7c",
+          "name": "moduleGitCommit"
+        }
+      ]
+    },
+    {
+      "id": "euler-riskmanager",
+      "address": "0x3297c8db9360f87a7f7826f52a4fa143988931a6",
+      "chainId": 1,
+      "blockNumber": 16817995,
+      "blockHash": "0x9218163f892b710003a56169af6f1a109f5f97eda093fedebb84901babb3527d",
+      "contractName": "RiskManager",
+      "compilerVersion": "0.8.10+commit.fc410830.Emscripten.clang",
+      "compilerInputSha256": "242e88667e38654e943851f28f3c62b14384f53ced6a83b54ad362a28af60d83",
+      "historicalRuntimeSha256": "5d2f6fd28391744d479f22e7878773ae7112ec9b58c74f28672fa2a48f045cd9",
+      "sourceCount": 15,
+      "exactMatch": false,
+      "matchExceptCompilerDeclaredImmutables": true,
+      "matchExceptImmutablesAndMetadataDigest": true,
+      "metadataDigestOnlyDifference": false,
+      "compiledRuntimeBytes": 16258,
+      "historicalRuntimeBytes": 16258,
+      "immutableValues": [
+        {
+          "astId": "3004",
+          "start": 497,
+          "length": 32,
+          "historicalValue": "0x00000000000000000000000000000000000000000000000000000000000f4240",
+          "name": "moduleId"
+        },
+        {
+          "astId": "3006",
+          "start": 254,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000d7f62927eb58592d82302c87205490c26cccca7c",
+          "name": "moduleGitCommit"
+        },
+        {
+          "astId": "4304",
+          "start": 882,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+          "name": "referenceAsset"
+        },
+        {
+          "astId": "4304",
+          "start": 1238,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+          "name": "referenceAsset"
+        },
+        {
+          "astId": "4304",
+          "start": 6089,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+          "name": "referenceAsset"
+        },
+        {
+          "astId": "4304",
+          "start": 7005,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+          "name": "referenceAsset"
+        },
+        {
+          "astId": "4306",
+          "start": 1177,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000001f98431c8ad98523631ae4a59f267346ea31f984",
+          "name": "uniswapFactory"
+        },
+        {
+          "astId": "4306",
+          "start": 6210,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000001f98431c8ad98523631ae4a59f267346ea31f984",
+          "name": "uniswapFactory"
+        },
+        {
+          "astId": "4308",
+          "start": 6269,
+          "length": 32,
+          "historicalValue": "0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54",
+          "name": "uniswapPoolInitCodeHash"
+        }
+      ]
+    },
+    {
+      "id": "socket-route",
+      "address": "0xCC5fDA5e3cA925bd0bb428C8b2669496eE43067e",
+      "chainId": 1,
+      "blockNumber": 19021453,
+      "blockHash": "0x19e115f9cfcb42809715551118cf0238f3dbf5190dbcb224cfe268b8975263aa",
+      "contractName": "WrappedTokenSwapperImpl",
+      "compilerVersion": "0.8.7+commit.e28d00a7.Emscripten.clang",
+      "compilerInputSha256": "4614878a6cf95be4802e9ca03ed2d3e2fd3ac9e381bc2aabed890cf023ce46b5",
+      "historicalRuntimeSha256": "b59409cc4f9df325e58e7dbb0bc7e99da6c702c8f336065d1c9dbc66f3a0c161",
+      "sourceCount": 6,
+      "exactMatch": false,
+      "matchExceptCompilerDeclaredImmutables": false,
+      "matchExceptImmutablesAndMetadataDigest": true,
+      "metadataDigestOnlyDifference": true,
+      "compiledRuntimeBytes": 5580,
+      "historicalRuntimeBytes": 5580,
+      "immutableValues": [
+        {
+          "astId": "545",
+          "start": 644,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "name": "NATIVE_TOKEN_ADDRESS"
+        },
+        {
+          "astId": "545",
+          "start": 1188,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "name": "NATIVE_TOKEN_ADDRESS"
+        },
+        {
+          "astId": "545",
+          "start": 3094,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "name": "NATIVE_TOKEN_ADDRESS"
+        },
+        {
+          "astId": "548",
+          "start": 334,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000003a23f943181408eac424116af7b7790c94cb97a5",
+          "name": "socketGateway"
+        },
+        {
+          "astId": "548",
+          "start": 887,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000003a23f943181408eac424116af7b7790c94cb97a5",
+          "name": "socketGateway"
+        },
+        {
+          "astId": "548",
+          "start": 1331,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000003a23f943181408eac424116af7b7790c94cb97a5",
+          "name": "socketGateway"
+        },
+        {
+          "astId": "548",
+          "start": 1691,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000003a23f943181408eac424116af7b7790c94cb97a5",
+          "name": "socketGateway"
+        },
+        {
+          "astId": "548",
+          "start": 2140,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000003a23f943181408eac424116af7b7790c94cb97a5",
+          "name": "socketGateway"
+        },
+        {
+          "astId": "548",
+          "start": 2381,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000003a23f943181408eac424116af7b7790c94cb97a5",
+          "name": "socketGateway"
+        },
+        {
+          "astId": "548",
+          "start": 2763,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000003a23f943181408eac424116af7b7790c94cb97a5",
+          "name": "socketGateway"
+        },
+        {
+          "astId": "548",
+          "start": 3237,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000003a23f943181408eac424116af7b7790c94cb97a5",
+          "name": "socketGateway"
+        },
+        {
+          "astId": "548",
+          "start": 3597,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000003a23f943181408eac424116af7b7790c94cb97a5",
+          "name": "socketGateway"
+        },
+        {
+          "astId": "548",
+          "start": 3872,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000003a23f943181408eac424116af7b7790c94cb97a5",
+          "name": "socketGateway"
+        },
+        {
+          "astId": "548",
+          "start": 4113,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000003a23f943181408eac424116af7b7790c94cb97a5",
+          "name": "socketGateway"
+        },
+        {
+          "astId": "548",
+          "start": 4397,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000003a23f943181408eac424116af7b7790c94cb97a5",
+          "name": "socketGateway"
+        },
+        {
+          "astId": "551",
+          "start": 592,
+          "length": 32,
+          "historicalValue": "0x00000000000000000000000071630095e3f08a86afc73f7b07342192adf39c55",
+          "name": "socketDeployFactory"
+        },
+        {
+          "astId": "551",
+          "start": 795,
+          "length": 32,
+          "historicalValue": "0x00000000000000000000000071630095e3f08a86afc73f7b07342192adf39c55",
+          "name": "socketDeployFactory"
+        },
+        {
+          "astId": "560",
+          "start": 423,
+          "length": 32,
+          "historicalValue": "0x7899f9ed00000000000000000000000000000000000000000000000000000000",
+          "name": "SWAP_FUNCTION_SELECTOR"
+        },
+        {
+          "astId": "569",
+          "start": 228,
+          "length": 32,
+          "historicalValue": "0xa2c7302c00000000000000000000000000000000000000000000000000000000",
+          "name": "SWAP_WITHIN_FUNCTION_SELECTOR"
+        },
+        {
+          "astId": "751",
+          "start": 540,
+          "length": 32,
+          "historicalValue": "0x77726170706564546f6b656e53776170706572496d706c000000000000000000",
+          "name": "Identifier"
+        },
+        {
+          "astId": "751",
+          "start": 2653,
+          "length": 32,
+          "historicalValue": "0x77726170706564546f6b656e53776170706572496d706c000000000000000000",
+          "name": "Identifier"
+        },
+        {
+          "astId": "751",
+          "start": 4359,
+          "length": 32,
+          "historicalValue": "0x77726170706564546f6b656e53776170706572496d706c000000000000000000",
+          "name": "Identifier"
+        }
+      ]
+    },
+    {
+      "id": "socket-gateway",
+      "address": "0x3a23F943181408EAC424116Af7b7790c94Cb97a5",
+      "chainId": 1,
+      "blockNumber": 19021453,
+      "blockHash": "0x19e115f9cfcb42809715551118cf0238f3dbf5190dbcb224cfe268b8975263aa",
+      "contractName": "SocketGateway",
+      "compilerVersion": "0.8.7+commit.e28d00a7.Emscripten.clang",
+      "compilerInputSha256": "c926541c405c1650dfef3d286c2275a8b57cddeb74893d9a5893a00490c685dc",
+      "historicalRuntimeSha256": "fc619cf9664f596e4577c821c40e892a30d506caefaaebca2485c744eebf8799",
+      "sourceCount": 50,
+      "exactMatch": false,
+      "matchExceptCompilerDeclaredImmutables": false,
+      "matchExceptImmutablesAndMetadataDigest": true,
+      "metadataDigestOnlyDifference": true,
+      "compiledRuntimeBytes": 24305,
+      "historicalRuntimeBytes": 24305,
+      "immutableValues": [
+        {
+          "astId": "4280",
+          "start": 866,
+          "length": 32,
+          "historicalValue": "0xb3dc8da400000000000000000000000000000000000000000000000000000000",
+          "name": "BRIDGE_AFTER_SWAP_SELECTOR"
+        },
+        {
+          "astId": "4280",
+          "start": 20557,
+          "length": 32,
+          "historicalValue": "0xb3dc8da400000000000000000000000000000000000000000000000000000000",
+          "name": "BRIDGE_AFTER_SWAP_SELECTOR"
+        },
+        {
+          "astId": "4289",
+          "start": 814,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000f34a522ff82151c90679b73211955068fd854f1",
+          "name": "disabledRouteAddress"
+        },
+        {
+          "astId": "4289",
+          "start": 19183,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000f34a522ff82151c90679b73211955068fd854f1",
+          "name": "disabledRouteAddress"
+        },
+        {
+          "astId": "4289",
+          "start": 21123,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000f34a522ff82151c90679b73211955068fd854f1",
+          "name": "disabledRouteAddress"
+        }
+      ]
+    },
+    {
+      "id": "sentiment-source",
+      "address": "0x16F3ae9C1727ee38c98417cA08BA785BB7641b5B",
+      "chainId": 42161,
+      "blockNumber": 77026912,
+      "blockHash": "0x87079e5c2e27c6be2557ad927ec0785ce0de684f5f20141b83783e68d7a19f1c",
+      "contractName": "WeightedBalancerLPOracle",
+      "compilerVersion": "0.8.17+commit.8df45f5f.Emscripten.clang",
+      "compilerInputSha256": "e584b672efdd4d70b6eec2a6db33abd8c23188ccfa6158bac02a0a56397f4c60",
+      "historicalRuntimeSha256": "123f354f50abc4baf4e4f7ca0bb206ed04d5476f497d25ba9ee47e8a986a554a",
+      "sourceCount": 8,
+      "exactMatch": false,
+      "matchExceptCompilerDeclaredImmutables": true,
+      "matchExceptImmutablesAndMetadataDigest": true,
+      "metadataDigestOnlyDifference": false,
+      "compiledRuntimeBytes": 7090,
+      "historicalRuntimeBytes": 7090,
+      "immutableValues": [
+        {
+          "astId": "61",
+          "start": 92,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000ba12222222228d8ba445958a75a0704d566bf2c8",
+          "name": "vault"
+        },
+        {
+          "astId": "65",
+          "start": 532,
+          "length": 32,
+          "historicalValue": "0x00000000000000000000000008f81e1637230d25b4ea6d4a69d74373e433efb3",
+          "name": "oracleFacade"
+        }
+      ]
+    },
+    {
+      "id": "sentiment-account-manager-implementation",
+      "address": "0x23ad9605b6e7a02ab9f73068f5e68715f21c2b6b",
+      "chainId": 42161,
+      "blockNumber": 77026912,
+      "blockHash": "0x87079e5c2e27c6be2557ad927ec0785ce0de684f5f20141b83783e68d7a19f1c",
+      "contractName": "AccountManager",
+      "compilerVersion": "0.8.17+commit.8df45f5f.Emscripten.clang",
+      "compilerInputSha256": "1cae077b666a87fed97ed3377d1e4cba2875c0c4a6a6e172f320564bd86cb70b",
+      "historicalRuntimeSha256": "ffe746e340ce0359da3f5a3af788f41a37d7ea1ac2a4a6aae95bdfe357783c66",
+      "sourceCount": 20,
+      "exactMatch": true,
+      "matchExceptCompilerDeclaredImmutables": true,
+      "matchExceptImmutablesAndMetadataDigest": true,
+      "metadataDigestOnlyDifference": false,
+      "compiledRuntimeBytes": 15403,
+      "historicalRuntimeBytes": 15403,
+      "immutableValues": []
+    },
+    {
+      "id": "sentiment-account-manager",
+      "address": "0x62c5AA8277E49B3EAd43dC67453ec91DC6826403",
+      "chainId": 42161,
+      "blockNumber": 77026912,
+      "blockHash": "0x87079e5c2e27c6be2557ad927ec0785ce0de684f5f20141b83783e68d7a19f1c",
+      "contractName": "Proxy",
+      "compilerVersion": "0.8.17+commit.8df45f5f.Emscripten.clang",
+      "compilerInputSha256": "c81e500e369da70b7652dc053e2263c6852bcfd6e4e998cca807c926f60c2cff",
+      "historicalRuntimeSha256": "78b6d75e92b87d85c435fff89e945d1726cf432e6d14c649a2c1fde65884b776",
+      "sourceCount": 7,
+      "exactMatch": false,
+      "matchExceptCompilerDeclaredImmutables": false,
+      "matchExceptImmutablesAndMetadataDigest": true,
+      "metadataDigestOnlyDifference": true,
+      "compiledRuntimeBytes": 1470,
+      "historicalRuntimeBytes": 1470,
+      "immutableValues": []
+    },
+    {
+      "id": "sentiment-balancer-vault",
+      "address": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "chainId": 42161,
+      "blockNumber": 77026912,
+      "blockHash": "0x87079e5c2e27c6be2557ad927ec0785ce0de684f5f20141b83783e68d7a19f1c",
+      "contractName": "Vault",
+      "compilerVersion": "0.7.1+commit.f4a555be.Emscripten.clang",
+      "compilerInputSha256": "797184be37b9904022cb15d0dfe343772cf1c5c7a4dbe60b4bce9e42a4727c95",
+      "historicalRuntimeSha256": "c0303124d97de59606c442c995c29a4d22ee10cedffbade0eb0a3b36052ba695",
+      "sourceCount": 45,
+      "exactMatch": false,
+      "matchExceptCompilerDeclaredImmutables": true,
+      "matchExceptImmutablesAndMetadataDigest": true,
+      "metadataDigestOnlyDifference": false,
+      "compiledRuntimeBytes": 24512,
+      "historicalRuntimeBytes": 24512,
+      "immutableValues": [
+        {
+          "astId": "6",
+          "start": 1320,
+          "length": 32,
+          "historicalValue": "0x00000000000000000000000082af49447d8a07e3bd95bd0d56f35241523fbab1",
+          "name": "_weth"
+        },
+        {
+          "astId": "138",
+          "start": 4349,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000ba12222222228d8ba445958a75a0704d566bf2c8",
+          "name": "_actionIdDisambiguator"
+        },
+        {
+          "astId": "963",
+          "start": 6857,
+          "length": 32,
+          "historicalValue": "0x00000000000000000000000000000000000000000000000000000000619c0e9c",
+          "name": "_pauseWindowEndTime"
+        },
+        {
+          "astId": "965",
+          "start": 6893,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000061c39b9c",
+          "name": "_bufferPeriodEndTime"
+        },
+        {
+          "astId": "3068",
+          "start": 10432,
+          "length": 32,
+          "historicalValue": "0x546d0ab49c5920e3fe063e6971dd456a095183a2e20611f1b5815c7a1f43f069",
+          "name": "_HASHED_NAME"
+        },
+        {
+          "astId": "3070",
+          "start": 10465,
+          "length": 32,
+          "historicalValue": "0xc89efdaa54c0f20c7adf612882df0950f5a951637e0307cdcb4c672f298b8bc6",
+          "name": "_HASHED_VERSION"
+        },
+        {
+          "astId": "3072",
+          "start": 10399,
+          "length": 32,
+          "historicalValue": "0x8b73c3c69bb8fe3d512ecc4cf759cc79239f7b179b0ffacaa9a75d522b39400f",
+          "name": "_TYPE_HASH"
+        },
+        {
+          "astId": "4696",
+          "start": 5041,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000ce88686553686da562ce7cea497ce749da109f9f",
+          "name": "_protocolFeesCollector"
+        }
+      ]
+    },
+    {
+      "id": "20210418-weighted-pool",
+      "address": "0x64541216bAFFFEec8ea535BB71Fbc927831d0595",
+      "chainId": 42161,
+      "blockNumber": 77026912,
+      "blockHash": "0x87079e5c2e27c6be2557ad927ec0785ce0de684f5f20141b83783e68d7a19f1c",
+      "contractName": "WeightedPool",
+      "compilerVersion": "0.7.1+commit.f4a555be.Emscripten.clang",
+      "compilerInputSha256": "55de717cb650fed691f631edc7e87e59646c14389880153a85ea7c24b7ee201a",
+      "historicalRuntimeSha256": "1e525ee6701012cc531dc06176ad065fb9f51e53e60608c392284f82de9a8ffa",
+      "sourceCount": 36,
+      "exactMatch": false,
+      "matchExceptCompilerDeclaredImmutables": true,
+      "matchExceptImmutablesAndMetadataDigest": true,
+      "metadataDigestOnlyDifference": false,
+      "compiledRuntimeBytes": 18286,
+      "historicalRuntimeBytes": 18286,
+      "immutableValues": [
+        {
+          "astId": "8",
+          "start": 1947,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000007dfdef5f355096603419239ce743bfaf1120312b",
+          "name": "_actionIdDisambiguator"
+        },
+        {
+          "astId": "582",
+          "start": 3789,
+          "length": 32,
+          "historicalValue": "0x00000000000000000000000000000000000000000000000000000000619c14dd",
+          "name": "_pauseWindowEndTime"
+        },
+        {
+          "astId": "584",
+          "start": 3825,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000061c3a1dd",
+          "name": "_bufferPeriodEndTime"
+        },
+        {
+          "astId": "2629",
+          "start": 4117,
+          "length": 32,
+          "historicalValue": "0x10e0734f2f2bb7e28f294ae54f5c1a4f15c9960b3bebf024b7b47b567b9fff40",
+          "name": "_HASHED_NAME"
+        },
+        {
+          "astId": "2631",
+          "start": 4150,
+          "length": 32,
+          "historicalValue": "0xc89efdaa54c0f20c7adf612882df0950f5a951637e0307cdcb4c672f298b8bc6",
+          "name": "_HASHED_VERSION"
+        },
+        {
+          "astId": "2633",
+          "start": 4084,
+          "length": 32,
+          "historicalValue": "0x8b73c3c69bb8fe3d512ecc4cf759cc79239f7b179b0ffacaa9a75d522b39400f",
+          "name": "_TYPE_HASH"
+        },
+        {
+          "astId": "3615",
+          "start": 2741,
+          "length": 32,
+          "historicalValue": "0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9",
+          "name": "_PERMIT_TYPE_HASH"
+        },
+        {
+          "astId": "4400",
+          "start": 2101,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000ba12222222228d8ba445958a75a0704d566bf2c8",
+          "name": "_vault"
+        },
+        {
+          "astId": "4402",
+          "start": 1495,
+          "length": 32,
+          "historicalValue": "0x64541216bafffeec8ea535bb71fbc927831d0595000100000000000000000002",
+          "name": "_poolId"
+        },
+        {
+          "astId": "4404",
+          "start": 4354,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000003",
+          "name": "_totalTokens"
+        },
+        {
+          "astId": "4406",
+          "start": 6204,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000002f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
+          "name": "_token0"
+        },
+        {
+          "astId": "4406",
+          "start": 9589,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000002f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
+          "name": "_token0"
+        },
+        {
+          "astId": "4408",
+          "start": 6301,
+          "length": 32,
+          "historicalValue": "0x00000000000000000000000082af49447d8a07e3bd95bd0d56f35241523fbab1",
+          "name": "_token1"
+        },
+        {
+          "astId": "4408",
+          "start": 9686,
+          "length": 32,
+          "historicalValue": "0x00000000000000000000000082af49447d8a07e3bd95bd0d56f35241523fbab1",
+          "name": "_token1"
+        },
+        {
+          "astId": "4410",
+          "start": 6398,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000ff970a61a04b1ca14834a43f5de4533ebddb5cc8",
+          "name": "_token2"
+        },
+        {
+          "astId": "4410",
+          "start": 9783,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000ff970a61a04b1ca14834a43f5de4533ebddb5cc8",
+          "name": "_token2"
+        },
+        {
+          "astId": "4412",
+          "start": 6495,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_token3"
+        },
+        {
+          "astId": "4412",
+          "start": 9880,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_token3"
+        },
+        {
+          "astId": "4414",
+          "start": 6592,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_token4"
+        },
+        {
+          "astId": "4414",
+          "start": 9977,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_token4"
+        },
+        {
+          "astId": "4416",
+          "start": 6689,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_token5"
+        },
+        {
+          "astId": "4416",
+          "start": 10074,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_token5"
+        },
+        {
+          "astId": "4418",
+          "start": 6786,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_token6"
+        },
+        {
+          "astId": "4418",
+          "start": 10171,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_token6"
+        },
+        {
+          "astId": "4420",
+          "start": 6883,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_token7"
+        },
+        {
+          "astId": "4420",
+          "start": 10268,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_token7"
+        },
+        {
+          "astId": "4422",
+          "start": 5189,
+          "length": 32,
+          "historicalValue": "0x00000000000000000000000000000000000000000000000000000002540be400",
+          "name": "_scalingFactor0"
+        },
+        {
+          "astId": "4422",
+          "start": 6263,
+          "length": 32,
+          "historicalValue": "0x00000000000000000000000000000000000000000000000000000002540be400",
+          "name": "_scalingFactor0"
+        },
+        {
+          "astId": "4424",
+          "start": 5270,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000001",
+          "name": "_scalingFactor1"
+        },
+        {
+          "astId": "4424",
+          "start": 6360,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000001",
+          "name": "_scalingFactor1"
+        },
+        {
+          "astId": "4426",
+          "start": 5337,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000000000000000000000000000000000e8d4a51000",
+          "name": "_scalingFactor2"
+        },
+        {
+          "astId": "4426",
+          "start": 6457,
+          "length": 32,
+          "historicalValue": "0x000000000000000000000000000000000000000000000000000000e8d4a51000",
+          "name": "_scalingFactor2"
+        },
+        {
+          "astId": "4428",
+          "start": 5404,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_scalingFactor3"
+        },
+        {
+          "astId": "4428",
+          "start": 6554,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_scalingFactor3"
+        },
+        {
+          "astId": "4430",
+          "start": 5471,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_scalingFactor4"
+        },
+        {
+          "astId": "4430",
+          "start": 6651,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_scalingFactor4"
+        },
+        {
+          "astId": "4432",
+          "start": 5538,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_scalingFactor5"
+        },
+        {
+          "astId": "4432",
+          "start": 6748,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_scalingFactor5"
+        },
+        {
+          "astId": "4434",
+          "start": 5605,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_scalingFactor6"
+        },
+        {
+          "astId": "4434",
+          "start": 6845,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_scalingFactor6"
+        },
+        {
+          "astId": "4436",
+          "start": 5672,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_scalingFactor7"
+        },
+        {
+          "astId": "4436",
+          "start": 6942,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_scalingFactor7"
+        },
+        {
+          "astId": "5849",
+          "start": 2065,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000006207ed574152496c9b072c24fd87ce9cd9e17320",
+          "name": "_owner"
+        },
+        {
+          "astId": "6966",
+          "start": 8912,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000001",
+          "name": "_maxWeightTokenIndex"
+        },
+        {
+          "astId": "6966",
+          "start": 8964,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000001",
+          "name": "_maxWeightTokenIndex"
+        },
+        {
+          "astId": "6966",
+          "start": 9024,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000001",
+          "name": "_maxWeightTokenIndex"
+        },
+        {
+          "astId": "6968",
+          "start": 7408,
+          "length": 32,
+          "historicalValue": "0x00000000000000000000000000000000000000000000000004a03ce68d215555",
+          "name": "_normalizedWeight0"
+        },
+        {
+          "astId": "6968",
+          "start": 9648,
+          "length": 32,
+          "historicalValue": "0x00000000000000000000000000000000000000000000000004a03ce68d215555",
+          "name": "_normalizedWeight0"
+        },
+        {
+          "astId": "6970",
+          "start": 7475,
+          "length": 32,
+          "historicalValue": "0x00000000000000000000000000000000000000000000000004a03ce68d215556",
+          "name": "_normalizedWeight1"
+        },
+        {
+          "astId": "6970",
+          "start": 9745,
+          "length": 32,
+          "historicalValue": "0x00000000000000000000000000000000000000000000000004a03ce68d215556",
+          "name": "_normalizedWeight1"
+        },
+        {
+          "astId": "6972",
+          "start": 7542,
+          "length": 32,
+          "historicalValue": "0x00000000000000000000000000000000000000000000000004a03ce68d215555",
+          "name": "_normalizedWeight2"
+        },
+        {
+          "astId": "6972",
+          "start": 9842,
+          "length": 32,
+          "historicalValue": "0x00000000000000000000000000000000000000000000000004a03ce68d215555",
+          "name": "_normalizedWeight2"
+        },
+        {
+          "astId": "6974",
+          "start": 7609,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_normalizedWeight3"
+        },
+        {
+          "astId": "6974",
+          "start": 9939,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_normalizedWeight3"
+        },
+        {
+          "astId": "6976",
+          "start": 7676,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_normalizedWeight4"
+        },
+        {
+          "astId": "6976",
+          "start": 10036,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_normalizedWeight4"
+        },
+        {
+          "astId": "6978",
+          "start": 7743,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_normalizedWeight5"
+        },
+        {
+          "astId": "6978",
+          "start": 10133,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_normalizedWeight5"
+        },
+        {
+          "astId": "6980",
+          "start": 7810,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_normalizedWeight6"
+        },
+        {
+          "astId": "6980",
+          "start": 10230,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_normalizedWeight6"
+        },
+        {
+          "astId": "6982",
+          "start": 7877,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_normalizedWeight7"
+        },
+        {
+          "astId": "6982",
+          "start": 10327,
+          "length": 32,
+          "historicalValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "name": "_normalizedWeight7"
+        }
+      ]
+    }
+  ]
+}

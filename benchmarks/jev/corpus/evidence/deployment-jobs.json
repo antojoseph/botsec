@@ -1,0 +1,243 @@
+{
+  "jobs": [
+    {
+      "id": "euler-core",
+      "compilerVersion": "0.8.10+commit.fc410830",
+      "contractName": "Euler",
+      "file": "contracts/Euler.sol",
+      "rpcEvidence": "evidence/euler-2023-03-13.historical-rpc.json",
+      "addressKey": "euler",
+      "input": "evidence/euler-core.compiler-input.json",
+      "sourceOrigin": {
+        "url": "https://eth.blockscout.com/api/v2/smart-contracts/0x27182842E098f60e3D576794A5bFFb0777E025d3",
+        "kind": "explorer-verified-source",
+        "repositoryId": "euler-contracts-c6fda952dcd0"
+      }
+    },
+    {
+      "id": "euler-installer",
+      "compilerVersion": "0.8.10+commit.fc410830",
+      "contractName": "Installer",
+      "file": "contracts/modules/Installer.sol",
+      "rpcEvidence": "evidence/euler-2023-03-13.historical-rpc.json",
+      "addressKey": "Installer",
+      "input": "evidence/euler-installer.compiler-input.json",
+      "sourceOrigin": {
+        "url": "https://eth.blockscout.com/api/v2/smart-contracts/0xec29b4c2cacae5df1a491f084e5ec7c62a7edab5",
+        "kind": "explorer-verified-source",
+        "repositoryId": "euler-contracts-c6fda952dcd0"
+      }
+    },
+    {
+      "id": "euler-markets",
+      "compilerVersion": "0.8.10+commit.fc410830",
+      "contractName": "Markets",
+      "file": "contracts/modules/Markets.sol",
+      "rpcEvidence": "evidence/euler-2023-03-13.historical-rpc.json",
+      "addressKey": "Markets",
+      "input": "evidence/euler-markets.compiler-input.json",
+      "sourceOrigin": {
+        "url": "https://eth.blockscout.com/api/v2/smart-contracts/0x1e21cac3eb590a5f5482e1cce07174dcdb7f7fce",
+        "kind": "explorer-verified-source",
+        "repositoryId": "euler-deployed-module"
+      }
+    },
+    {
+      "id": "euler-liquidation",
+      "compilerVersion": "0.8.10+commit.fc410830",
+      "contractName": "Liquidation",
+      "file": "contracts/modules/Liquidation.sol",
+      "rpcEvidence": "evidence/euler-2023-03-13.historical-rpc.json",
+      "addressKey": "Liquidation",
+      "input": "evidence/euler-liquidation.compiler-input.json",
+      "sourceOrigin": {
+        "url": "https://eth.blockscout.com/api/v2/smart-contracts/0xd737ee2bb39f49c62a436002a77f2710cc45ed98",
+        "kind": "explorer-verified-source",
+        "repositoryId": "euler-deployed-module"
+      }
+    },
+    {
+      "id": "euler-governance",
+      "compilerVersion": "0.8.10+commit.fc410830",
+      "contractName": "Governance",
+      "file": "contracts/modules/Governance.sol",
+      "rpcEvidence": "evidence/euler-2023-03-13.historical-rpc.json",
+      "addressKey": "Governance",
+      "input": "evidence/euler-governance.compiler-input.json",
+      "sourceOrigin": {
+        "url": "https://eth.blockscout.com/api/v2/smart-contracts/0xe83b69edfd12e477fe47152c0e1d65576b91a1cf",
+        "kind": "explorer-verified-source",
+        "repositoryId": "euler-contracts-fa9398728165"
+      }
+    },
+    {
+      "id": "euler-exec",
+      "compilerVersion": "0.8.10+commit.fc410830",
+      "contractName": "Exec",
+      "file": "contracts/modules/Exec.sol",
+      "rpcEvidence": "evidence/euler-2023-03-13.historical-rpc.json",
+      "addressKey": "Exec",
+      "input": "evidence/euler-exec.compiler-input.json",
+      "sourceOrigin": {
+        "url": "https://eth.blockscout.com/api/v2/smart-contracts/0x0bf04952a5b3ef6bad343c2218f584a7413bb44d",
+        "kind": "explorer-verified-source",
+        "repositoryId": "euler-deployed-module"
+      }
+    },
+    {
+      "id": "euler-etoken",
+      "compilerVersion": "0.8.10+commit.fc410830",
+      "contractName": "EToken",
+      "file": "contracts/modules/EToken.sol",
+      "rpcEvidence": "evidence/euler-2023-03-13.historical-rpc.json",
+      "addressKey": "EToken",
+      "input": "evidence/euler-etoken.compiler-input.json",
+      "sourceOrigin": {
+        "url": "https://eth.blockscout.com/api/v2/smart-contracts/0xbb0d4bb654a21054af95456a3b29c63e8d1f4c0a",
+        "kind": "explorer-verified-source",
+        "repositoryId": "euler-deployed-module"
+      }
+    },
+    {
+      "id": "euler-dtoken",
+      "compilerVersion": "0.8.10+commit.fc410830",
+      "contractName": "DToken",
+      "file": "contracts/modules/DToken.sol",
+      "rpcEvidence": "evidence/euler-2023-03-13.historical-rpc.json",
+      "addressKey": "DToken",
+      "input": "evidence/euler-dtoken.compiler-input.json",
+      "sourceOrigin": {
+        "url": "https://eth.blockscout.com/api/v2/smart-contracts/0x29daddfda3442693c21a50351a2b4820ddbbff79",
+        "kind": "explorer-verified-source",
+        "repositoryId": "euler-deployed-module"
+      }
+    },
+    {
+      "id": "euler-riskmanager",
+      "compilerVersion": "0.8.10+commit.fc410830",
+      "contractName": "RiskManager",
+      "file": "contracts/modules/RiskManager.sol",
+      "rpcEvidence": "evidence/euler-2023-03-13.historical-rpc.json",
+      "addressKey": "RiskManager",
+      "input": "evidence/euler-riskmanager.compiler-input.json",
+      "sourceOrigin": {
+        "url": "https://eth.blockscout.com/api/v2/smart-contracts/0x3297c8db9360f87a7f7826f52a4fa143988931a6",
+        "kind": "explorer-verified-source",
+        "repositoryId": "euler-deployed-module"
+      }
+    },
+    {
+      "id": "socket-route",
+      "compilerVersion": "0.8.7+commit.e28d00a7",
+      "contractName": "WrappedTokenSwapperImpl",
+      "file": "src/swap/wrappedTokenSwapper/swapWrappedImpl.sol",
+      "rpcEvidence": "evidence/socket-2024-01-16.historical-rpc.json",
+      "addressKey": "route",
+      "input": "evidence/socket-route.compiler-input.json",
+      "sourceOrigin": {
+        "url": "https://eth.blockscout.com/api/v2/smart-contracts/0xCC5fDA5e3cA925bd0bb428C8b2669496eE43067e",
+        "kind": "explorer-verified-source"
+      }
+    },
+    {
+      "id": "socket-gateway",
+      "compilerVersion": "0.8.7+commit.e28d00a7",
+      "contractName": "SocketGateway",
+      "file": "src/SocketGatewayDeployment.sol",
+      "rpcEvidence": "evidence/socket-2024-01-16.historical-rpc.json",
+      "addressKey": "gateway",
+      "input": "evidence/socket-gateway.compiler-input.json",
+      "sourceOrigin": {
+        "url": "https://eth.blockscout.com/api/v2/smart-contracts/0x3a23F943181408EAC424116Af7b7790c94Cb97a5",
+        "kind": "explorer-verified-source"
+      }
+    },
+    {
+      "id": "sentiment-source",
+      "compilerVersion": "0.8.17+commit.8df45f5f",
+      "contractName": "WeightedBalancerLPOracle",
+      "file": "src/balancer/WeightedBalancerLPOracle.sol",
+      "rpcEvidence": "evidence/sentiment-2023-04-04.historical-rpc.json",
+      "addressKey": "weightedOracle",
+      "input": "evidence/sentiment-source.compiler-input.json",
+      "sourceOrigin": {
+        "url": "https://arbitrum.blockscout.com/api/v2/smart-contracts/0x16F3ae9C1727ee38c98417cA08BA785BB7641b5B",
+        "kind": "explorer-verified-source",
+        "repositoryId": "sentiment-oracle"
+      }
+    },
+    {
+      "id": "sentiment-account-manager-implementation",
+      "compilerVersion": "0.8.17+commit.8df45f5f",
+      "contractName": "AccountManager",
+      "file": "src/core/AccountManager.sol",
+      "rpcEvidence": "evidence/sentiment-2023-04-04.historical-rpc.json",
+      "addressKey": "accountManagerImplementation",
+      "input": "evidence/sentiment-account-manager-implementation.compiler-input.json",
+      "sourceOrigin": {
+        "url": "https://arbitrum.blockscout.com/api/v2/smart-contracts/0x23ad9605b6e7a02ab9f73068f5e68715f21c2b6b",
+        "kind": "explorer-verified-source",
+        "repositoryId": "sentiment-protocol"
+      }
+    },
+    {
+      "id": "sentiment-account-manager",
+      "compilerVersion": "0.8.17+commit.8df45f5f",
+      "contractName": "Proxy",
+      "file": "src/proxy/Proxy.sol",
+      "rpcEvidence": "evidence/sentiment-2023-04-04.historical-rpc.json",
+      "addressKey": "accountManager",
+      "input": "evidence/sentiment-account-manager.compiler-input.json",
+      "sourceOrigin": {
+        "url": "https://arbitrum.blockscout.com/api/v2/smart-contracts/0x62c5AA8277E49B3EAd43dC67453ec91DC6826403",
+        "kind": "explorer-verified-source",
+        "repositoryId": "sentiment-protocol"
+      }
+    },
+    {
+      "id": "sentiment-balancer-vault",
+      "compilerVersion": "0.7.1+commit.f4a555be",
+      "contractName": "Vault",
+      "file": "contracts/vault/Vault.sol",
+      "rpcEvidence": "evidence/sentiment-2023-04-04.historical-rpc.json",
+      "addressKey": "balancerVault",
+      "input": "evidence/sentiment-balancer-vault.compiler-input.json",
+      "sourceOrigin": {
+        "url": "https://arbitrum.blockscout.com/api/v2/smart-contracts/0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+        "kind": "explorer-verified-source",
+        "publicArtifact": {
+          "repository": "balancer/balancer-deployments",
+          "commit": "b55dc2b8a46bce8f27aed5a3b03f719f662f860a",
+          "path": "v2/tasks/20210418-vault/build-info/Vault.json",
+          "url": "https://raw.githubusercontent.com/balancer/balancer-deployments/b55dc2b8a46bce8f27aed5a3b03f719f662f860a/v2/tasks/20210418-vault/build-info/Vault.json",
+          "archive": "archives/balancer-vault.build-info.json.gz",
+          "uncompressedSha256": "8200d4cca5e38c218dca0242786efff3a19e7ca7de152ff27c49c6f624e997c5",
+          "gitBlob": "7c2e1db73336387fc67e02426245ea31ceb91b2a"
+        }
+      }
+    },
+    {
+      "id": "20210418-weighted-pool",
+      "compilerVersion": "0.7.1+commit.f4a555be",
+      "contractName": "WeightedPool",
+      "file": "contracts/pools/weighted/WeightedPool.sol",
+      "rpcEvidence": "evidence/sentiment-2023-04-04.historical-rpc.json",
+      "addressKey": "balancerPool",
+      "input": "evidence/20210418-weighted-pool.compiler-input.json",
+      "sourceOrigin": {
+        "url": "https://raw.githubusercontent.com/balancer/balancer-deployments/b55dc2b8a46bce8f27aed5a3b03f719f662f860a/v2/deprecated/20210418-weighted-pool/build-info/WeightedPoolFactory.json",
+        "repositoryCommit": "b55dc2b8a46bce8f27aed5a3b03f719f662f860a",
+        "kind": "public-repository-deployment-artifact",
+        "publicArtifact": {
+          "repository": "balancer/balancer-deployments",
+          "commit": "b55dc2b8a46bce8f27aed5a3b03f719f662f860a",
+          "path": "v2/deprecated/20210418-weighted-pool/build-info/WeightedPoolFactory.json",
+          "url": "https://raw.githubusercontent.com/balancer/balancer-deployments/b55dc2b8a46bce8f27aed5a3b03f719f662f860a/v2/deprecated/20210418-weighted-pool/build-info/WeightedPoolFactory.json",
+          "archive": "archives/balancer-weighted-pool.build-info.json.gz",
+          "uncompressedSha256": "cafb5efbe83a89a71f4f4089a2a9288241652e6a3b2b93b1714277418b56be5e",
+          "gitBlob": "ea14f128508c6981963fd2d436d18438a030a3fd"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "manifestUrl": "https://binaries.soliditylang.org/bin/list.json",
+  "retrievedAt": "2026-09-21T05:59:18.172Z",
+  "wrapperPackage": "solc@0.8.17",
+  "compilers": [
+    {
+      "version": "0.8.7+commit.e28d00a7",
+      "url": "https://binaries.soliditylang.org/bin/soljson-v0.8.7+commit.e28d00a7.js",
+      "sha256": "663ba99f7c7ee907f0f03227502d48a78256c3c292ace3b79a5d3eb510665306",
+      "bytes": 25947744
+    },
+    {
+      "version": "0.8.10+commit.fc410830",
+      "url": "https://binaries.soliditylang.org/bin/soljson-v0.8.10+commit.fc410830.js",
+      "sha256": "5eaee3240a06891abf5ac70c75caf9a0c33ebe9a2736abdaa22a337f86c22933",
+      "bytes": 27036439
+    },
+    {
+      "version": "0.8.17+commit.8df45f5f",
+      "url": "https://binaries.soliditylang.org/bin/soljson-v0.8.17+commit.8df45f5f.js",
+      "sha256": "617828e63be485c7cc2dbcbdd5a22b582b40fafaa41016ad595637b83c90656c",
+      "bytes": 8468401
+    },
+    {
+      "version": "0.7.1+commit.f4a555be",
+      "url": "https://binaries.soliditylang.org/bin/soljson-v0.7.1+commit.f4a555be.js",
+      "sha256": "7fcc983c5149840a47b946fc51fc14f1c21cda07c01d650e4a1f814319cb1423",
+      "bytes": 22938468
+    }
+  ]
+}
