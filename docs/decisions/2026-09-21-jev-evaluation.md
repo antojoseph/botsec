@@ -72,6 +72,18 @@ Before collecting the final test results, agree on the acceptable harmful-action
 
 ## Inputs needed to run the next study
 
+### Candidate incident source: DeFiHackLabs
+
+Inspected on 2026-09-21 at commit [`cb457812eacd4dad09bbd1b62a1fe2fcff1a8669`](https://github.com/SunWeb3Sec/DeFiHackLabs/tree/cb457812eacd4dad09bbd1b62a1fe2fcff1a8669). This is a suitable source of historical incident candidates and executable reference evidence. It is not yet a labeled corpus for our two finding-review tasks, and no new benchmark run has been performed against it.
+
+The inspected [Euler reproduction](https://github.com/SunWeb3Sec/DeFiHackLabs/blob/cb457812eacd4dad09bbd1b62a1fe2fcff1a8669/src/test/2023-03/Euler_exp.sol) records an Ethereum fork block and attack transaction; [Sentiment](https://github.com/SunWeb3Sec/DeFiHackLabs/blob/cb457812eacd4dad09bbd1b62a1fe2fcff1a8669/src/test/2023-04/Sentiment_exp.sol) exercises read-only reentrancy on an Arbitrum fork; [Socket](https://github.com/SunWeb3Sec/DeFiHackLabs/blob/cb457812eacd4dad09bbd1b62a1fe2fcff1a8669/src/test/2024-01/SocketGateway_exp.sol) distinguishes the vulnerable route from the gateway and links its implementation. These give concrete starting points across different mechanisms.
+
+Proposed use: select 12 independent protocol families after checking historical source availability and reproducibility. Retrieve the incident-time target implementation and dependencies, including the historical proxy implementation where applicable. Analyze that source without exploit scripts or postmortem answers in the model context, capture pre-filter findings, and replay both filters on identical inputs. Reserve the exploit harness, transaction evidence, and postmortem for adjudication. Hold out whole protocol families, including related forks and repeated incidents.
+
+Check economic or invariant outcomes rather than treating every successful Forge command as proof: the inspected Euler test logs the final balance without asserting an expected profit. Historical RPC access, pinned block state, correct source/bytecode correspondence, and explicit success assertions must be verified case by case. Infrastructure failures are not security verdicts.
+
+This source most directly improves incident diversity and the ability to check whether filtering loses a known exploit finding. Deduplication still needs independently generated reports mapped to root causes; two reports about the same incident are not automatically duplicates. Contradiction review still needs genuine retracting and unresolved reports, which positive exploit reproductions do not supply. Add ordinary projects and carefully validated repaired controls as separate strata rather than estimating normal false-positive rates from hacked protocols alone. Public, well-known incidents may also have appeared in model training; hiding answer files reduces direct leakage but cannot establish absence of memorization.
+
 The key missing inputs are representative raw reports or project selections, two independent reviewers, and an agreed budget for generating any missing reports. Existing OpenRouter access is sufficient for further Jev calls. Corpus collection and human adjudication are the substantial work; the pilot's low Jev bill does not estimate the cost of generating and reviewing a larger corpus.
 
 This record documents why the experiment was run and why further evaluation is justified. It does not claim that production Jev adoption has already occurred. Append future decisions with their dataset/run references and keep this pilot unchanged, including negative and inconclusive results.
