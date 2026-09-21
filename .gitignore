@@ -5,6 +5,7 @@ dist/
 forge-proof-output/
 FINDINGS.md
 benchmarks/jev/runs/
+benchmarks/jev/corpus/cache/
 
 # Foundry artifacts from temp projects
 cache/
