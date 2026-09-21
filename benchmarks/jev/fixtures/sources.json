@@ -1,0 +1,520 @@
+[
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-001",
+      "category": "flash-loan",
+      "title": "SideEntranceLenderPool: flash loan repayment via deposit() allows draining all ETH",
+      "description": "The flashLoan function only checks that the contract's ETH balance hasn't decreased after the callback. An attacker can receive the flash loan ETH, call deposit() during the callback to credit their balance, satisfying the balance check. Then withdraw() to drain all funds.",
+      "attackScenario": "1. Attacker calls flashLoan(poolBalance)\n2. In execute() callback, attacker calls deposit{value: poolBalance}()\n3. Pool balance is restored, check passes\n4. Attacker calls withdraw() to drain entire pool balance",
+      "affectedCode": [
+        "src/side-entrance/SideEntranceLenderPool.sol:35-43",
+        "src/side-entrance/SideEntranceLenderPool.sol:19-24",
+        "src/side-entrance/SideEntranceLenderPool.sol:26-33"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "suggestedProperties": [
+        "check_flashloan_cannot_increase_user_balance",
+        "check_pool_solvency_after_flashloan"
+      ]
+    }
+  },
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-002",
+      "category": "cross-contract",
+      "title": "TrusterLenderPool: arbitrary function call during flash loan enables token approval theft",
+      "description": "The flashLoan function takes a target address and arbitrary calldata, calling target.functionCall(data) after transferring tokens to the borrower. An attacker can request a 0-amount flash loan and pass data that calls token.approve(attacker, type(uint256).max) on the token contract, then transferFrom all tokens.",
+      "attackScenario": "1. Attacker calls flashLoan(0, attacker, address(token), abi.encodeCall(token.approve, (attacker, type(uint256).max)))\n2. Pool approves attacker for max tokens\n3. Balance check passes (0 transferred)\n4. Attacker calls token.transferFrom(pool, attacker, pool.balance) to drain all tokens",
+      "affectedCode": [
+        "src/truster/TrusterLenderPool.sol:20-35"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "suggestedProperties": [
+        "check_pool_cannot_approve_external_addresses",
+        "check_no_token_loss_after_flashloan"
+      ]
+    }
+  },
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-003",
+      "category": "governance",
+      "title": "SelfiePool: flash loan enables governance takeover to drain pool via emergencyExit",
+      "description": "SelfiePool offers zero-fee flash loans of DamnValuableVotes tokens. An attacker can flash-borrow more than half the total supply, delegate votes to themselves, queue a governance action calling emergencyExit, wait the 2-day delay, then execute to drain the pool.",
+      "attackScenario": "1. Attacker takes flash loan of >50% token supply from SelfiePool\n2. During callback, delegate votes to self and call governance.queueAction(selfiePool, 0, abi.encodeCall(SelfiePool.emergencyExit, (attacker)))\n3. Repay flash loan\n4. Wait 2 days\n5. Call governance.executeAction(actionId) to drain pool",
+      "affectedCode": [
+        "src/selfie/SelfiePool.sol:50-69",
+        "src/selfie/SelfiePool.sol:71-76",
+        "src/selfie/SimpleGovernance.sol:23-51",
+        "src/selfie/SimpleGovernance.sol:100-103"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "suggestedProperties": [
+        "check_snapshot_based_voting",
+        "check_emergency_exit_requires_multisig"
+      ]
+    }
+  },
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-004",
+      "category": "oracle-manipulation",
+      "title": "PuppetPool: spot price oracle from Uniswap V1 pair is trivially manipulable",
+      "description": "PuppetPool calculates the required ETH collateral based on the Uniswap V1 pair's spot reserves (uniswapPair.balance / token.balanceOf(uniswapPair)). An attacker can dump tokens into the pair to crash the token price, then borrow the pool's entire token supply for minimal ETH collateral.",
+      "attackScenario": "1. Attacker sells large amount of DVT into Uniswap V1 pair, crashing token price\n2. _computeOraclePrice returns near-zero since token balance in pair is now huge vs ETH\n3. Attacker calls borrow(totalPoolBalance, attacker) with minimal ETH\n4. Attacker drains all DVT from the pool",
+      "affectedCode": [
+        "src/puppet/PuppetPool.sol:59-62",
+        "src/puppet/PuppetPool.sol:55-57",
+        "src/puppet/PuppetPool.sol:30-53"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "suggestedProperties": [
+        "check_oracle_not_spot_price",
+        "check_borrow_collateral_ratio"
+      ]
+    }
+  },
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-005",
+      "category": "oracle-manipulation",
+      "title": "PuppetV2Pool: spot price oracle from Uniswap V2 reserves is manipulable",
+      "description": "PuppetV2Pool uses UniswapV2Library.getReserves and UniswapV2Library.quote to calculate collateral requirements. These are based on instantaneous reserve ratios that can be manipulated by swapping large amounts through the pair.",
+      "attackScenario": "1. Attacker swaps large amount of DVT for WETH in the Uniswap V2 pair, crashing DVT price\n2. Spot reserves now show DVT as nearly worthless\n3. Attacker calls borrow(totalPoolBalance) with minimal WETH deposit\n4. Pool is drained",
+      "affectedCode": [
+        "src/puppet-v2/PuppetV2Pool.sol:56-61",
+        "src/puppet-v2/PuppetV2Pool.sol:50-53",
+        "src/puppet-v2/PuppetV2Pool.sol:35-48"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "suggestedProperties": [
+        "check_twap_oracle_used",
+        "check_collateral_floor"
+      ]
+    }
+  },
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-007",
+      "category": "logic-error",
+      "title": "ClimberTimelock: execute() runs calls before verifying operation was scheduled, enabling arbitrary execution",
+      "description": "ClimberTimelock.execute() first runs all the target calls via functionCallWithValue, then checks if the operation is in ReadyForExecution state. An attacker can include a call to schedule the same operation (with delay=0) as part of the execution batch. The calls run first, creating the schedule, then the post-execution check passes.",
+      "attackScenario": "1. Attacker crafts a batch of calls: [updateDelay(0), grantRole(PROPOSER_ROLE, attackerContract), attackerContract.scheduleBatch()]\n2. Calls execute() with these targets\n3. First call sets delay to 0\n4. Second call grants PROPOSER_ROLE to attacker's contract\n5. Third call makes attacker contract schedule the same operation (now with delay=0, so immediately ready)\n6. Post-execution check passes because operation is now ReadyForExecution\n7. Attacker can now upgrade ClimberVault to malicious implementation and drain funds",
+      "affectedCode": [
+        "src/climber/ClimberTimelock.sol:72-99",
+        "src/climber/ClimberTimelock.sol:101-111",
+        "src/climber/ClimberTimelock.sol:41-67"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "suggestedProperties": [
+        "check_schedule_before_execute",
+        "check_delay_nonzero"
+      ]
+    }
+  },
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-008",
+      "category": "access-control",
+      "title": "AuthorizedExecutor: hardcoded calldata offset for selector extraction enables ABI smuggling to bypass permissions",
+      "description": "AuthorizedExecutor.execute() reads the function selector at a hardcoded calldata offset (4 + 32*3 = 100) to check permissions. However, the actual actionData parameter is a dynamic bytes type whose offset is encoded in the calldata. An attacker can craft calldata where the selector at position 100 differs from the actual selector in actionData, bypassing the permission check.",
+      "attackScenario": "1. Attacker has permission for withdraw() selector but not sweepFunds()\n2. Attacker crafts malicious calldata where byte offset 100 contains withdraw selector, but the actual actionData bytes encode sweepFunds\n3. Permission check passes (sees withdraw selector)\n4. target.functionCall(actionData) executes sweepFunds\n5. All vault tokens are swept to attacker",
+      "affectedCode": [
+        "src/abi-smuggling/AuthorizedExecutor.sol:46-61",
+        "src/abi-smuggling/SelfAuthorizedVault.sol:47-49"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "suggestedProperties": [
+        "check_selector_matches_actionData",
+        "check_no_calldata_offset_manipulation"
+      ]
+    }
+  },
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-009",
+      "category": "logic-error",
+      "title": "FreeRiderNFTMarketplace: msg.value reused across multiple NFT purchases in buyMany, and payment sent to buyer instead of seller",
+      "description": "The _buyOne function checks msg.value >= priceToPay for each individual purchase in a loop, but msg.value is the same for every iteration. Additionally, after safeTransferFrom changes ownership to buyer, ownerOf(tokenId) returns buyer, so the payment goes to the buyer instead of the original seller.",
+      "attackScenario": "1. Attacker gets a flash loan for the price of 1 NFT\n2. Calls buyMany([0,1,2,3,4,5]) with msg.value = price of 1 NFT\n3. msg.value check passes for each NFT (same msg.value reused)\n4. Each purchase pays the buyer (attacker) instead of the seller because ownerOf is checked after transfer\n5. Attacker receives all 6 NFTs AND gets paid back the price for each\n6. Attacker repays flash loan, keeps NFTs and profit",
+      "affectedCode": [
+        "src/free-rider/FreeRiderNFTMarketplace.sol:83-89",
+        "src/free-rider/FreeRiderNFTMarketplace.sol:91-111"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "suggestedProperties": [
+        "check_msg_value_not_reused",
+        "check_payment_goes_to_seller"
+      ]
+    }
+  },
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-010",
+      "category": "cross-contract",
+      "title": "NaiveReceiverPool: multicall + trusted forwarder _msgSender allows draining FlashLoanReceiver via forced flash loans",
+      "description": "NaiveReceiverPool uses _msgSender() which extracts sender from the last 20 bytes of calldata when called by trustedForwarder. The Multicall contract uses delegatecall, preserving msg.sender. An attacker can use the BasicForwarder to call NaiveReceiverPool.multicall with 10 flashLoan calls targeting the FlashLoanReceiver, draining its 10 ETH through fees (1 ETH per loan). Furthermore, the multicall+forwarder combination allows appending a victim's address to manipulate _msgSender for withdraw calls.",
+      "attackScenario": "1. Attacker calls flashLoan 10 times targeting FlashLoanReceiver, each charging 1 ETH fee, draining receiver's 10 ETH to feeReceiver deposits\n2. Attacker uses BasicForwarder to call multicall on NaiveReceiverPool with withdraw call + appended feeReceiver address as _msgSender\n3. This allows draining the feeReceiver's accumulated deposits to attacker-controlled address\n4. Alternatively, batch all 10 flashLoan calls + withdraw in one multicall via forwarder",
+      "affectedCode": [
+        "src/naive-receiver/NaiveReceiverPool.sol:86-92",
+        "src/naive-receiver/NaiveReceiverPool.sol:43-64",
+        "src/naive-receiver/NaiveReceiverPool.sol:66-73",
+        "src/naive-receiver/Multicall.sol:9-15"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "suggestedProperties": [
+        "check_flashloan_requires_receiver_approval",
+        "check_msgSender_not_spoofable_via_multicall"
+      ]
+    }
+  },
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-012",
+      "category": "access-control",
+      "title": "TokenBridge: inverted authorization check allows any non-otherBridge sender to execute withdrawals",
+      "description": "TokenBridge.executeTokenWithdrawal checks `l1Forwarder.getSender() == otherBridge` and reverts if true. The logic is inverted: it should revert when getSender() is NOT otherBridge. As written, legitimate withdrawals from the other bridge are rejected, while any other l2Sender (that gets their message forwarded) can trigger withdrawals.",
+      "attackScenario": "1. Attacker submits a fraudulent merkle proof (or exploits forwarder) to call forwardMessage with l2Sender = any address != otherBridge\n2. forwardMessage calls TokenBridge.executeTokenWithdrawal\n3. msg.sender == l1Forwarder (true), getSender() != otherBridge (so ==otherBridge is false)\n4. The OR condition is false, so no revert\n5. Tokens are transferred to attacker's receiver address",
+      "affectedCode": [
+        "src/withdrawal/TokenBridge.sol:23-27"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "suggestedProperties": [
+        "check_only_otherBridge_can_withdraw",
+        "check_authorization_logic_correctness"
+      ]
+    }
+  },
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-014",
+      "category": "access-control",
+      "title": "WalletRegistry: Safe wallet setup initializer allows module/delegate backdoor during creation",
+      "description": "WalletRegistry.proxyCreated validates singleton, threshold, owner count, and fallback manager. However, Safe.setup accepts optional parameters for delegatecall during setup (the 'to' and 'data' parameters). An attacker can set these to execute arbitrary code (e.g., token.approve(attacker, max)) during wallet creation, before the registry transfers payment tokens to the wallet.",
+      "attackScenario": "1. Attacker deploys a helper contract with a function that calls token.approve(attacker, max)\n2. For each beneficiary, attacker calls SafeProxyFactory.createProxyWithCallback with: singleton=correct, initializer=Safe.setup(owner=[beneficiary], threshold=1, to=helperContract, data=approve_calldata, ...)\n3. During setup, the Safe delegatecalls to helper, approving attacker for DVT\n4. WalletRegistry.proxyCreated validates and sends 10 DVT to wallet\n5. Attacker calls token.transferFrom(wallet, attacker, 10 DVT) to steal the payment",
+      "affectedCode": [
+        "src/backdoor/WalletRegistry.sol:67-122"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "suggestedProperties": [
+        "check_no_delegatecall_in_setup",
+        "check_wallet_balance_retained"
+      ]
+    }
+  },
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-011",
+      "category": "denial-of-service",
+      "title": "UnstoppableVault: direct token transfer breaks flash loan invariant, causing permanent DoS",
+      "description": "UnstoppableVault.flashLoan checks that convertToShares(totalSupply) == balanceBefore (totalAssets). If anyone donates tokens directly to the vault (not via deposit), totalAssets increases but totalSupply stays the same, breaking this invariant and permanently disabling flash loans.",
+      "attackScenario": "1. Attacker transfers 1 wei of DVT directly to the vault (not via deposit)\n2. totalAssets() now returns more than convertToShares(totalSupply)\n3. All subsequent flashLoan calls revert with InvalidBalance\n4. The vault's flash loan service is permanently broken",
+      "affectedCode": [
+        "src/unstoppable/UnstoppableVault.sol:78-104",
+        "src/unstoppable/UnstoppableVault.sol:84-85"
+      ],
+      "severity": "High",
+      "confidence": "high",
+      "suggestedProperties": [
+        "check_flashloan_invariant_resilient_to_donation",
+        "check_totalAssets_equals_tracked_deposits"
+      ]
+    }
+  },
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-013",
+      "category": "logic-error",
+      "title": "TheRewarderDistributor: claim ordering bug allows claiming same reward multiple times across different token groupings",
+      "description": "The claimRewards function processes claims in order and only calls _setClaimed when the token changes or on the last claim. An attacker can reorder claims to manipulate when _setClaimed is invoked, potentially transferring tokens for a claim before its bitmap is set, or grouping claims to bypass the already-claimed check.",
+      "attackScenario": "1. Attacker has valid merkle proofs for claims in different batch numbers\n2. Attacker orders claims so same-token claims in different word positions are grouped together\n3. _setClaimed only records bits for the last wordPosition encountered in the group\n4. Attacker can re-submit claims for earlier wordPositions since their bits were never set\n5. Attacker drains reward tokens beyond their legitimate allocation",
+      "affectedCode": [
+        "src/the-rewarder/TheRewarderDistributor.sol:81-118",
+        "src/the-rewarder/TheRewarderDistributor.sol:120-129"
+      ],
+      "severity": "High",
+      "confidence": "high",
+      "suggestedProperties": [
+        "check_each_claim_individually_marked",
+        "check_no_double_claim"
+      ]
+    }
+  },
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-006",
+      "category": "oracle-manipulation",
+      "title": "PuppetV3Pool: TWAP oracle over 10 minutes is still manipulable with sufficient capital",
+      "description": "PuppetV3Pool uses a 10-minute TWAP from Uniswap V3, which is an improvement over spot price but still manipulable by an attacker who can hold a position for the TWAP window duration.",
+      "attackScenario": "1. Attacker dumps massive DVT into Uniswap V3 pool, moving the tick price\n2. Attacker waits 10+ minutes for TWAP to fully reflect the manipulated price\n3. Attacker calls borrow() with minimal WETH to drain pool\n4. Attacker swaps back to recover DVT position",
+      "affectedCode": [
+        "src/puppet-v3/PuppetV3Pool.sol:61-69",
+        "src/puppet-v3/PuppetV3Pool.sol:56-59",
+        "src/puppet-v3/PuppetV3Pool.sol:16"
+      ],
+      "severity": "High",
+      "confidence": "medium",
+      "suggestedProperties": [
+        "check_twap_period_sufficient",
+        "check_liquidity_depth_requirement"
+      ]
+    }
+  },
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-015",
+      "category": "access-control",
+      "title": "WalletDeployer: AuthorizerUpgradeable implementation not initialized, enabling SELFDESTRUCT/upgrade attacks",
+      "description": "AuthorizerUpgradeable's constructor sets needsInit=0 on the implementation, but if the implementation contract itself can be destroyed or if the proxy's upgrader role is compromised, the authorization can be bypassed. Additionally, the WalletDeployer.can() function uses low-level assembly staticcall that returns false (y=0) on failure rather than reverting, so if mom has no code (destroyed), can() returns false, but the drop() check is `!can()` which then also returns false, skipping the revert.\n\nRelated: TransparentProxy: wrong function signature in _fallback check allows upgrader to bypass upgrade restriction — TransparentProxy._fallback checks msg.sig against bytes4(keccak256('upgradeToAndCall(address, bytes)')). This string has a space after the comma, producing a different selector than the actual upgradeToAndCall(address,bytes) function. This means the check never matches, and the upgrader's calls fall through or revert unexpectedly.",
+      "attackScenario": "1. Attacker finds a way to destroy the AuthorizerUpgradeable implementation behind the proxy (e.g., via the upgrade mechanism if they can gain upgrader role)\n2. Once implementation is destroyed, mom points to codeless address\n3. can() returns false via stop(), and since mom != address(0), drop() returns false\n4. However, if attacker can selfdestruct the proxy itself or set mom=0 by other means, authorization is bypassed\n5. Attacker can then deploy wallets and claim DVT rewards",
+      "affectedCode": [
+        "src/wallet-mining/WalletDeployer.sol:48-61",
+        "src/wallet-mining/WalletDeployer.sol:63-75",
+        "src/wallet-mining/AuthorizerUpgradeable.sol:5-31",
+        "src/wallet-mining/TransparentProxy.sol:28-35"
+      ],
+      "severity": "High",
+      "confidence": "medium",
+      "suggestedProperties": [
+        "check_authorizer_cannot_be_destroyed",
+        "check_can_function_reverts_on_failure",
+        "check_upgrade_selector_correct",
+        "check_upgrader_can_upgrade"
+      ]
+    }
+  },
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-017",
+      "category": "oracle-manipulation",
+      "title": "CurvyPuppetLending: LP token price depends on Curve pool virtual price, manipulable via pool imbalance",
+      "description": "CurvyPuppetLending calculates the borrow asset (LP token) price as oracle.getPrice(coins(0)).value * curvePool.get_virtual_price(). The virtual price of a Curve pool can be manipulated via large single-sided deposits/withdrawals or exploiting reentrancy in older Curve pools.",
+      "attackScenario": "1. Attacker manipulates Curve pool's virtual price (e.g., via read-only reentrancy in older ETH/stETH pools during withdraw_admin_fees, or large imbalanced deposit)\n2. This changes _getLPTokenPrice() calculation\n3. If price goes up: attacker borrows excessive LP tokens with insufficient collateral\n4. If price goes down: attacker liquidates healthy positions and steals their collateral",
+      "affectedCode": [
+        "src/curvy-puppet/CurvyPuppetLending.sol:133-135",
+        "src/curvy-puppet/CurvyPuppetLending.sol:61-83",
+        "src/curvy-puppet/CurvyPuppetLending.sol:97-109"
+      ],
+      "severity": "High",
+      "confidence": "medium",
+      "suggestedProperties": [
+        "check_virtual_price_not_manipulable",
+        "check_oracle_reentrancy_guard"
+      ]
+    }
+  },
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-016",
+      "category": "arithmetic",
+      "title": "ShardsNFTMarketplace: inconsistent rounding between fill payment and cancel refund leads to value extraction",
+      "description": "In fill(), the buyer pays want.mulDivDown(price_in_DVT, totalShards) (rounds down). In cancel(), the buyer gets back purchase.shards.mulDivUp(purchase.rate, 1e6) which uses a completely different calculation (mulDivUp on rate). The cancel refund formula doesn't match the fill payment formula, potentially refunding more than was paid.",
+      "attackScenario": "1. Attacker opens a fill with carefully chosen shard amounts where rounding differences are maximized\n2. Cancels within the cancel window\n3. Receives a slightly higher refund than what was paid due to mulDivUp vs mulDivDown\n4. Repeats to extract value from the marketplace",
+      "affectedCode": [
+        "src/shards/ShardsNFTMarketplace.sol:116-139",
+        "src/shards/ShardsNFTMarketplace.sol:144-164"
+      ],
+      "severity": "Medium",
+      "confidence": "medium",
+      "suggestedProperties": [
+        "check_cancel_refund_leq_fill_payment",
+        "check_consistent_rounding"
+      ]
+    }
+  },
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-018",
+      "category": "arithmetic",
+      "title": "UnstoppableVault (ERC4626): potential first-depositor inflation attack via share price manipulation",
+      "description": "UnstoppableVault inherits from solmate's ERC4626, which is susceptible to the first-depositor inflation attack. An attacker can be the first depositor with 1 wei, then donate a large amount of tokens to inflate the share price, causing subsequent depositors to receive 0 shares due to rounding.",
+      "attackScenario": "1. Attacker deposits 1 wei of DVT, receiving 1 share\n2. Attacker donates 1e18 DVT directly to vault\n3. Now 1 share = 1e18 + 1 DVT\n4. Victim deposits < 1e18 DVT, convertToShares rounds down to 0\n5. Victim loses their deposit",
+      "affectedCode": [
+        "src/unstoppable/UnstoppableVault.sol:16",
+        "src/unstoppable/UnstoppableVault.sol:71-73"
+      ],
+      "severity": "Medium",
+      "confidence": "medium",
+      "suggestedProperties": [
+        "check_nonzero_shares_on_deposit",
+        "check_virtual_share_offset"
+      ]
+    }
+  },
+  {
+    "project": "dvdefi",
+    "source": "reports/damn-vulnerable-defi/threat-model.json",
+    "finding": {
+      "id": "T-019",
+      "category": "logic-error",
+      "title": "ShardsNFTMarketplace: cancel() timing condition is always false, making cancellation impossible",
+      "description": "The cancel function has a timing check that is logically inconsistent. It requires purchase.timestamp + CANCEL_PERIOD_LENGTH < block.timestamp (cancel period expired) OR block.timestamp > purchase.timestamp + TIME_BEFORE_CANCEL (waiting period over). Combined with the revert, the window where cancellation is allowed is empty or extremely narrow.",
+      "attackScenario": "1. Buyer fills an offer at timestamp T\n2. Before T+1 day: second condition (block.timestamp > T + 1 day) is false, first condition (T + 2 days < block.timestamp) is false => no revert, cancel works\n3. After T+1 day: second condition becomes true => revert, cancel impossible\n4. Buyer's funds are locked -- they can only cancel in the first day, contradicting the intent of waiting 1 day before allowing cancel",
+      "affectedCode": [
+        "src/shards/ShardsNFTMarketplace.sol:152-155"
+      ],
+      "severity": "Medium",
+      "confidence": "medium",
+      "suggestedProperties": [
+        "check_cancel_window_matches_intent"
+      ]
+    }
+  },
+  {
+    "project": "inflation",
+    "source": "release-v0.2.1/erc4626-inflation/threat-model.json",
+    "finding": {
+      "id": "T-001",
+      "category": "logic-error",
+      "title": "First-depositor inflation attack: attacker steals victim deposits via donated share ratio manipulation",
+      "description": "convertToShares() has no virtual offset and uses live balanceOf() for totalAssets. An attacker can deposit 1 wei to seed 1 share at 1:1, then donate a large amount D directly to the vault. The share price inflates to D+1 assets per share. When a victim deposits D tokens, convertToShares(D) = (D * 1) / (D + 1) = 0 (integer truncation), so the victim receives 0 shares while their tokens are accepted. The attacker then redeems their 1 share for all assets: convertToAssets(1) = 1 * (2D+1) / 1 = 2D+1, stealing the victim's D tokens.",
+      "attackScenario": "1. Attacker calls deposit(1, attacker) — totalShares=1, totalAssets=1 (1:1 ratio)\n2. Attacker calls asset.transfer(vault, D) directly — totalShares=1, totalAssets=D+1\n3. Victim calls deposit(D, victim) — convertToShares(D) = (D*1)/(D+1) = 0 due to truncation; victim's D tokens accepted but shares=0 minted\n4. Attacker calls redeem(1, attacker, attacker) — convertToAssets(1) = (1*(2D+1))/1 = 2D+1; attacker receives all vault assets\n5. Net: attacker recovers their 1-wei deposit + D donation + steals D tokens from victim",
+      "affectedCode": [
+        "src/erc4626-inflation.sol:convertToShares:54-60",
+        "src/erc4626-inflation.sol:deposit:70-77",
+        "src/erc4626-inflation.sol:totalAssets:45-47",
+        "src/erc4626-inflation.sol:redeem:95-109"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "suggestedProperties": [
+        "assert(deposit(assets) returns shares > 0 when assets > 0)",
+        "assert(convertToShares uses virtual offset: (assets * (supply + 1e18)) / (totalAssets() + 1e18))",
+        "assert(attacker profit <= attacker input across any sequence of deposit/withdraw/donate)"
+      ]
+    }
+  },
+  {
+    "project": "inflation",
+    "source": "release-v0.2.1/erc4626-inflation/threat-model.json",
+    "finding": {
+      "id": "T-002",
+      "category": "logic-error",
+      "title": "withdraw() allows free asset extraction when convertToShares rounds to zero — any address can drain vault",
+      "description": "In withdraw(), the shares to burn are computed as convertToShares(assets) which truncates to 0 when the share price is inflated above the requested assets. The guard `require(shareBalances[owner] >= shares)` evaluates to `require(shareBalances[owner] >= 0)` when shares=0, which is always true for uint256. Therefore any address — including one with zero shares — can call withdraw(X, receiver, self) and receive X tokens from the vault for free. This is a direct theft primitive that applies to any inflated vault state, not just during the T-001 scenario.",
+      "attackScenario": "Precondition: vault is in an inflated state (totalAssets/totalShares >> 1), e.g. after T-001 step 2. Attack:\n1. Attacker (fresh address, 0 shares) picks amount X where X * totalShares < totalAssets (so convertToShares(X)=0)\n2. Calls withdraw(X, attacker, attacker)\n3. shares = convertToShares(X) = 0\n4. require(shareBalances[attacker] >= 0) — always passes\n5. shareBalances[attacker] -= 0, totalShares -= 0 (no change)\n6. asset.transfer(attacker, X) executes — attacker receives X tokens\n7. Repeat until vault drained (or combine: pick X just below totalAssets to drain in one call)",
+      "affectedCode": [
+        "src/erc4626-inflation.sol:withdraw:84",
+        "src/erc4626-inflation.sol:withdraw:88",
+        "src/erc4626-inflation.sol:withdraw:89-91",
+        "src/erc4626-inflation.sol:convertToShares:59"
+      ],
+      "severity": "Critical",
+      "confidence": "high",
+      "suggestedProperties": [
+        "assert(withdraw(assets) requires shares > 0)",
+        "assert(vault token balance non-decreasing unless caller holds sufficient shares)",
+        "assert(totalShares strictly decreases proportional to assets withdrawn)"
+      ]
+    }
+  },
+  {
+    "project": "inflation",
+    "source": "release-v0.2.1/erc4626-inflation/threat-model.json",
+    "finding": {
+      "id": "T-003",
+      "category": "logic-error",
+      "title": "deposit() silently accepts assets and mints zero shares, permanently locking victim funds",
+      "description": "deposit() computes shares = convertToShares(assets) but does not check that shares > 0 before proceeding. When the vault share price is inflated (via donation), convertToShares returns 0 for any amount smaller than totalAssets/totalShares. The function still calls asset.transferFrom (taking the user's tokens) and then writes shareBalances[receiver] += 0 and totalShares += 0. The deposited assets are permanently locked in the vault with no shares to redeem them, unless the attacker has already planned to redeem them via T-001 or T-002.",
+      "attackScenario": "1. Attacker executes T-001 steps 1-2 (deposit 1 wei, donate D tokens) — ratio inflated to (D+1):1\n2. Victim calls deposit(D, victim) in good faith\n3. convertToShares(D) = (D*1)/(D+1) = 0 — victim gets 0 shares\n4. Victim's D tokens are now in the vault permanently (from victim's perspective)\n5. Victim cannot withdraw or redeem since shareBalances[victim] = 0\n6. Attacker redeems their 1 share for all vault assets including victim's D",
+      "affectedCode": [
+        "src/erc4626-inflation.sol:deposit:70-77"
+      ],
+      "severity": "High",
+      "confidence": "high",
+      "suggestedProperties": [
+        "assert(deposit returns shares > 0 when assets > 0)",
+        "assert(shareBalances[receiver] increases after successful deposit)"
+      ]
+    }
+  },
+  {
+    "project": "inflation",
+    "source": "release-v0.2.1/erc4626-inflation/threat-model.json",
+    "finding": {
+      "id": "T-005",
+      "category": "unchecked-calls",
+      "title": "Unchecked IERC20.transfer return value in withdraw() and redeem() can cause silent fund loss",
+      "description": "Both withdraw() (line 91) and redeem() (line 107) call asset.transfer(receiver, assets) without checking the boolean return value. State (shareBalances and totalShares) is updated before the transfer call. If the token's transfer returns false instead of reverting, shares are already burned but the receiver gets no assets — a permanent loss of user funds. This affects non-standard ERC20 tokens that signal failure via return value rather than revert.",
+      "attackScenario": "Precondition: vault deployed with a non-standard ERC20 that returns false on insufficient balance rather than reverting.\n1. User has shares but the vault's token balance is 0 (edge case after other draining).\n2. User calls withdraw(amount, receiver, user).\n3. shareBalances[user] -= shares, totalShares -= shares (state updated).\n4. asset.transfer(receiver, amount) returns false (not enough token balance) — no revert.\n5. User's shares are burned but no assets received — permanent fund loss with no recourse.",
+      "affectedCode": [
+        "src/erc4626-inflation.sol:withdraw:91",
+        "src/erc4626-inflation.sol:redeem:107"
+      ],
+      "severity": "Medium",
+      "confidence": "medium",
+      "suggestedProperties": [
+        "assert(transfer return value checked or use SafeERC20)",
+        "assert(if transfer fails, shares not burned)"
+      ]
+    }
+  },
+  {
+    "project": "inflation",
+    "source": "release-v0.2.1/erc4626-inflation/threat-model.json",
+    "finding": {
+      "id": "T-004",
+      "category": "logic-error",
+      "title": "Rounding direction in withdraw() systematically underpays shares, slowly diluting remaining holders",
+      "description": "In withdraw(), shares burned are computed as convertToShares(assets) which rounds DOWN (floor division). This means a withdrawer burns strictly fewer shares than the proportional amount, receiving a slight surplus of assets per share. Over many withdraw() calls, the vault's totalShares declines more slowly than the totalAssets, meaning the share price stays flat or rises slightly for remaining holders on each individual call. However, if an attacker accumulates this rounding benefit systematically via many small withdrawals, they extract marginally more assets than they deposited. The effect is amplified at inflated share prices.",
+      "attackScenario": "Example at 1:1 ratio (totalShares=100, totalAssets=100):\n1. Attacker calls withdraw(1, attacker, attacker) — shares = (1*100)/100 = 1, burns 1 share, receives 1 token. Fair.\nExample at 3:2 ratio (totalShares=2, totalAssets=3):\n2. Attacker calls withdraw(1, attacker, attacker) — shares = (1*2)/3 = 0 — leads to T-002 scenario.\nExample at 3:4 ratio (totalShares=4, totalAssets=3):\n3. Attacker calls withdraw(1, attacker, attacker) — shares = (1*4)/3 = 1, burns 1 share but receives 1 token (worth only 0.75 shares of assets). This penalizes the withdrawer. So the rounding in withdraw() can go either way depending on ratio — but T-002 shows the zero-shares case is the critical one.",
+      "affectedCode": [
+        "src/erc4626-inflation.sol:withdraw:84",
+        "src/erc4626-inflation.sol:convertToShares:59"
+      ],
+      "severity": "Low",
+      "confidence": "medium",
+      "suggestedProperties": [
+        "assert(assets_received * totalShares_before <= assets_deposited * totalShares_after for withdraw)",
+        "assert(no profit from deposit-withdraw at same block)"
+      ]
+    }
+  }
+]

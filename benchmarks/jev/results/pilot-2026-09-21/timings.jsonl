@@ -1,0 +1,5 @@
+{"phase":"smoke","repeat":0,"concurrency":1,"jobs":1,"elapsedMs":417.287792,"resumed":false}
+{"phase":"main","repeat":0,"concurrency":1,"jobs":240,"elapsedMs":59453.005416,"resumed":false}
+{"phase":"main","repeat":1,"concurrency":4,"jobs":240,"elapsedMs":14304.569209000001,"resumed":false}
+{"phase":"main","repeat":2,"concurrency":4,"jobs":240,"elapsedMs":13564.945875000005,"resumed":false}
+{"phase":"group","repeat":0,"concurrency":4,"jobs":36,"elapsedMs":2065.0305420000077,"resumed":false}

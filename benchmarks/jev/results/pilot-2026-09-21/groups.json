@@ -1,0 +1,1238 @@
+[
+  {
+    "id": "group-1",
+    "gold": [
+      [
+        "A",
+        "B"
+      ],
+      [
+        "C"
+      ]
+    ],
+    "orders": [
+      {
+        "order": [
+          "A",
+          "B",
+          "C"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "A",
+            "C"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "A",
+          "C",
+          "B"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "B",
+          "A",
+          "C"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "A",
+            "C"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "B",
+            "A"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "B",
+          "C",
+          "A"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "B",
+            "A"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "C",
+          "A",
+          "B"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "C"
+          ],
+          [
+            "A",
+            "B"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "C",
+          "B",
+          "A"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "C"
+          ],
+          [
+            "B",
+            "A"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "group-2",
+    "gold": [
+      [
+        "A",
+        "B"
+      ],
+      [
+        "C"
+      ]
+    ],
+    "orders": [
+      {
+        "order": [
+          "A",
+          "B",
+          "C"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "A",
+            "C"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "A",
+          "C",
+          "B"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "B",
+          "A",
+          "C"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "A",
+            "C"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "B",
+            "A"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "B",
+          "C",
+          "A"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "B",
+            "A"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "C",
+          "A",
+          "B"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "C"
+          ],
+          [
+            "A",
+            "B"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "C",
+          "B",
+          "A"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "C"
+          ],
+          [
+            "B",
+            "A"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "group-3",
+    "gold": [
+      [
+        "A",
+        "B"
+      ],
+      [
+        "C"
+      ]
+    ],
+    "orders": [
+      {
+        "order": [
+          "A",
+          "B",
+          "C"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "A",
+            "C"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "A",
+          "C",
+          "B"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "B",
+          "A",
+          "C"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "A",
+            "C"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "B",
+            "A"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "B",
+          "C",
+          "A"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "B",
+            "A"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "C",
+          "A",
+          "B"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "C"
+          ],
+          [
+            "A",
+            "B"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "C",
+          "B",
+          "A"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "C"
+          ],
+          [
+            "B",
+            "A"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "group-4",
+    "gold": [
+      [
+        "A",
+        "B"
+      ],
+      [
+        "C"
+      ]
+    ],
+    "orders": [
+      {
+        "order": [
+          "A",
+          "B",
+          "C"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "A",
+            "C"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "A",
+          "C",
+          "B"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "B",
+          "A",
+          "C"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "A",
+            "C"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "B",
+            "A"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "B",
+          "C",
+          "A"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "B",
+            "A"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "C",
+          "A",
+          "B"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "C"
+          ],
+          [
+            "A",
+            "B"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "C",
+          "B",
+          "A"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "C"
+          ],
+          [
+            "B",
+            "A"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "group-5",
+    "gold": [
+      [
+        "A",
+        "B"
+      ],
+      [
+        "C"
+      ]
+    ],
+    "orders": [
+      {
+        "order": [
+          "A",
+          "B",
+          "C"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "A",
+            "C"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "A",
+          "C",
+          "B"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "B",
+          "A",
+          "C"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "A",
+            "C"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "B",
+            "A"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "B",
+          "C",
+          "A"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "B",
+            "A"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "C",
+          "A",
+          "B"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "C"
+          ],
+          [
+            "A",
+            "B"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "C",
+          "B",
+          "A"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "C"
+          ],
+          [
+            "B",
+            "A"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "group-6",
+    "gold": [
+      [
+        "A",
+        "B"
+      ],
+      [
+        "C"
+      ]
+    ],
+    "orders": [
+      {
+        "order": [
+          "A",
+          "B",
+          "C"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "A",
+            "C"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "A",
+          "C",
+          "B"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "B",
+          "A",
+          "C"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "A",
+            "C"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "B",
+            "A"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "B",
+          "C",
+          "A"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "B",
+            "A"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "C",
+          "A",
+          "B"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "C"
+          ],
+          [
+            "A",
+            "B"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      },
+      {
+        "order": [
+          "C",
+          "B",
+          "A"
+        ],
+        "missingDecisions": 0,
+        "baseline": [
+          [
+            "B",
+            "C",
+            "A"
+          ]
+        ],
+        "baselineErrors": {
+          "falseMerges": 2,
+          "missedMerges": 0
+        },
+        "jev": [
+          [
+            "C"
+          ],
+          [
+            "B",
+            "A"
+          ]
+        ],
+        "jevErrors": {
+          "falseMerges": 0,
+          "missedMerges": 0
+        }
+      }
+    ]
+  }
+]

@@ -66,6 +66,8 @@ Runtime:       ~2 hours
 
 ## How It Works
 
+Experimental evaluation: [Jev for contradiction and duplicate review](docs/decisions/2026-09-21-jev-evaluation.md). The decision record links the preserved benchmark results, limitations, and requirements for stronger validation. Production filters currently remain unchanged.
+
 Two-stage pipeline: **threat model** identifies what to look for, **analyze** proves it with Halmos.
 
 ### Stage 1: `forge-proof threat-model <project>`

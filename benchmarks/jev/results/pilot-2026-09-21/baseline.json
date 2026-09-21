@@ -1,0 +1,3482 @@
+[
+  {
+    "id": "contradiction-001",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-permit",
+    "cluster": "dev-permit",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.1288330000000002,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-002",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-permit",
+    "cluster": "dev-permit",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.004833000000004972,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-003",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-permit",
+    "cluster": "dev-permit",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0024999999999977263,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-004",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-permit",
+    "cluster": "dev-permit",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "retracts",
+    "latencyMs": 0.01795800000000014,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "Medium",
+      "confidenceBefore": "high",
+      "confidenceAfter": "low"
+    }
+  },
+  {
+    "id": "contradiction-005",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-permit",
+    "cluster": "dev-permit",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0027910000000019863,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "dedup-001",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-permit",
+    "cluster": "dev-permit",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "same",
+    "latencyMs": 0.06291699999999878,
+    "effects": null
+  },
+  {
+    "id": "dedup-002",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-permit",
+    "cluster": "dev-permit",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.002625000000001876,
+    "effects": null
+  },
+  {
+    "id": "dedup-003",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-permit",
+    "cluster": "dev-permit",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.05412499999999909,
+    "effects": null
+  },
+  {
+    "id": "dedup-004",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-permit",
+    "cluster": "dev-permit",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.009166999999997927,
+    "effects": null
+  },
+  {
+    "id": "dedup-005",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-permit",
+    "cluster": "dev-permit",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0061249999999972715,
+    "effects": null
+  },
+  {
+    "id": "contradiction-006",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-auction",
+    "cluster": "dev-auction",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.004249999999998977,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-007",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-auction",
+    "cluster": "dev-auction",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0019579999999947972,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-008",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-auction",
+    "cluster": "dev-auction",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0017920000000017922,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-009",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-auction",
+    "cluster": "dev-auction",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "retracts",
+    "latencyMs": 0.006041000000003294,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "Medium",
+      "confidenceBefore": "high",
+      "confidenceAfter": "low"
+    }
+  },
+  {
+    "id": "contradiction-010",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-auction",
+    "cluster": "dev-auction",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0015409999999960178,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "dedup-006",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-auction",
+    "cluster": "dev-auction",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "same",
+    "latencyMs": 0.00274999999999892,
+    "effects": null
+  },
+  {
+    "id": "dedup-007",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-auction",
+    "cluster": "dev-auction",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0021249999999994884,
+    "effects": null
+  },
+  {
+    "id": "dedup-008",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-auction",
+    "cluster": "dev-auction",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.004125000000001933,
+    "effects": null
+  },
+  {
+    "id": "dedup-009",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-auction",
+    "cluster": "dev-auction",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.001624999999997101,
+    "effects": null
+  },
+  {
+    "id": "dedup-010",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-auction",
+    "cluster": "dev-auction",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0010410000000007358,
+    "effects": null
+  },
+  {
+    "id": "contradiction-011",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-rewards",
+    "cluster": "dev-rewards",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.00116599999999778,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-012",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-rewards",
+    "cluster": "dev-rewards",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0009589999999946031,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-013",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-rewards",
+    "cluster": "dev-rewards",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.001041999999998211,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-014",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-rewards",
+    "cluster": "dev-rewards",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "retracts",
+    "latencyMs": 0.0010000000000047748,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "Medium",
+      "confidenceBefore": "high",
+      "confidenceAfter": "low"
+    }
+  },
+  {
+    "id": "contradiction-015",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-rewards",
+    "cluster": "dev-rewards",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0009160000000036916,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "dedup-011",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-rewards",
+    "cluster": "dev-rewards",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "same",
+    "latencyMs": 0.001125000000001819,
+    "effects": null
+  },
+  {
+    "id": "dedup-012",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-rewards",
+    "cluster": "dev-rewards",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0007500000000035811,
+    "effects": null
+  },
+  {
+    "id": "dedup-013",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-rewards",
+    "cluster": "dev-rewards",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0009170000000011669,
+    "effects": null
+  },
+  {
+    "id": "dedup-014",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-rewards",
+    "cluster": "dev-rewards",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0009170000000011669,
+    "effects": null
+  },
+  {
+    "id": "dedup-015",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-rewards",
+    "cluster": "dev-rewards",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0008750000000006253,
+    "effects": null
+  },
+  {
+    "id": "contradiction-016",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-bridge",
+    "cluster": "dev-bridge",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0009160000000036916,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-017",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-bridge",
+    "cluster": "dev-bridge",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0008750000000006253,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-018",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-bridge",
+    "cluster": "dev-bridge",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0009589999999946031,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-019",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-bridge",
+    "cluster": "dev-bridge",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "retracts",
+    "latencyMs": 0.0008330000000000837,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "Medium",
+      "confidenceBefore": "high",
+      "confidenceAfter": "low"
+    }
+  },
+  {
+    "id": "contradiction-020",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-bridge",
+    "cluster": "dev-bridge",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0009159999999965862,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "dedup-016",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-bridge",
+    "cluster": "dev-bridge",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "same",
+    "latencyMs": 0.0010000000000047748,
+    "effects": null
+  },
+  {
+    "id": "dedup-017",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-bridge",
+    "cluster": "dev-bridge",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0006669999999999732,
+    "effects": null
+  },
+  {
+    "id": "dedup-018",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-bridge",
+    "cluster": "dev-bridge",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0009579999999971278,
+    "effects": null
+  },
+  {
+    "id": "dedup-019",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-bridge",
+    "cluster": "dev-bridge",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0008750000000006253,
+    "effects": null
+  },
+  {
+    "id": "dedup-020",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-bridge",
+    "cluster": "dev-bridge",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0008339999999975589,
+    "effects": null
+  },
+  {
+    "id": "contradiction-021",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-liquidation",
+    "cluster": "dev-liquidation",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0009170000000011669,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-022",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-liquidation",
+    "cluster": "dev-liquidation",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0008750000000006253,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-023",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-liquidation",
+    "cluster": "dev-liquidation",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0010830000000012774,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-024",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-liquidation",
+    "cluster": "dev-liquidation",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "retracts",
+    "latencyMs": 0.0011670000000023606,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "Medium",
+      "confidenceBefore": "high",
+      "confidenceAfter": "low"
+    }
+  },
+  {
+    "id": "contradiction-025",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-liquidation",
+    "cluster": "dev-liquidation",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0009579999999971278,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "dedup-021",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-liquidation",
+    "cluster": "dev-liquidation",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "same",
+    "latencyMs": 0.0010830000000012774,
+    "effects": null
+  },
+  {
+    "id": "dedup-022",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-liquidation",
+    "cluster": "dev-liquidation",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0006249999999994316,
+    "effects": null
+  },
+  {
+    "id": "dedup-023",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-liquidation",
+    "cluster": "dev-liquidation",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0008330000000000837,
+    "effects": null
+  },
+  {
+    "id": "dedup-024",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-liquidation",
+    "cluster": "dev-liquidation",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0007919999999970173,
+    "effects": null
+  },
+  {
+    "id": "dedup-025",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-liquidation",
+    "cluster": "dev-liquidation",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0008330000000000837,
+    "effects": null
+  },
+  {
+    "id": "contradiction-026",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-upgrade",
+    "cluster": "dev-upgrade",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.3052500000000009,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-027",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-upgrade",
+    "cluster": "dev-upgrade",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.002082999999998947,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-028",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-upgrade",
+    "cluster": "dev-upgrade",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0012499999999988631,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-029",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-upgrade",
+    "cluster": "dev-upgrade",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "retracts",
+    "latencyMs": 0.001958999999999378,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "Medium",
+      "confidenceBefore": "high",
+      "confidenceAfter": "low"
+    }
+  },
+  {
+    "id": "contradiction-030",
+    "task": "contradiction",
+    "split": "dev",
+    "family": "dev-upgrade",
+    "cluster": "dev-upgrade",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0011670000000023606,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "dedup-026",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-upgrade",
+    "cluster": "dev-upgrade",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "same",
+    "latencyMs": 0.004790999999997325,
+    "effects": null
+  },
+  {
+    "id": "dedup-027",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-upgrade",
+    "cluster": "dev-upgrade",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0012910000000019295,
+    "effects": null
+  },
+  {
+    "id": "dedup-028",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-upgrade",
+    "cluster": "dev-upgrade",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0013749999999959073,
+    "effects": null
+  },
+  {
+    "id": "dedup-029",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-upgrade",
+    "cluster": "dev-upgrade",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0010410000000007358,
+    "effects": null
+  },
+  {
+    "id": "dedup-030",
+    "task": "dedup",
+    "split": "dev",
+    "family": "dev-upgrade",
+    "cluster": "dev-upgrade",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0009579999999971278,
+    "effects": null
+  },
+  {
+    "id": "contradiction-031",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-001",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.002375000000000682,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-032",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-002",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.002207999999995991,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-033",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-003",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0023339999999976158,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-034",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-004",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.00216700000000003,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-035",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-005",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0017920000000017922,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-036",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-007",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0027079999999983784,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-037",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-008",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0024999999999977263,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-038",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-009",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.002290999999999599,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-039",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-010",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0031250000000042633,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-040",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-012",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0023330000000001405,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-041",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-014",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0030000000000001137,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-042",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-011",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.001708000000000709,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-043",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-013",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.002291999999997074,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-044",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-006",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0015830000000036648,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-045",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-015",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.08245799999999548,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-046",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-017",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0027919999999994616,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-047",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-016",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0021249999999994884,
+    "effects": {
+      "severityBefore": "Medium",
+      "severityAfter": "Medium",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-048",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-018",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0017909999999972115,
+    "effects": {
+      "severityBefore": "Medium",
+      "severityAfter": "Medium",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-049",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-019",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.002375000000000682,
+    "effects": {
+      "severityBefore": "Medium",
+      "severityAfter": "Medium",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-050",
+    "task": "contradiction",
+    "split": "test",
+    "family": "inflation:T-001",
+    "cluster": "inflation",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0034159999999943125,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-051",
+    "task": "contradiction",
+    "split": "test",
+    "family": "inflation:T-002",
+    "cluster": "inflation",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0036250000000066507,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-052",
+    "task": "contradiction",
+    "split": "test",
+    "family": "inflation:T-003",
+    "cluster": "inflation",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0033749999999983515,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-053",
+    "task": "contradiction",
+    "split": "test",
+    "family": "inflation:T-005",
+    "cluster": "inflation",
+    "origin": "real",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0031669999999976994,
+    "effects": {
+      "severityBefore": "Medium",
+      "severityAfter": "Medium",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-054",
+    "task": "contradiction",
+    "split": "test",
+    "family": "inflation:T-004",
+    "cluster": "inflation",
+    "origin": "real",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.003917000000001281,
+    "effects": {
+      "severityBefore": "Low",
+      "severityAfter": "Low",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-055",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-001",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0018749999999982947,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-056",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-002",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "retracts",
+    "latencyMs": 0.0024579999999971847,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "low"
+    }
+  },
+  {
+    "id": "contradiction-057",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-003",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "retracts",
+    "latencyMs": 0.0016660000000001673,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "low"
+    }
+  },
+  {
+    "id": "contradiction-058",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-004",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0017499999999941451,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-059",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-005",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0016669999999976426,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-060",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-007",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "retracts",
+    "latencyMs": 0.0018749999999982947,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "low"
+    }
+  },
+  {
+    "id": "contradiction-061",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-008",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.0019580000000019027,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-062",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-009",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "maintains",
+    "latencyMs": 0.001958999999999378,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-063",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-010",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "maintains",
+    "prediction": "retracts",
+    "latencyMs": 0.002082999999998947,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "low"
+    }
+  },
+  {
+    "id": "contradiction-064",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-001",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0015420000000005984,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-065",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-002",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0015420000000005984,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-066",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-003",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0014170000000035543,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-067",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-004",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0015420000000005984,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-068",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-005",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.001333000000002471,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-069",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-007",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "retracts",
+    "latencyMs": 0.001708000000000709,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "low"
+    }
+  },
+  {
+    "id": "contradiction-070",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-008",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.001667000000004748,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-071",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-009",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0012919999999994047,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-072",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-010",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0018340000000023338,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-073",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-012",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0016250000000042064,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-074",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-014",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0016660000000001673,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-075",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-011",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "retracts",
+    "latencyMs": 0.0016250000000042064,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "Medium",
+      "confidenceBefore": "high",
+      "confidenceAfter": "low"
+    }
+  },
+  {
+    "id": "contradiction-076",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-013",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.001624999999997101,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-077",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-006",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0012919999999994047,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-078",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-015",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.002957999999999572,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-079",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-017",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.001708000000000709,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-080",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-016",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0015410000000031232,
+    "effects": {
+      "severityBefore": "Medium",
+      "severityAfter": "Medium",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-081",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-018",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "retracts",
+    "latencyMs": 0.0015410000000031232,
+    "effects": {
+      "severityBefore": "Medium",
+      "severityAfter": "Low",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "low"
+    }
+  },
+  {
+    "id": "contradiction-082",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-019",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0015409999999960178,
+    "effects": {
+      "severityBefore": "Medium",
+      "severityAfter": "Medium",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-083",
+    "task": "contradiction",
+    "split": "test",
+    "family": "inflation:T-001",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0018330000000048585,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-084",
+    "task": "contradiction",
+    "split": "test",
+    "family": "inflation:T-002",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.002042000000002986,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-085",
+    "task": "contradiction",
+    "split": "test",
+    "family": "inflation:T-003",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0023339999999976158,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-086",
+    "task": "contradiction",
+    "split": "test",
+    "family": "inflation:T-005",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.002250000000003638,
+    "effects": {
+      "severityBefore": "Medium",
+      "severityAfter": "Medium",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-087",
+    "task": "contradiction",
+    "split": "test",
+    "family": "inflation:T-004",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "retracts",
+    "latencyMs": 0.0026249999999947704,
+    "effects": {
+      "severityBefore": "Low",
+      "severityAfter": "Low",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "low"
+    }
+  },
+  {
+    "id": "contradiction-088",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-001",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0011249999999947136,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-089",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-002",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0012079999999983215,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-090",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-003",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0010410000000007358,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-091",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-004",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0010830000000012774,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-092",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-005",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "maintains",
+    "latencyMs": 0.0010830000000012774,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-093",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-007",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "retracts",
+    "prediction": "retracts",
+    "latencyMs": 0.0012499999999988631,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "low"
+    }
+  },
+  {
+    "id": "contradiction-094",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-001",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0015420000000005984,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-095",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-002",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.00158400000000114,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-096",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-003",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0016669999999976426,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-097",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-004",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0015000000000000568,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-098",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-005",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0015410000000031232,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-099",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-007",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0014580000000066207,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-100",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-008",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0015420000000005984,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-101",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-009",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0014579999999995152,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-102",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-010",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0017920000000017922,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-103",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-012",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0014170000000035543,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-104",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-014",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0015829999999965594,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-105",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-011",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0014170000000035543,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-106",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-013",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0014589999999969905,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-107",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-006",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0012499999999988631,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-108",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-015",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.00245800000000429,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-109",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-017",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0015000000000000568,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-110",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-016",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0016660000000001673,
+    "effects": {
+      "severityBefore": "Medium",
+      "severityAfter": "Medium",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-111",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-018",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0013749999999959073,
+    "effects": {
+      "severityBefore": "Medium",
+      "severityAfter": "Medium",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-112",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-019",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.001624999999997101,
+    "effects": {
+      "severityBefore": "Medium",
+      "severityAfter": "Medium",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-113",
+    "task": "contradiction",
+    "split": "test",
+    "family": "inflation:T-001",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0016660000000001673,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-114",
+    "task": "contradiction",
+    "split": "test",
+    "family": "inflation:T-002",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0018749999999982947,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-115",
+    "task": "contradiction",
+    "split": "test",
+    "family": "inflation:T-003",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0020000000000024443,
+    "effects": {
+      "severityBefore": "High",
+      "severityAfter": "High",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-116",
+    "task": "contradiction",
+    "split": "test",
+    "family": "inflation:T-005",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0018750000000054001,
+    "effects": {
+      "severityBefore": "Medium",
+      "severityAfter": "Medium",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-117",
+    "task": "contradiction",
+    "split": "test",
+    "family": "inflation:T-004",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0021249999999994884,
+    "effects": {
+      "severityBefore": "Low",
+      "severityAfter": "Low",
+      "confidenceBefore": "medium",
+      "confidenceAfter": "medium"
+    }
+  },
+  {
+    "id": "contradiction-118",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-001",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.0013339999999999463,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-119",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-002",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.001125000000001819,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "contradiction-120",
+    "task": "contradiction",
+    "split": "test",
+    "family": "dvdefi:T-003",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "unresolved",
+    "prediction": "maintains",
+    "latencyMs": 0.00116599999999778,
+    "effects": {
+      "severityBefore": "Critical",
+      "severityAfter": "Critical",
+      "confidenceBefore": "high",
+      "confidenceAfter": "high"
+    }
+  },
+  {
+    "id": "dedup-031",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.0017909999999972115,
+    "effects": null
+  },
+  {
+    "id": "dedup-032",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.002082999999998947,
+    "effects": null
+  },
+  {
+    "id": "dedup-033",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.0011670000000023606,
+    "effects": null
+  },
+  {
+    "id": "dedup-034",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.001041999999998211,
+    "effects": null
+  },
+  {
+    "id": "dedup-035",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.001082999999994172,
+    "effects": null
+  },
+  {
+    "id": "dedup-036",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.0009579999999971278,
+    "effects": null
+  },
+  {
+    "id": "dedup-037",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.0007909999999995421,
+    "effects": null
+  },
+  {
+    "id": "dedup-038",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.0016250000000042064,
+    "effects": null
+  },
+  {
+    "id": "dedup-039",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.0009579999999971278,
+    "effects": null
+  },
+  {
+    "id": "dedup-040",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.00058299999999889,
+    "effects": null
+  },
+  {
+    "id": "dedup-041",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.0007909999999995421,
+    "effects": null
+  },
+  {
+    "id": "dedup-042",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.0008330000000000837,
+    "effects": null
+  },
+  {
+    "id": "dedup-043",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.0008750000000006253,
+    "effects": null
+  },
+  {
+    "id": "dedup-044",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.0010830000000012774,
+    "effects": null
+  },
+  {
+    "id": "dedup-045",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.001041999999998211,
+    "effects": null
+  },
+  {
+    "id": "dedup-046",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.0016250000000042064,
+    "effects": null
+  },
+  {
+    "id": "dedup-047",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.0007499999999964757,
+    "effects": null
+  },
+  {
+    "id": "dedup-048",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.0006669999999999732,
+    "effects": null
+  },
+  {
+    "id": "dedup-049",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:real-pairs",
+    "cluster": "dvdefi",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.0008340000000046643,
+    "effects": null
+  },
+  {
+    "id": "dedup-050",
+    "task": "dedup",
+    "split": "test",
+    "family": "inflation:real-pairs",
+    "cluster": "inflation",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.0012499999999988631,
+    "effects": null
+  },
+  {
+    "id": "dedup-051",
+    "task": "dedup",
+    "split": "test",
+    "family": "inflation:real-pairs",
+    "cluster": "inflation",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.001708000000000709,
+    "effects": null
+  },
+  {
+    "id": "dedup-052",
+    "task": "dedup",
+    "split": "test",
+    "family": "inflation:real-pairs",
+    "cluster": "inflation",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.0006249999999994316,
+    "effects": null
+  },
+  {
+    "id": "dedup-053",
+    "task": "dedup",
+    "split": "test",
+    "family": "inflation:real-pairs",
+    "cluster": "inflation",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.0007090000000005148,
+    "effects": null
+  },
+  {
+    "id": "dedup-054",
+    "task": "dedup",
+    "split": "test",
+    "family": "inflation:real-pairs",
+    "cluster": "inflation",
+    "origin": "real",
+    "label": "distinct",
+    "prediction": "distinct",
+    "latencyMs": 0.0010410000000007358,
+    "effects": null
+  },
+  {
+    "id": "dedup-055",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-001",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0014159999999989736,
+    "effects": null
+  },
+  {
+    "id": "dedup-056",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-001",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.005167000000000144,
+    "effects": null
+  },
+  {
+    "id": "dedup-057",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-001",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0023330000000001405,
+    "effects": null
+  },
+  {
+    "id": "dedup-058",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-002",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0006660000000024979,
+    "effects": null
+  },
+  {
+    "id": "dedup-059",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-002",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0014589999999969905,
+    "effects": null
+  },
+  {
+    "id": "dedup-060",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-002",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0012090000000029022,
+    "effects": null
+  },
+  {
+    "id": "dedup-061",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-003",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "same",
+    "latencyMs": 0.003292000000001849,
+    "effects": null
+  },
+  {
+    "id": "dedup-062",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-003",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0019169999999988363,
+    "effects": null
+  },
+  {
+    "id": "dedup-063",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-003",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0015830000000036648,
+    "effects": null
+  },
+  {
+    "id": "dedup-064",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-004",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0010410000000007358,
+    "effects": null
+  },
+  {
+    "id": "dedup-065",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-004",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0016669999999976426,
+    "effects": null
+  },
+  {
+    "id": "dedup-066",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-004",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.00245800000000429,
+    "effects": null
+  },
+  {
+    "id": "dedup-067",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-005",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0010410000000007358,
+    "effects": null
+  },
+  {
+    "id": "dedup-068",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-005",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.001624999999997101,
+    "effects": null
+  },
+  {
+    "id": "dedup-069",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-005",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0015420000000005984,
+    "effects": null
+  },
+  {
+    "id": "dedup-070",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-007",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "same",
+    "latencyMs": 0.001708000000000709,
+    "effects": null
+  },
+  {
+    "id": "dedup-071",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-007",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.00158400000000114,
+    "effects": null
+  },
+  {
+    "id": "dedup-072",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-007",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0013749999999959073,
+    "effects": null
+  },
+  {
+    "id": "dedup-073",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-008",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0008750000000006253,
+    "effects": null
+  },
+  {
+    "id": "dedup-074",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-008",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0015829999999965594,
+    "effects": null
+  },
+  {
+    "id": "dedup-075",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-008",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0014579999999995152,
+    "effects": null
+  },
+  {
+    "id": "dedup-076",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-009",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0009580000000042332,
+    "effects": null
+  },
+  {
+    "id": "dedup-077",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-009",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0013749999999959073,
+    "effects": null
+  },
+  {
+    "id": "dedup-078",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-009",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.002290999999999599,
+    "effects": null
+  },
+  {
+    "id": "dedup-079",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-010",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "same",
+    "latencyMs": 0.002082999999998947,
+    "effects": null
+  },
+  {
+    "id": "dedup-080",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-010",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.00274999999999892,
+    "effects": null
+  },
+  {
+    "id": "dedup-081",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-010",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0017500000000012506,
+    "effects": null
+  },
+  {
+    "id": "dedup-082",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-012",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0006249999999994316,
+    "effects": null
+  },
+  {
+    "id": "dedup-083",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-012",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0013339999999999463,
+    "effects": null
+  },
+  {
+    "id": "dedup-084",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-012",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0011670000000023606,
+    "effects": null
+  },
+  {
+    "id": "dedup-085",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-014",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0007079999999959341,
+    "effects": null
+  },
+  {
+    "id": "dedup-086",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-014",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0012919999999994047,
+    "effects": null
+  },
+  {
+    "id": "dedup-087",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-014",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0012090000000029022,
+    "effects": null
+  },
+  {
+    "id": "dedup-088",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-011",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "same",
+    "latencyMs": 0.0024999999999977263,
+    "effects": null
+  },
+  {
+    "id": "dedup-089",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-011",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0015420000000005984,
+    "effects": null
+  },
+  {
+    "id": "dedup-090",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-011",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.001333000000002471,
+    "effects": null
+  },
+  {
+    "id": "dedup-091",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-013",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0009170000000011669,
+    "effects": null
+  },
+  {
+    "id": "dedup-092",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-013",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0015829999999965594,
+    "effects": null
+  },
+  {
+    "id": "dedup-093",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-013",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.002250000000003638,
+    "effects": null
+  },
+  {
+    "id": "dedup-094",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-006",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0011670000000023606,
+    "effects": null
+  },
+  {
+    "id": "dedup-095",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-006",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0015420000000005984,
+    "effects": null
+  },
+  {
+    "id": "dedup-096",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-006",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0025839999999988095,
+    "effects": null
+  },
+  {
+    "id": "dedup-097",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-015",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "same",
+    "latencyMs": 0.0024579999999971847,
+    "effects": null
+  },
+  {
+    "id": "dedup-098",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-015",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.00216700000000003,
+    "effects": null
+  },
+  {
+    "id": "dedup-099",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-015",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.001916000000001361,
+    "effects": null
+  },
+  {
+    "id": "dedup-100",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-017",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0009999999999976694,
+    "effects": null
+  },
+  {
+    "id": "dedup-101",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-017",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0016250000000042064,
+    "effects": null
+  },
+  {
+    "id": "dedup-102",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-017",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0025830000000013342,
+    "effects": null
+  },
+  {
+    "id": "dedup-103",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-016",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0009170000000011669,
+    "effects": null
+  },
+  {
+    "id": "dedup-104",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-016",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.001624999999997101,
+    "effects": null
+  },
+  {
+    "id": "dedup-105",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-016",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0014579999999995152,
+    "effects": null
+  },
+  {
+    "id": "dedup-106",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-018",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "same",
+    "latencyMs": 0.001333000000002471,
+    "effects": null
+  },
+  {
+    "id": "dedup-107",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-018",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.002625000000001876,
+    "effects": null
+  },
+  {
+    "id": "dedup-108",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-018",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0012910000000019295,
+    "effects": null
+  },
+  {
+    "id": "dedup-109",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-019",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0013750000000030127,
+    "effects": null
+  },
+  {
+    "id": "dedup-110",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-019",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0012090000000029022,
+    "effects": null
+  },
+  {
+    "id": "dedup-111",
+    "task": "dedup",
+    "split": "test",
+    "family": "dvdefi:T-019",
+    "cluster": "dvdefi",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0009999999999976694,
+    "effects": null
+  },
+  {
+    "id": "dedup-112",
+    "task": "dedup",
+    "split": "test",
+    "family": "inflation:T-001",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0014170000000035543,
+    "effects": null
+  },
+  {
+    "id": "dedup-113",
+    "task": "dedup",
+    "split": "test",
+    "family": "inflation:T-001",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.002625000000001876,
+    "effects": null
+  },
+  {
+    "id": "dedup-114",
+    "task": "dedup",
+    "split": "test",
+    "family": "inflation:T-001",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0024170000000012237,
+    "effects": null
+  },
+  {
+    "id": "dedup-115",
+    "task": "dedup",
+    "split": "test",
+    "family": "inflation:T-002",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "same",
+    "latencyMs": 0.0024999999999977263,
+    "effects": null
+  },
+  {
+    "id": "dedup-116",
+    "task": "dedup",
+    "split": "test",
+    "family": "inflation:T-002",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.0022080000000030964,
+    "effects": null
+  },
+  {
+    "id": "dedup-117",
+    "task": "dedup",
+    "split": "test",
+    "family": "inflation:T-002",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.002917000000003611,
+    "effects": null
+  },
+  {
+    "id": "dedup-118",
+    "task": "dedup",
+    "split": "test",
+    "family": "inflation:T-003",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "same",
+    "prediction": "distinct",
+    "latencyMs": 0.0006669999999999732,
+    "effects": null
+  },
+  {
+    "id": "dedup-119",
+    "task": "dedup",
+    "split": "test",
+    "family": "inflation:T-003",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "distinct",
+    "prediction": "same",
+    "latencyMs": 0.001459000000004096,
+    "effects": null
+  },
+  {
+    "id": "dedup-120",
+    "task": "dedup",
+    "split": "test",
+    "family": "inflation:T-003",
+    "cluster": "inflation",
+    "origin": "constructed",
+    "label": "insufficient",
+    "prediction": "same",
+    "latencyMs": 0.0014589999999969905,
+    "effects": null
+  }
+]

@@ -4,6 +4,7 @@ dist/
 .env
 forge-proof-output/
 FINDINGS.md
+benchmarks/jev/runs/
 
 # Foundry artifacts from temp projects
 cache/
