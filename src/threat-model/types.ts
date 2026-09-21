@@ -104,6 +104,38 @@ export interface HistoricalReference {
   similarity: string;
 }
 
+export interface SourceCitation {
+  id: string;
+  /** Workspace-relative Solidity path; distinct compilation units retain their paths. */
+  path: string;
+  startLine: number;
+  endLine: number;
+  quote: string;
+}
+
+/** The generator's reasoning, not an independently verified security verdict. */
+export interface ClaimAssessment {
+  conclusion: "supported" | "unresolved" | "contradicted";
+  executionContext: string;
+  sourceReferences: SourceCitation[];
+  steps: Array<{ action: string; expectedResult: string; citationIds: string[] }>;
+  checks: Array<{
+    kind: "reachability" | "guards-and-rollback" | "callback-state" | "profit-and-loss";
+    result: "supported" | "unresolved" | "blocked" | "not-applicable";
+    reason: string;
+    citationIds: string[];
+  }>;
+  missingEvidence: string[];
+}
+
+/** Mechanical citation checks cannot establish the truth of an attack claim. */
+export interface ClaimReview {
+  status: "citations-checked" | "needs-review" | "not-assessed";
+  executionVerified: false;
+  issues: string[];
+  sourceReferences: Array<{ id: string; path: string; quoteMatches: boolean; fileSha256?: string }>;
+}
+
 export interface Threat {
   id: string;
   category: ThreatCategory;
@@ -130,6 +162,9 @@ export interface Threat {
   suggestedProperties: string[];
   /** Step-by-step exploit using traced code paths */
   attackScenario?: string;
+  claimAssessment?: ClaimAssessment;
+  claimReview?: ClaimReview;
+  mergedClaims?: Array<{ findingId: string; assessment?: ClaimAssessment; review?: ClaimReview }>;
   /** 1 = highest priority */
   priority: number;
 }
@@ -194,6 +229,8 @@ export interface ThreatModel {
   assets: Asset[];
   trustBoundaries: TrustBoundary[];
   threats: Threat[];
+  /** Preserve rejected leads so a smaller report does not hide what was investigated. */
+  dismissedCandidates?: Array<{ title: string; reason: string; sourceReferences: SourceCitation[] }>;
   onChainProfile?: OnChainProfile;
   precomputed: {
     astAnalysisAvailable: boolean;

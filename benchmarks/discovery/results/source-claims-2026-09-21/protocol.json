@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "study": "Cross-contract discovery and source-grounded attack claims",
+  "frozenBeforeGeneration": true,
+  "baseline": "benchmarks/jev/results/real-source-2026-09-21/collection.json",
+  "sample": ["socket", "sentiment", "euler"],
+  "split": "development regression; these incidents informed the prompt changes and are not held out",
+  "sampling": "One consecutive new generation per project. Retain all failures; do not select favorable reports or retry for quality.",
+  "model": "anthropic/claude-sonnet-4.6",
+  "classifier": "anthropic/claude-haiku-4.5",
+  "generationBudget": {
+    "originalApprovedUsd": 15,
+    "previousBilledUsd": 2.0937358500000003,
+    "thisRunCapUsd": 12,
+    "aggregateMaximumUsd": 14.09373585,
+    "jevCalls": 0
+  },
+  "changes": [
+    "Expose a source inventory including separate dependency context units",
+    "Trace producers, consumers and callback state before exhausting local blueprint leads",
+    "Require structured checks for reachability, guards and rollback, callback state, and net attacker economics",
+    "Require exact source citations and mechanically check paths, line ranges, quotes and file hashes",
+    "Retain dismissed candidates and unresolved evidence; never label a quote check as executable verification",
+    "Preserve constituent assessments when existing dedup merges reports"
+  ],
+  "referencePolicy": "Trust the existing pinned DeFiHackLabs PoCs without rerunning them. Exploit files and this protocol stay outside generator access. The generic prompt was informed by baseline failures, so answer-file exclusion does not make this an unseen evaluation.",
+  "coverageRubric": {
+    "full-mechanism": "A report identifies the specific defective operation and the incident's essential actor/context, state sequence, consuming operation and committed harmful outcome. No material contradiction in the claimed path.",
+    "partial-mechanism": "A report identifies the incident's specific root defect but omits an essential transition/context or adds an inconsistent exploit path.",
+    "missed": "No report identifies the specific incident mechanism. Matching a broad class such as oracle manipulation is insufficient.",
+    "unresolved": "The available evidence does not establish the match. Do not infer missing steps or treat a failed generation as a vulnerability verdict."
+  },
+  "referenceRequirements": {
+    "socket": [
+      "Gateway executes the attacker-selected registered route using delegatecall; storage/address(this) and spender identity belong to the gateway",
+      "WrappedTokenSwapperImpl forwards caller-chosen token target and calldata without restricting the called operation",
+      "Zero amount permits the balance-delta check to pass while transferFrom takes tokens from a third-party victim who approved the gateway",
+      "The complete outer transaction commits and the attacker receives the victim's tokens"
+    ],
+    "sentiment": [
+      "A Balancer pool exit burns pool shares before all Vault token balances are updated",
+      "An ETH transfer during exit gives the attacker a callback while supply and Vault balances describe different stages of the operation",
+      "WeightedBalancerLPOracle reads that transient combination without rejecting an active Vault operation",
+      "The attacker calls Sentiment borrowing during the callback and the consumer accepts inflated collateral valuation"
+    ],
+    "euler": [
+      "donateToReserves reduces the donor's eToken collateral without checkLiquidity despite outstanding debt",
+      "The missing check permits creation of an insolvent position",
+      "The report distinguishes this path from a deferred sequence that actually runs a dirty final solvency check",
+      "For an incident-level profit claim, it explains leveraged setup, donation, a second account's liquidation, collateral withdrawal and loan repayment without asserting that a healthy account can be liquidated"
+    ]
+  },
+  "reportQualityRubric": [
+    "Flag claims that nested transfers or approvals survive a reverted outer transaction",
+    "Flag positive-profit claims whose stated incoming value merely equals attacker funding",
+    "Flag guarded or healthy paths described as executable without a demonstrated bypass",
+    "Flag ordinary reserve swaps presented as sufficient to manipulate an invariant-based price without calculation",
+    "Distinguish explicit unresolved prerequisites from unsupported confident conclusions",
+    "Check source citations mechanically, then separately assess whether the quoted code supports the narrative"
+  ],
+  "metrics": [
+    "Reference mechanism coverage per project before and after",
+    "Raw and final finding counts; dismissed candidates; unresolved assessments",
+    "Exact quote matches and citation-check issues",
+    "Specific source/PoC-backed reasoning defects with retained evidence",
+    "Actual billing, generation latency, parse/completion status and failures"
+  ],
+  "interpretation": "Assessment is by the primary assistant and is not independent or fully blinded. One stochastic run per project cannot establish general accuracy or attribute gains to an individual prompt component. Fewer findings alone is not improvement. Confirmed exploit execution is not claimed."
+}

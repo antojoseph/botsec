@@ -12,6 +12,7 @@ import { query } from "@anthropic-ai/claude-agent-sdk";
 import { writeFileSync, mkdirSync, readFileSync, mkdtempSync } from "fs";
 import { captureJson, captureStage, sourceInventory } from "./capture.js";
 import { sourceOnlyHook } from "./source-only.js";
+import { claimAssessmentSchema, sourceCitationSchema, reviewClaim } from "./claim-review.js";
 import type { Options } from "@anthropic-ai/claude-agent-sdk";
 import { join } from "path";
 
@@ -67,7 +68,7 @@ export async function generateThreatModel(
   if (opts.sourceOnly && opts.enabledProviders?.some(p => p.phase === "enrichment" || p.id === "etherscan")) {
     throw new Error("Source-only collection cannot use incident/external enrichment providers");
   }
-  const inventory = opts.captureRaw ? sourceInventory(opts.contractPath) : undefined;
+  const inventory = sourceInventory(opts.contractPath);
 
   // Phase 0: Pre-computation
   console.log("\n  Phase 0: Pre-computing analysis data...");
@@ -75,6 +76,11 @@ export async function generateThreatModel(
 
   const forgeProofDir = join(precomputed.projectDir, ".forge-proof");
   mkdirSync(forgeProofDir, { recursive: true });
+  const sourceIndexPath = join(forgeProofDir, "source-index.json");
+  writeFileSync(sourceIndexPath, JSON.stringify({
+    note: "Source inventory, not an AST coverage claim. context/ contains separate compilation units when supplied. node_modules and generated artifacts are omitted; resolve additional dependencies as needed.",
+    files: inventory.filter(f => f.path.endsWith(".sol")),
+  }, null, 2));
 
   // Run precompute providers (AST, inspect, blueprint, etherscan, slither, etc.)
   // Providers populate precomputed via result.data (merged after each run).
@@ -164,6 +170,7 @@ export async function generateThreatModel(
   const agentDef = threatModelerAgent(precomputed, {
     blueprintPath,
     codemapPath,
+    sourceIndexPath,
     extraDataSections: extraDataSections || undefined,
   });
   if (opts.sourceOnly) {
@@ -172,7 +179,7 @@ export async function generateThreatModel(
   }
   const agents = { "threat-modeler": agentDef };
 
-  const orchestratorPrompt = buildOrchestratorPrompt(precomputed);
+  const orchestratorPrompt = buildOrchestratorPrompt(precomputed, sourceIndexPath);
 
   let rawModel: any = null;
   let costUsd = 0;
@@ -248,16 +255,25 @@ export async function generateThreatModel(
                 },
                 suggestedProperties: { type: "array", items: { type: "string" } },
                 attackScenario: { type: "string" },
+                claimAssessment: claimAssessmentSchema,
                 priority: { type: "number" },
               },
               required: [
                 "id", "category", "title", "description", "affectedCode",
-                "severity", "confidence", "trace", "suggestedProperties", "priority",
+                "severity", "confidence", "trace", "suggestedProperties", "priority", "claimAssessment",
               ],
             },
           },
+          dismissedCandidates: {
+            type: "array", items: {
+              type: "object", properties: {
+                title: { type: "string" }, reason: { type: "string" },
+                sourceReferences: { type: "array", items: sourceCitationSchema },
+              }, required: ["title", "reason", "sourceReferences"],
+            },
+          },
         },
-        required: ["contractType", "threats"],
+        required: ["contractType", "threats", "dismissedCandidates"],
       },
     },
   };
@@ -338,6 +354,13 @@ export async function generateThreatModel(
 
   if (opts.captureRaw) captureJson(runDir, "raw-findings.json", rawModel);
 
+  // Check citations without treating the generator's interpretation as proof.
+  // Preserve every candidate and its original severity, including failed checks.
+  for (const threat of rawModel.threats) {
+    threat.claimReview = reviewClaim(precomputed.projectDir, threat.claimAssessment);
+  }
+  if (opts.captureRaw) captureJson(runDir, "claim-reviews.json", rawModel.threats.map((t: Threat) => ({ id: t.id, review: t.claimReview })));
+
   // Phase 2: Synthesis
   console.log("\n  Phase 2: Synthesis & enrichment...");
 
@@ -382,6 +405,7 @@ export async function generateThreatModel(
     assets: rawModel.assets || [],
     trustBoundaries: rawModel.trustBoundaries || [],
     threats: rawModel.threats,
+    dismissedCandidates: Array.isArray(rawModel.dismissedCandidates) ? rawModel.dismissedCandidates : [],
     onChainProfile: precomputed.onChain,
     precomputed: {
       astAnalysisAvailable: !!precomputed.structural,
@@ -457,16 +481,16 @@ function resolveSrcDir(projectDir: string): string {
   }
 }
 
-function buildOrchestratorPrompt(pre: PrecomputedAnalysis): string {
+function buildOrchestratorPrompt(pre: PrecomputedAnalysis, sourceIndexPath: string): string {
   const srcDir = resolveSrcDir(pre.projectDir);
   return `You are Forge Proof's threat modeling orchestrator.
 
-Your job is to delegate to the **threat-modeler** agent, which will deeply explore the smart contracts in ${pre.projectDir}/${srcDir}/ and produce a structured threat model as JSON.
+Your job is to delegate to the **threat-modeler** agent, which will explore the primary contracts in ${pre.projectDir}/${srcDir}/ AND their producers, consumers and dependency implementations, and produce a structured threat model as JSON. The source inventory is ${sourceIndexPath}; additional context/ units may be outside the primary AST.
 
 ## Instructions
 
 1. Delegate to the **threat-modeler** agent with this brief:
-   "Analyze all smart contracts in ${pre.projectDir}/${srcDir}/. Produce a complete threat model as JSON following your output format instructions. Use the pre-computed code map and on-chain data to guide your exploration. Every threat must include a TRACE."
+   "Analyze the primary smart contracts and trace cross-contract trust boundaries using the source inventory, including any context/ units. Do not stop at the primary AST or interface declarations. Produce JSON with threats, structured claimAssessment for each threat, and dismissedCandidates with reasons. Use the code map as leads, not proof. Check guards, transaction rollback, transient callback state and net attacker economics before maintaining an attack. Every threat must include a TRACE and exact source quotes."
 
 2. When the threat-modeler returns its JSON output, present it as your final response.
 
@@ -642,6 +666,8 @@ function printSummary(model: ThreatModel, outputPath: string): void {
   }
 
   console.log(`\n  Threats: ${model.threats.length} total`);
+  const citationsChecked = model.threats.filter(t => t.claimReview?.status === "citations-checked").length;
+  console.log(`  Source citations checked: ${citationsChecked}/${model.threats.length}; exploit execution remains unverified`);
   if (bySeverity["Critical"]) console.log(`    Critical: ${bySeverity["Critical"]}`);
   if (bySeverity["High"]) console.log(`    High:     ${bySeverity["High"]}`);
   if (bySeverity["Medium"]) console.log(`    Medium:   ${bySeverity["Medium"]}`);

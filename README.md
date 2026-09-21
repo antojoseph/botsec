@@ -227,6 +227,8 @@ Adding a provider to `src/threat-model/providers/registry.ts` generates its CLI
 flag automatically from the provider's `ProviderMeta` — default-on providers get
 `--no-<flag>`, opt-in providers get `--<flag>`.
 
+Threat generation traces cross-contract producers, consumers and callback state as well as local blueprint leads. Each new finding includes a `claimAssessment` covering reachability, guards/rollback, callback timing and attacker economics. `claimReview` checks that cited source paths, line ranges and quotes match the workspace and records file hashes. `citations-checked` means the references match; it does **not** mean the exploit was executed or proved. Missing, blocked or inconsistent assessments remain visibly `needs-review`; candidates are not deleted by this check. Rejected leads are retained in `dismissedCandidates`. With `--capture-raw`, the original findings and separate `claim-reviews.json` are also saved.
+
 ## Output Structure
 
 Each run creates a timestamped directory — nothing is overwritten:

@@ -68,6 +68,18 @@ export const dedupProvider: SynthesisFilterProvider = {
           const keep = threats[keepIdx];
           const drop = threats[dropIdx];
 
+          // A citation check for one report does not cover a combined claim.
+          // Preserve each original assessment and make that limitation visible.
+          if (keep.claimReview || drop.claimReview || keep.claimAssessment || drop.claimAssessment || keep.mergedClaims || drop.mergedClaims) {
+            const originals = (t: Threat) => t.mergedClaims ?? [{ findingId: t.id, assessment: t.claimAssessment, review: t.claimReview }];
+            keep.mergedClaims = [...originals(keep), ...originals(drop)];
+            delete keep.claimAssessment;
+            keep.claimReview = {
+              status: "needs-review", executionVerified: false, sourceReferences: [],
+              issues: ["Combined report requires review; original claim assessments are preserved in mergedClaims"],
+            };
+          }
+
           // Merge descriptions
           keep.description = `${keep.description}\n\n[Merged] ${drop.description}`;
 

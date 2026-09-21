@@ -2,8 +2,8 @@
  * Anti-Slop SynthesisFilterProvider — drops threats that lack code traces.
  *
  * Every threat must have a non-empty trace.steps array to survive this filter.
- * This is the primary quality gate ensuring the agent backed each finding
- * with concrete evidence from the codebase.
+ * This checks trace presence only. Citation matching is recorded separately;
+ * neither check establishes exploitability.
  */
 
 import type { SynthesisFilterProvider } from "../types.js";

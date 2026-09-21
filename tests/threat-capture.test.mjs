@@ -29,6 +29,12 @@ test('captures findings removed and mutated by synthesis without changing normal
   const run = join(f.reports, readdirSync(f.reports)[0]);
   const raw = JSON.parse(readFileSync(join(run, 'raw-findings.json')));
   assert.equal(raw.threats.length, 3); assert.equal(raw.threats[0].severity, 'High');
+  assert.equal(raw.threats[0].claimReview, undefined);
+  const reviews = JSON.parse(readFileSync(join(run, 'claim-reviews.json')));
+  assert.equal(reviews.length, 3);
+  assert.ok(reviews.every(r => r.review.executionVerified === false && r.review.status === 'not-assessed'));
+  const inventory = JSON.parse(readFileSync(join(f.project, '.forge-proof/source-index.json')));
+  assert.ok(inventory.files.some(f => f.path === 'src/C.sol'));
   const stages = readFileSync(join(run, 'synthesis-stages.jsonl'), 'utf8').trim().split('\n').map(JSON.parse);
   assert.equal(stages[0].before.length, 3); assert.equal(stages[0].after.length, 2);
   assert.equal(stages[1].after[0].severity, 'Medium');

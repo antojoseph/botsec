@@ -408,6 +408,10 @@ function formatThreatModelSection(threatModel: ThreatModel): string {
       if (t.attackScenario) {
         lines.push(`  Attack scenario: ${t.attackScenario}`);
       }
+      lines.push(`  Claim evidence: ${t.claimReview?.status ?? "not-assessed"}; source citation checks do not verify exploit execution.`);
+      if (t.claimReview?.issues.length) lines.push(`  Unresolved evidence checks: ${t.claimReview.issues.join("; ")}`);
+      if (t.claimAssessment) lines.push(`  Generator claim assessment (unverified): ${JSON.stringify(t.claimAssessment)}`);
+      if (t.mergedClaims) lines.push(`  Original merged claim assessments (unverified): ${JSON.stringify(t.mergedClaims)}`);
       return lines.join("\n");
     })
     .join("\n\n");
@@ -423,6 +427,7 @@ ${threats}
 
 ### Instructions
 - The code-explorer should VALIDATE these threats (confirm or reject with evidence), not re-discover them from scratch
+- Treat generator assessments as hypotheses. Exact source-quote matching is not semantic or executable verification. Resolve missing evidence, guards, rollback and economics; preserve counterevidence.
 - The code-explorer should identify any ADDITIONAL threats not covered above
 - The formal-verifier should prioritize writing check_ tests for the suggestedProperties listed above
 - Threats marked Critical/High should be verified FIRST

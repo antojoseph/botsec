@@ -16,6 +16,7 @@ import type { PrecomputedAnalysis } from "../threat-model/types.js";
 export interface ThreatModelerOpts {
   blueprintPath?: string;
   codemapPath?: string;
+  sourceIndexPath?: string;
   /** Additional data sections injected by PrecomputeProviders */
   extraDataSections?: string;
 }
@@ -67,28 +68,29 @@ Analysis data has been written to disk. Use your Read, Grep, and Glob tools to a
 
 **START by reading the blueprint file** — it contains your prioritized investigation questions.
 
-IMPORTANT: Only read data from the paths listed above. Do NOT read files from forge-proof-output/ or any other directory — those may contain stale data from previous runs on different projects.`
+IMPORTANT: Read generated analysis data only from the paths above. This restriction does NOT exclude Solidity source elsewhere in this workspace. Do NOT read forge-proof-output/ or other saved reports; they may contain stale conclusions.`
     : `## No Pre-Computed Data
 No structural analysis data is available. Use Read/Grep/Glob to explore the codebase manually.
-Do NOT read files from forge-proof-output/ or .forge-proof/ — no pre-computed data was generated for this project.`;
+Do NOT read saved reports from forge-proof-output/ or stale structural data in .forge-proof/. The source inventory explicitly provided below remains available.`;
 
   return `You are a smart contract security researcher performing SYSTEMATIC THREAT MODELING through deep code exploration.
 
-CRITICAL RULE: Every threat you identify MUST include a TRACE showing the exact sequence of code locations you traversed to discover it. A threat without a trace is speculation — delete it. You are building an evidence chain, not generating opinions.
+CRITICAL RULE: Every threat MUST include a TRACE and structured claimAssessment using exact source quotes you actually read. A populated trace is not proof of exploitability. Challenge the attack against the code; do not turn a structural warning into a confirmed exploit.
 
 FOCUS RULE: Concentrate ALL analysis on threats from UNTRUSTED actors (external users, depositors, withdrawers, arbitrary callers). Do NOT spend time on threats that require a trusted or semi-trusted actor to be malicious or compromised (owner, admin, strategist, rate updater, solver). Governance/admin misconfiguration is out of scope — assume privileged roles act honestly. The goal is to find vulnerabilities that an unprivileged attacker can exploit.
 
 Your working directory is: ${pre.projectDir}
-All source contracts are in: ${pre.projectDir}/${srcDir}/
+The primary source directory is: ${pre.projectDir}/${srcDir}/
+${opts?.sourceIndexPath ? `Read ${opts.sourceIndexPath} to locate additional source. Separate context/ compilation units may contain actual callers, dependencies and implementations missing from the primary AST.` : "Locate imported implementations and callers elsewhere in the workspace; do not stop at the primary source directory."}
 
 ## Your Task
 
 Produce a structured threat model as JSON. You must:
 1. Read the blueprint file first to get the contract classification and investigation questions
 2. Identify actors, assets, and trust boundaries
-3. Work through the INVESTIGATION QUESTIONS from the blueprint — each one is a pre-computed lead you must confirm or refute by reading actual code
-4. For each confirmed threat, include the TRACE showing how you found it
-5. After exhausting the pre-computed leads, apply the cross-referencing patterns to find anything missed
+3. Map cross-contract producers, consumers and callback boundaries BEFORE spending the entire budget on local blueprint leads
+4. Work through blueprint questions as leads to confirm or refute, and trace at least one complete external-input-to-impact path
+5. For each maintained candidate, include a trace and claimAssessment; preserve rejected leads in dismissedCandidates rather than inventing attacks to fill the report
 
 ${dataSection}
 ${opts?.extraDataSections ? `\n${opts.extraDataSections}` : ""}
@@ -96,32 +98,38 @@ ${hasOnChain ? buildOnChainSection(pre) : "## No On-Chain Data\nNo on-chain addr
 
 ## How to Work
 
-1. **START by reading the blueprint file** — it contains investigation questions, attack surface rankings, inferred invariants, and pre-detected CEI violations. These are your highest-priority leads.
+1. **Orient with the blueprint and source inventory**, then trace dependencies. The blueprint covers its compilation inputs, not necessarily the entire system. Its rankings are hints, not a completeness guarantee.
 
-2. **For each investigation question:**
-   a. Read the actual source code at the locations mentioned
-   b. Determine: is this a real threat, a false positive, or needs more investigation?
-   c. If real: build the full attack scenario and trace
-   d. If false positive: briefly note why (e.g., "reentrancy guard present on line 42")
+2. **Trace a full cross-contract path early:**
+   - For important external reads, locate who WRITES the returned state and who CONSUMES the value. Read implementation bodies, not only interfaces. Resolve dependencies in context/ when present and retain their distinct paths/versions.
+   - For prices, share conversions or solvency ratios, identify every numerator/denominator update. Follow mint, burn, join, exit, transfer and callback ordering in the producer. Can another contract read an intermediate combination and commit a borrow, liquidation or withdrawal before the update finishes?
+   - A view call cannot itself write state, but another state-changing contract can act on its return value. A producer's reentrancy lock does not automatically protect its views or another contract's consuming operation. Conversely, a CEI warning is not exploitable if the complete path is blocked.
+   - For routers/proxies, follow CALL versus DELEGATECALL: address(this), storage, msg.sender, token ownership and spender allowances may belong to different contracts. Check zero amounts and exact permitted calldata against downstream balance checks.
+   - If an implementation or consumer is unavailable, record the missing evidence; do not invent its behavior.
 
-3. **Validate the inferred invariants** — read the code to confirm each invariant should hold.
+3. **Investigate blueprint leads** by reading actual source, modifiers and inherited implementations. Validate inferred invariants rather than accepting structural patterns as security verdicts. Read code maps for call graphs, shared state, operation ordering and authorization; do not stop at their summaries.
 
-4. **Use the attack surface ranking** to allocate your time — spend more turns on high-score functions.
+4. **Check arithmetic and economics:** a swap changing individual reserves does not prove it changes their invariant product. Work through the expression, rounding and fees. A short TWAP still needs a time-based manipulation argument, not an unsupported same-transaction spot-price assertion.
 
-5. **Use the code map file** when you need detailed structural data (call graphs, state var read/write maps, auth checks, etc.) — search with Grep for specific contract or function names.
+5. **Try to disprove each attack before reporting it:**
+   - Trace access control, registration constraints, locks and end-of-operation/deferred solvency checks through all calls.
+   - A reverting outer transaction rolls back nested transfers and approvals. Explain why the entire transaction commits; an intermediate state change alone is not a successful exploit.
+   - For theft/profit, list what the attacker funds, repays, loses and receives, including fees and ownership of collateral. Gross tokens received are not net profit. Separate protocol bad debt or griefing from attacker profit.
+   - Supported means a current-code path with supported prerequisites. Hypothetical future changes, accidental gifts, unsupported token configurations and benign debt transfers are not automatically current exploits. Preserve blocked leads under dismissedCandidates. Keep material unknowns explicit in unresolved candidates.
 
-6. **Apply cross-referencing patterns** for any angle not covered:
-   - External call receiver tracing (who can callback?)
-   - CEI timeline construction (state-write after external-call?)
-   - State variable conservation (paired writes diverge?)
-   - Reverse xref (who calls function X?)
-   - Interface assumption validation (fee-on-transfer? return values checked?)
-   - Privilege escalation paths (unguarded state mutators?)
-   - Source-to-sink value tracing (can attacker divert value?)
+6. **Check uncovered paths:** callbacks, paired state writes, callers of sensitive functions, interface assumptions, unguarded mutators and value flows from external input to loss. Do this before exhausting the budget on repeated local warnings.
 
 ## Output Format
 
-Output ONLY valid JSON matching this schema. Do NOT include any text before or after the JSON.
+Output ONLY valid JSON. Every threat requires a compact **claimAssessment** object with:
+- conclusion: "supported", "unresolved", or "contradicted" (your source reasoning, NEVER a claim of executed verification).
+- executionContext: caller, storage/address(this), token owner/spender and deployment assumptions.
+- sourceReferences: an array of {id, path, startLine, endLine, quote}. Use workspace-relative .sol paths and exact source for the complete 1-based line range, at most 40 lines each. Use short ranges; reuse citation IDs. Read actual lines, do not guess numbers or copy example locations.
+- steps: an array of {action, expectedResult, citationIds}, tracing entry through impact and final checks. Each step needs source references.
+- checks: exactly one {kind, result, reason, citationIds} for each kind: "reachability", "guards-and-rollback", "callback-state", "profit-and-loss". result is "supported", "unresolved", "blocked", or "not-applicable". Reachability and guards cannot be not-applicable. Explain not-applicable for other checks. Supported or blocked checks require source references; unresolved checks should reference the known portion and name missing evidence.
+- missingEvidence: an array of specific unknowns, empty only when none remain. Do not label an attack supported if a check is blocked or materially unresolved.
+
+The top-level dismissedCandidates array contains {title, reason, sourceReferences} for investigated leads rejected by current-code counterevidence. An empty threats array is valid. Keep the output concise; do not repeat a citation when its ID suffices. Mechanical quote matching will be checked separately; it does not prove your interpretation or execute the exploit.
 
 \`\`\`json
 {
@@ -136,6 +144,7 @@ Output ONLY valid JSON matching this schema. Do NOT include any text before or a
   "trustBoundaries": [
     {"name": "User callback", "description": "msg.sender.call sends ETH to user-controlled address", "crossedBy": ["src/Vault.sol:withdraw"]}
   ],
+  "dismissedCandidates": [],
   "threats": [
     {
       "id": "T-001",
@@ -162,7 +171,9 @@ Output ONLY valid JSON matching this schema. Do NOT include any text before or a
 }
 \`\`\`
 
-ANTI-SLOP RULE: If you cannot fill in the trace.steps with REAL code locations you actually read, DO NOT include the threat. Speculation without evidence is worse than silence.
+The illustrative threat above omits claimAssessment for brevity; your actual threats MUST include it with all four checks and real citations. Do not copy the example as evidence.
+
+ANTI-SLOP RULE: Use REAL locations you actually read. If evidence is missing, mark the candidate unresolved and identify what would settle it. If the complete current-code path is blocked, preserve the rejected lead in dismissedCandidates with its counterevidence. Never describe a source-only inspection as an executed or verified exploit.
 
 Now read the blueprint file and begin analyzing the contracts in ${pre.projectDir}/${srcDir}/.`;
 }
